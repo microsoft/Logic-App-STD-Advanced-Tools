@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Azure;
+﻿using Azure;
 using Azure.Data.Tables;
 using Azure.Data.Tables.Models;
 using Microsoft.Extensions.CommandLineUtils;
 using Newtonsoft.Json;
+using System;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
 
 namespace LAVersionReverter
 {
@@ -113,7 +110,7 @@ namespace LAVersionReverter
             {
                 Console.WriteLine(ex.Message);
                 Console.WriteLine(ex.StackTrace);
-            }            
+            }
         }
 
         private static void Decode(string ConnectionString, string WorkflowName, string Version)
@@ -156,7 +153,7 @@ namespace LAVersionReverter
             string TableName = GetMainTableName(ConnectionString);
 
             TableClient tableClient = new TableClient(ConnectionString, TableName);
-            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter:$"FlowName eq '{SourceName}'");
+            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{SourceName}'");
 
             string Content = String.Empty;
 
@@ -216,7 +213,7 @@ namespace LAVersionReverter
 
             string BackupDefinitionContent = File.ReadAllText(Files[0]);
             string DefinitionTemplatePath = $"C:/home/site/wwwroot/{WorkflowName}/workflow.json";
-            
+
             File.WriteAllText(DefinitionTemplatePath, BackupDefinitionContent);
 
             Console.WriteLine("Revert finished, please refresh the workflow page");
