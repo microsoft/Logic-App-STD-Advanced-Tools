@@ -9,6 +9,7 @@ using Azure;
 using Azure.Data.Tables;
 using Azure.Data.Tables.Models;
 using Microsoft.Extensions.CommandLineUtils;
+using Newtonsoft.Json;
 
 namespace LAVersionReverter
 {
@@ -23,6 +24,7 @@ namespace LAVersionReverter
 
             try
             {
+                #region Backup
                 app.Command("Backup", c =>
                 {
                     CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
@@ -38,7 +40,9 @@ namespace LAVersionReverter
                         return 0;
                     });
                 });
+                #endregion
 
+                #region Revert
                 app.Command("Revert", c =>
                 {
                     CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
@@ -61,7 +65,28 @@ namespace LAVersionReverter
                         return 0;
                     });
                 });
+                #endregion
 
+                app.Command("Decode", c =>
+                {
+                    CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
+                    CommandOption WorkflowNameCO = c.Option("-n|--name", "Workflow Name", CommandOptionType.SingleValue);
+                    CommandOption VersionCO = c.Option("-v|--version", "Version, the first part of the backup file name", CommandOptionType.SingleValue);
+
+                    c.HelpOption("-?");
+                    c.OnExecute(() =>
+                    {
+                        string ConnectionString = ConnectionStringCO.Value();
+                        string WorkflowName = WorkflowNameCO.Value();
+                        string Version = VersionCO.Value();
+
+                        Decode(ConnectionString, WorkflowName, Version);
+
+                        return 0;
+                    });
+                });
+
+                #region Clone
                 app.Command("Clone", c =>
                 {
                     CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
@@ -80,6 +105,7 @@ namespace LAVersionReverter
                         return 0;
                     });
                 });
+                #endregion
 
                 app.Execute(args);
             }
@@ -87,10 +113,44 @@ namespace LAVersionReverter
             {
                 Console.WriteLine(ex.Message);
                 Console.WriteLine(ex.StackTrace);
-            }
-            
+            }            
         }
 
+        private static void Decode(string ConnectionString, string WorkflowName, string Version)
+        {
+            string TableName = GetMainTableName(ConnectionString);
+
+            TableClient tableClient = new TableClient(ConnectionString, TableName);
+            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{WorkflowName}' and FlowSequenceId eq '{Version}'");
+
+            if (tableEntities.Count<TableEntity>() == 0)
+            {
+                Console.WriteLine("No Record Found! Please check the Workflow name and the Version(FlowSequenceId)");
+                return;
+            }
+
+            string Content = String.Empty;
+
+            foreach (TableEntity entity in tableEntities)
+            {
+                byte[] DefinitionCompressed = entity.GetBinary("DefinitionCompressed");
+                string DecompressedDefinition = DecompressContent(DefinitionCompressed);
+
+                dynamic JsonObject = JsonConvert.DeserializeObject(DecompressedDefinition);
+                string FormattedContent = JsonConvert.SerializeObject(JsonObject, Formatting.Indented);
+
+                Console.Write(FormattedContent);
+
+                break;
+            }
+        }
+
+        /// <summary>
+        /// Clone the latest workflow definition to a new one
+        /// </summary>
+        /// <param name="ConnectionString"></param>
+        /// <param name="SourceName"></param>
+        /// <param name="TargetName"></param>
         private static void Clone(string ConnectionString, string SourceName, string TargetName)
         {
             string TableName = GetMainTableName(ConnectionString);
