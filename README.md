@@ -8,14 +8,4 @@ Clone: Clone a workflow (latest version) to a new workflow, if the workflow alre
 
 Decode: Print identical workflow definition in Kudu console.  
 
-**Command and Options**  
-Backup  -cs|--connectionstring [The Connection String of storage account]  
-
-Revert -cs|--connectionstring [ConnectionString] -n|--name [Workflow Name] -v|--version [Definition Version]  
-
-Clone -cs|--connectionstring [ConnectionString] -sn|--sourcename [Source Workflow Name] -ts|--targetname [Target Workflow Name]  
-
-Decode -cs|--connectionstring [ConnectionString] -n|--name [Workflow Name] -v|--version [Definition Version]  
-
-  
-Help information also available by -? and [Command] -?.
+Help information available by -? and [Command] -?
