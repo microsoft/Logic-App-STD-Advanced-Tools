@@ -64,6 +64,7 @@ namespace LAVersionReverter
                 });
                 #endregion
 
+                #region Decode
                 app.Command("Decode", c =>
                 {
                     CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
@@ -82,6 +83,7 @@ namespace LAVersionReverter
                         return 0;
                     });
                 });
+                #endregion
 
                 #region Clone
                 app.Command("Clone", c =>
@@ -89,6 +91,7 @@ namespace LAVersionReverter
                     CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
                     CommandOption SourceNameCO = c.Option("-sn|--sourcename", "Source Workflow Name", CommandOptionType.SingleValue);
                     CommandOption TargetNameCO = c.Option("-tn|--targetname", "Target Workflow Name", CommandOptionType.SingleValue);
+                    CommandOption versionCO = c.Option("-v|--version", "Version of the workflow (optional, the latest version will be cloned if not provided this parameter)", CommandOptionType.SingleValue);
 
                     c.HelpOption("-?");
                     c.OnExecute(() =>
@@ -96,8 +99,9 @@ namespace LAVersionReverter
                         string ConnectionString = ConnectionStringCO.Value();
                         string SourceName = SourceNameCO.Value();
                         string TargetName = TargetNameCO.Value();
+                        string Version = versionCO.Value();
 
-                        Clone(ConnectionString, SourceName, TargetName);
+                        Clone(ConnectionString, SourceName, TargetName, Version);
 
                         return 0;
                     });
@@ -143,12 +147,13 @@ namespace LAVersionReverter
         }
 
         /// <summary>
-        /// Clone the latest workflow definition to a new one
+        /// Clone a workflow definition (also can be a old version) to a new one
         /// </summary>
         /// <param name="ConnectionString"></param>
         /// <param name="SourceName"></param>
         /// <param name="TargetName"></param>
-        private static void Clone(string ConnectionString, string SourceName, string TargetName)
+        /// <param name="Version"></param>
+        private static void Clone(string ConnectionString, string SourceName, string TargetName, string Version)
         {
             string TableName = GetMainTableName(ConnectionString);
 
@@ -157,11 +162,13 @@ namespace LAVersionReverter
 
             string Content = String.Empty;
 
+            string Identity = string.IsNullOrEmpty(Version) ? "FLOWIDENTIFIER" : Version;
+
             foreach (TableEntity entity in tableEntities)
             {
                 string RowKey = entity.GetString("RowKey");
 
-                if (RowKey.Contains("FLOWIDENTIFIER"))
+                if (RowKey.Contains(Identity))
                 {
                     byte[] DefinitionCompressed = entity.GetBinary("DefinitionCompressed");
                     string Kind = entity.GetString("Kind");
@@ -185,6 +192,12 @@ namespace LAVersionReverter
             Console.WriteLine("Clone finished, please refresh workflow page");
         }
 
+        /// <summary>
+        /// Retrieve the table name which contains all the workflow definitions
+        /// Need figure out where we store the Logic App ID
+        /// </summary>
+        /// <param name="ConnectionString"></param>
+        /// <returns></returns>
         private static string GetMainTableName(string ConnectionString)
         {
             TableServiceClient serviceClient = new TableServiceClient(ConnectionString);
