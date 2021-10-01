@@ -108,12 +108,51 @@ namespace LAVersionReverter
                 });
                 #endregion
 
+                #region List versions
+                app.Command("ListVersions", c =>
+                {
+                    CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
+                    CommandOption WorkflowNameCO = c.Option("-n|--name", "Workflow Name", CommandOptionType.SingleValue);
+                    c.HelpOption("-?");
+
+                    c.OnExecute(() => 
+                    {
+                        string ConnectionString = ConnectionStringCO.Value();
+                        string WorkflowName = WorkflowNameCO.Value();
+                        ListVersions(ConnectionString, WorkflowName);
+
+                        return 0;
+                    });
+                });
+                #endregion
+
                 app.Execute(args);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 Console.WriteLine(ex.StackTrace);
+            }
+        }
+
+        private static void ListVersions(string ConnectionString, string WorkflowName)
+        {
+            string TableName = GetMainTableName(ConnectionString);
+
+            TableClient tableClient = new TableClient(ConnectionString, TableName);
+            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{WorkflowName}'");
+
+            foreach (TableEntity entity in tableEntities)
+            {
+                string RowKey = entity.GetString("RowKey");
+
+                if (RowKey.Contains("FLOWVERSION"))
+                {
+                    string Version = entity.GetString("FlowSequenceId");
+                    DateTimeOffset? UpdateTime = entity.GetDateTimeOffset("FlowUpdatedTime");
+
+                    Console.WriteLine($"Version ID:{Version}    UpdateTime:{UpdateTime}");
+                }
             }
         }
 
