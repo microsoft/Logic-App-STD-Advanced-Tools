@@ -4,7 +4,7 @@ Backup: Retrieve all definitions for all the workflows and save to json files. E
 
 Revert: Revert to a pervious version, it will also do backup  
 
-Clone: Clone a workflow (latest version) to a new workflow, if the workflow already exists, then it will skip.  
+Clone: Clone a workflow to a new workflow, if the workflow already exists, then it will skip.
 
 Decode: Print identical workflow definition in Kudu console.  
 
