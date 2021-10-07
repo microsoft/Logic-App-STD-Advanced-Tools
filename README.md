@@ -8,4 +8,6 @@ Clone: Clone a workflow to a new workflow, if the workflow already exists, then 
 
 Decode: Print identical workflow definition in Kudu console.  
 
+ListVersions: List all the available versions as per workflow name.  
+
 Help information available by -? and [Command] -?
