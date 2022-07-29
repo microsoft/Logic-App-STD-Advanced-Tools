@@ -321,6 +321,7 @@ namespace LAVersionReverter
             string Result = String.Empty;
 
             MemoryStream output = new MemoryStream();
+
             using (var compressStream = new MemoryStream(Content))
             {
                 using (var decompressor = new DeflateStream(compressStream, CompressionMode.Decompress))
