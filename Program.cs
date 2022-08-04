@@ -24,13 +24,16 @@ namespace LAVersionReverter
                 #region Backup
                 app.Command("Backup", c =>
                 {
+                    CommandOption LogicAppNameCO = c.Option("-la|--LogicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
                     CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
+                    
                     c.HelpOption("-?");
 
                     c.OnExecute(() =>
                     {
                         string ConnectionString = ConnectionStringCO.Value();
-                        BackupDefinitions(ConnectionString);
+                        string LogicAppName = LogicAppNameCO.Value();
+                        BackupDefinitions(LogicAppName, ConnectionString);
 
                         Console.WriteLine("Backup Succeeded. You can download the definition ");
 
@@ -42,6 +45,7 @@ namespace LAVersionReverter
                 #region Revert
                 app.Command("Revert", c =>
                 {
+                    CommandOption LogicAppNameCO = c.Option("-la|--LogicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
                     CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
                     CommandOption WorkflowNameCO = c.Option("-n|--name", "Workflow Name", CommandOptionType.SingleValue);
                     CommandOption VersionCO = c.Option("-v|--version", "Version, the first part of the backup file name", CommandOptionType.SingleValue);
@@ -49,11 +53,12 @@ namespace LAVersionReverter
                     c.HelpOption("-?");
                     c.OnExecute(() =>
                     {
+                        string LogicAppName = LogicAppNameCO.Value();
                         string ConnectionString = ConnectionStringCO.Value();
                         string WorkflowName = WorkflowNameCO.Value();
                         string Version = VersionCO.Value();
 
-                        BackupDefinitions(ConnectionString);
+                        BackupDefinitions(LogicAppName, ConnectionString);
                         if (WorkflowName != null && Version != null)
                         {
                             RevertVersion(WorkflowName, Version);
@@ -67,6 +72,7 @@ namespace LAVersionReverter
                 #region Decode
                 app.Command("Decode", c =>
                 {
+                    CommandOption LogicAppNameCO = c.Option("-la|--LogicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
                     CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
                     CommandOption WorkflowNameCO = c.Option("-n|--name", "Workflow Name", CommandOptionType.SingleValue);
                     CommandOption VersionCO = c.Option("-v|--version", "Version, the first part of the backup file name", CommandOptionType.SingleValue);
@@ -74,11 +80,12 @@ namespace LAVersionReverter
                     c.HelpOption("-?");
                     c.OnExecute(() =>
                     {
+                        string LogicAppName = LogicAppNameCO.Value(); 
                         string ConnectionString = ConnectionStringCO.Value();
                         string WorkflowName = WorkflowNameCO.Value();
                         string Version = VersionCO.Value();
 
-                        Decode(ConnectionString, WorkflowName, Version);
+                        Decode(LogicAppName, ConnectionString, WorkflowName, Version);
 
                         return 0;
                     });
@@ -88,6 +95,7 @@ namespace LAVersionReverter
                 #region Clone
                 app.Command("Clone", c =>
                 {
+                    CommandOption LogicAppNameCO = c.Option("-la|--LogicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
                     CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
                     CommandOption SourceNameCO = c.Option("-sn|--sourcename", "Source Workflow Name", CommandOptionType.SingleValue);
                     CommandOption TargetNameCO = c.Option("-tn|--targetname", "Target Workflow Name", CommandOptionType.SingleValue);
@@ -96,12 +104,13 @@ namespace LAVersionReverter
                     c.HelpOption("-?");
                     c.OnExecute(() =>
                     {
+                        string LogicAppName = LogicAppNameCO.Value();
                         string ConnectionString = ConnectionStringCO.Value();
                         string SourceName = SourceNameCO.Value();
                         string TargetName = TargetNameCO.Value();
                         string Version = versionCO.Value();
 
-                        Clone(ConnectionString, SourceName, TargetName, Version);
+                        Clone(LogicAppName, ConnectionString, SourceName, TargetName, Version);
 
                         return 0;
                     });
@@ -111,15 +120,18 @@ namespace LAVersionReverter
                 #region List versions
                 app.Command("ListVersions", c =>
                 {
+                    CommandOption LogicAppNameCO = c.Option("-la|--LogicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
                     CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
                     CommandOption WorkflowNameCO = c.Option("-n|--name", "Workflow Name", CommandOptionType.SingleValue);
                     c.HelpOption("-?");
 
                     c.OnExecute(() => 
                     {
+                        string LogicAppName = LogicAppNameCO.Value();
                         string ConnectionString = ConnectionStringCO.Value();
                         string WorkflowName = WorkflowNameCO.Value();
-                        ListVersions(ConnectionString, WorkflowName);
+
+                        ListVersions(LogicAppName, ConnectionString, WorkflowName);
 
                         return 0;
                     });
@@ -135,9 +147,9 @@ namespace LAVersionReverter
             }
         }
 
-        private static void ListVersions(string ConnectionString, string WorkflowName)
+        private static void ListVersions(string LogicAppName, string ConnectionString, string WorkflowName)
         {
-            string TableName = GetMainTableName(ConnectionString);
+            string TableName = GetMainTableName(LogicAppName, ConnectionString);
 
             TableClient tableClient = new TableClient(ConnectionString, TableName);
             Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{WorkflowName}'");
@@ -156,9 +168,9 @@ namespace LAVersionReverter
             }
         }
 
-        private static void Decode(string ConnectionString, string WorkflowName, string Version)
+        private static void Decode(string LogicAppName, string ConnectionString, string WorkflowName, string Version)
         {
-            string TableName = GetMainTableName(ConnectionString);
+            string TableName = GetMainTableName(LogicAppName, ConnectionString);
 
             TableClient tableClient = new TableClient(ConnectionString, TableName);
             Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{WorkflowName}' and FlowSequenceId eq '{Version}'");
@@ -192,9 +204,9 @@ namespace LAVersionReverter
         /// <param name="SourceName"></param>
         /// <param name="TargetName"></param>
         /// <param name="Version"></param>
-        private static void Clone(string ConnectionString, string SourceName, string TargetName, string Version)
+        private static void Clone(string LogicAppName, string ConnectionString, string SourceName, string TargetName, string Version)
         {
-            string TableName = GetMainTableName(ConnectionString);
+            string TableName = GetMainTableName(LogicAppName, ConnectionString);
 
             TableClient tableClient = new TableClient(ConnectionString, TableName);
             Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{SourceName}'");
@@ -233,21 +245,21 @@ namespace LAVersionReverter
 
         /// <summary>
         /// Retrieve the table name which contains all the workflow definitions
-        /// Need figure out where we store the Logic App ID
         /// </summary>
         /// <param name="ConnectionString"></param>
         /// <returns></returns>
-        private static string GetMainTableName(string ConnectionString)
+        private static string GetMainTableName(string LogicAppName, string ConnectionString)
         {
+            string TableName = $"flow{StoragePrefixGenerator.Generate(LogicAppName)}flows";
+
             TableServiceClient serviceClient = new TableServiceClient(ConnectionString);
-            Pageable<TableItem> results = serviceClient.Query();
-            foreach (TableItem ti in results)
+
+            //Double check whether the table exists
+            Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{TableName}'");
+
+            if (results.Count() != 0)
             {
-                //Looks like this table contains all the definition, need double confirm with PG
-                if (ti.Name.StartsWith("flow") && ti.Name.EndsWith("flows") && ti.Name.Length == 24)
-                {
-                    return ti.Name;
-                }
+                return TableName;
             }
 
             return string.Empty;
@@ -271,9 +283,9 @@ namespace LAVersionReverter
             Console.WriteLine("Revert finished, please refresh the workflow page");
         }
 
-        private static void BackupDefinitions(string ConnectionString)
+        private static void BackupDefinitions(string LogicAppName, string ConnectionString)
         {
-            string DefinitionTableName = GetMainTableName(ConnectionString);
+            string DefinitionTableName = GetMainTableName(LogicAppName, ConnectionString);
             string BackupFolder = $"{Directory.GetCurrentDirectory()}/Backup";
 
             TableClient tableClient = new TableClient(ConnectionString, DefinitionTableName);
