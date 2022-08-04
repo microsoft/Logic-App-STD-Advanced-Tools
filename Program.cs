@@ -24,7 +24,7 @@ namespace LAVersionReverter
                 #region Backup
                 app.Command("Backup", c =>
                 {
-                    CommandOption LogicAppNameCO = c.Option("-la|--LogicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
+                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
                     CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
                     
                     c.HelpOption("-?");
@@ -45,7 +45,7 @@ namespace LAVersionReverter
                 #region Revert
                 app.Command("Revert", c =>
                 {
-                    CommandOption LogicAppNameCO = c.Option("-la|--LogicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
+                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
                     CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
                     CommandOption WorkflowNameCO = c.Option("-n|--name", "Workflow Name", CommandOptionType.SingleValue);
                     CommandOption VersionCO = c.Option("-v|--version", "Version, the first part of the backup file name", CommandOptionType.SingleValue);
@@ -72,7 +72,7 @@ namespace LAVersionReverter
                 #region Decode
                 app.Command("Decode", c =>
                 {
-                    CommandOption LogicAppNameCO = c.Option("-la|--LogicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
+                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
                     CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
                     CommandOption WorkflowNameCO = c.Option("-n|--name", "Workflow Name", CommandOptionType.SingleValue);
                     CommandOption VersionCO = c.Option("-v|--version", "Version, the first part of the backup file name", CommandOptionType.SingleValue);
@@ -95,7 +95,7 @@ namespace LAVersionReverter
                 #region Clone
                 app.Command("Clone", c =>
                 {
-                    CommandOption LogicAppNameCO = c.Option("-la|--LogicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
+                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
                     CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
                     CommandOption SourceNameCO = c.Option("-sn|--sourcename", "Source Workflow Name", CommandOptionType.SingleValue);
                     CommandOption TargetNameCO = c.Option("-tn|--targetname", "Target Workflow Name", CommandOptionType.SingleValue);
@@ -120,7 +120,7 @@ namespace LAVersionReverter
                 #region List versions
                 app.Command("ListVersions", c =>
                 {
-                    CommandOption LogicAppNameCO = c.Option("-la|--LogicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
+                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
                     CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
                     CommandOption WorkflowNameCO = c.Option("-n|--name", "Workflow Name", CommandOptionType.SingleValue);
                     c.HelpOption("-?");
