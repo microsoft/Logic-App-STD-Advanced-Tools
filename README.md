@@ -1,6 +1,9 @@
 ## Release Note
 2022-08-04
-1. Changed the mechanism of retrieving Logic App's definition table name to prevent wrong definition table get picked up if there are multiple Logic App Standard binding the same Storage Account.
+1. Changed the mechanism of retrieving Logic App's definition table name to prevent wrong definition table get picked up if there are multiple Logic App Standard binding the same Storage Account. For all the command, we need to add an extra option **"-la [LogicAppName]"** to identify which Logic App we need to operate. This new option is not case sensetive and only Logic App name is required.
+![image](https://user-images.githubusercontent.com/72241569/182770468-5ad3e8af-f990-445e-982d-47e7b338f158.png)
+
+3. Removed binary files, please compile the code locally.
 
 ## Introduction
 This tool can be used for revert the Logic App Standard workflow's previous version which we don't have this this feature on portal yet.
@@ -9,7 +12,7 @@ This tool can be used for revert the Logic App Standard workflow's previous vers
 1. Open Kudu (Advanced Tools) of Logic App Standard and upload this tool into a folder
 ![image](https://user-images.githubusercontent.com/72241569/139808016-75b98cb6-c976-4b90-a23b-c032020094c2.png)
 
-2. Use command **LAVersionReverter backup -cs [ConnectionString] -la [LogicAppName(no case sensetive)]** to backup all the existing workflows. The connection string can be found in Storage Account - Access Key
+2. Use command **LAVersionReverter backup -cs [ConnectionString] -la [LogicAppName]** to backup all the existing workflows. The connection string can be found in Storage Account - Access Key
    After run the command, the tool will create a new folder which called "**Backup**", the sub-folders will be named as workflow name. Each definition will be a seperate json file.
 ![image](https://user-images.githubusercontent.com/72241569/182768428-33c48551-5b92-42ec-9e0e-324832b9aa13.png)
 
