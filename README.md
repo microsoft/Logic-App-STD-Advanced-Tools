@@ -25,6 +25,7 @@ This tool can be used for revert the Logic App Standard workflow's previous vers
 ## Limitation
 1. This tool only modify workflow.json, if the API connection metadata get lost in connections.json, the reverted workflow will not work.
 2. If the definition not be used in 90 days, the backend service will remove it from storage table, so this tool will not be able to retrieve the definitions older than 90 days.
+3. Before execute Revert command, we need to backup first since the Revert command is reading workflow definitions from backup folder.
 
 ## Supported Command
 1. **Backup**: Backup all the existing definitions into Json files
