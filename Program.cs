@@ -4,6 +4,7 @@ using Azure.Data.Tables.Models;
 using Microsoft.Extensions.CommandLineUtils;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -138,6 +139,26 @@ namespace LAVersionReverter
                 });
                 #endregion
 
+                #region
+                app.Command("RestoreAll", c =>
+                {
+                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
+                    CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
+
+                    c.HelpOption("-?");
+
+                    c.OnExecute(() =>
+                    {
+                        string LogicAppName = LogicAppNameCO.Value();
+                        string ConnectionString = ConnectionStringCO.Value();
+
+                        RestoreAll(LogicAppName, ConnectionString);
+
+                        return 0;
+                    });
+                });
+                #endregion
+
                 app.Execute(args);
             }
             catch (Exception ex)
@@ -145,6 +166,42 @@ namespace LAVersionReverter
                 Console.WriteLine(ex.Message);
                 Console.WriteLine(ex.StackTrace);
             }
+        }
+
+        private static void RestoreAll(string LogicAppName, string ConnectionString)
+        {
+            string TableName = GetMainTableName(LogicAppName, ConnectionString);
+
+            TableClient tableClient = new TableClient(ConnectionString, TableName);
+            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(select: new string[] { "FlowName", "ChangedTime", "DefinitionCompressed", "Kind" });
+
+            List<TableEntity> entities = (from n in tableEntities
+                                        group n by n.GetString("FlowName") into g
+                                        select g.OrderByDescending(x => x.GetDateTimeOffset("ChangedTime")).FirstOrDefault()).ToList();
+
+            foreach (TableEntity entity in entities)
+            {
+                string flowName = entity.GetString("FlowName");
+                byte[] definitionCompressed = entity.GetBinary("DefinitionCompressed");
+                string kind = entity.GetString("Kind");
+                string decompressedDefinition = DecompressContent(definitionCompressed);
+
+                string outputContent = $"{{\"definition\": {decompressedDefinition},\"kind\": \"{kind}\"}}";
+
+                string workflowPath = $"C:/home/site/wwwroot/{flowName}";
+                if (!Directory.Exists(workflowPath))
+                {
+                    Directory.CreateDirectory(workflowPath);
+                }
+
+                string definitionPath = $"{workflowPath}/workflow.json";
+
+                File.WriteAllText(definitionPath, outputContent);
+
+                Console.WriteLine($"Workflow: {flowName} restored successfully.");
+            }
+
+            Console.WriteLine("Restored all the workflows which found in Storage Table. Please refresh workflow page.");
         }
 
         private static void ListVersions(string LogicAppName, string ConnectionString, string WorkflowName)
