@@ -37,4 +37,5 @@ This tool can be used for revert the Logic App Standard workflow's previous vers
 3. **Decode** Decode a difinition into readable content
 4. **ListVersions** List all the existing versions of a workflow
 5. **Revert** Revert a workflow to previous version as per version ID.
-6. **-?/[command] -?** help of the command
+6. **RestoreAll** Retrieve all the exsiting definitions from Storage Table and restore in Logic App.
+7. **-?/[command] -?** help of the command
