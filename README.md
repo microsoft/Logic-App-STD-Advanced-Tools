@@ -1,9 +1,13 @@
 ## Release Note
+2022-09-30
+1. Added "RestoreAll" command, this new command will retrieve all the definitions which can be found in Storage Table and restore to Logic App Standard.
+2. Fixed some typo issues.
+
 2022-08-04
 1. Changed the mechanism of retrieving Logic App's definition table name to prevent wrong definition table get picked up if there are multiple Logic App Standard binding the same Storage Account. For all the command, we need to add an extra option **"-la [LogicAppName]"** to identify which Logic App we need to operate. This new option is not case sensetive and only Logic App name is required.
 ![image](https://user-images.githubusercontent.com/72241569/182770468-5ad3e8af-f990-445e-982d-47e7b338f158.png)
 
-3. Removed binary files, please compile the code locally.
+2. Removed binary files, please compile the code locally.
 
 ## Introduction
 This tool can be used for revert the Logic App Standard workflow's previous version which we don't have this this feature on portal yet.
@@ -33,4 +37,5 @@ This tool can be used for revert the Logic App Standard workflow's previous vers
 3. **Decode** Decode a difinition into readable content
 4. **ListVersions** List all the existing versions of a workflow
 5. **Revert** Revert a workflow to previous version as per version ID.
-6. **-?/[command] -?** help of the command
+6. **RestoreAll** Retrieve all the exsiting definitions from Storage Table and restore in Logic App.
+7. **-?/[command] -?** help of the command
