@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace LAVersionReverter
 {
-    class Program
+    partial class Program
     {
         static void Main(string[] args)
         {
@@ -168,138 +168,6 @@ namespace LAVersionReverter
             }
         }
 
-        private static void RestoreAll(string LogicAppName, string ConnectionString)
-        {
-            string TableName = GetMainTableName(LogicAppName, ConnectionString);
-
-            TableClient tableClient = new TableClient(ConnectionString, TableName);
-            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(select: new string[] { "FlowName", "ChangedTime", "DefinitionCompressed", "Kind" });
-
-            List<TableEntity> entities = (from n in tableEntities
-                                        group n by n.GetString("FlowName") into g
-                                        select g.OrderByDescending(x => x.GetDateTimeOffset("ChangedTime")).FirstOrDefault()).ToList();
-
-            foreach (TableEntity entity in entities)
-            {
-                string flowName = entity.GetString("FlowName");
-                byte[] definitionCompressed = entity.GetBinary("DefinitionCompressed");
-                string kind = entity.GetString("Kind");
-                string decompressedDefinition = DecompressContent(definitionCompressed);
-
-                string outputContent = $"{{\"definition\": {decompressedDefinition},\"kind\": \"{kind}\"}}";
-
-                string workflowPath = $"C:/home/site/wwwroot/{flowName}";
-                if (!Directory.Exists(workflowPath))
-                {
-                    Directory.CreateDirectory(workflowPath);
-                }
-
-                string definitionPath = $"{workflowPath}/workflow.json";
-
-                File.WriteAllText(definitionPath, outputContent);
-
-                Console.WriteLine($"Workflow: {flowName} restored successfully.");
-            }
-
-            Console.WriteLine("Restored all the workflows which found in Storage Table. Please refresh workflow page.");
-        }
-
-        private static void ListVersions(string LogicAppName, string ConnectionString, string WorkflowName)
-        {
-            string TableName = GetMainTableName(LogicAppName, ConnectionString);
-
-            TableClient tableClient = new TableClient(ConnectionString, TableName);
-            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{WorkflowName}'");
-
-            foreach (TableEntity entity in tableEntities)
-            {
-                string RowKey = entity.GetString("RowKey");
-
-                if (RowKey.Contains("FLOWVERSION"))
-                {
-                    string Version = entity.GetString("FlowSequenceId");
-                    DateTimeOffset? UpdateTime = entity.GetDateTimeOffset("FlowUpdatedTime");
-
-                    Console.WriteLine($"Version ID:{Version}    UpdateTime:{UpdateTime}");
-                }
-            }
-        }
-
-        private static void Decode(string LogicAppName, string ConnectionString, string WorkflowName, string Version)
-        {
-            string TableName = GetMainTableName(LogicAppName, ConnectionString);
-
-            TableClient tableClient = new TableClient(ConnectionString, TableName);
-            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{WorkflowName}' and FlowSequenceId eq '{Version}'");
-
-            if (tableEntities.Count<TableEntity>() == 0)
-            {
-                Console.WriteLine("No Record Found! Please check the Workflow name and the Version(FlowSequenceId)");
-                return;
-            }
-
-            string Content = String.Empty;
-
-            foreach (TableEntity entity in tableEntities)
-            {
-                byte[] DefinitionCompressed = entity.GetBinary("DefinitionCompressed");
-                string DecompressedDefinition = DecompressContent(DefinitionCompressed);
-
-                dynamic JsonObject = JsonConvert.DeserializeObject(DecompressedDefinition);
-                string FormattedContent = JsonConvert.SerializeObject(JsonObject, Formatting.Indented);
-
-                Console.Write(FormattedContent);
-
-                break;
-            }
-        }
-
-        /// <summary>
-        /// Clone a workflow definition (also can be a old version) to a new one
-        /// </summary>
-        /// <param name="ConnectionString"></param>
-        /// <param name="SourceName"></param>
-        /// <param name="TargetName"></param>
-        /// <param name="Version"></param>
-        private static void Clone(string LogicAppName, string ConnectionString, string SourceName, string TargetName, string Version)
-        {
-            string TableName = GetMainTableName(LogicAppName, ConnectionString);
-
-            TableClient tableClient = new TableClient(ConnectionString, TableName);
-            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{SourceName}'");
-
-            string Content = String.Empty;
-
-            string Identity = string.IsNullOrEmpty(Version) ? "FLOWIDENTIFIER" : Version;
-
-            foreach (TableEntity entity in tableEntities)
-            {
-                string RowKey = entity.GetString("RowKey");
-
-                if (RowKey.Contains(Identity))
-                {
-                    byte[] DefinitionCompressed = entity.GetBinary("DefinitionCompressed");
-                    string Kind = entity.GetString("Kind");
-                    string DecompressedDefinition = DecompressContent(DefinitionCompressed);
-
-                    string OutputContent = $"{{\"definition\": {DecompressedDefinition},\"kind\": \"{Kind}\"}}";
-                    string ClonePath = $"C:/home/site/wwwroot/{TargetName}";
-
-                    if (Directory.Exists(ClonePath))
-                    {
-                        Console.WriteLine("Workflow already exists, workflow will not be cloned. Please use another target name.");
-                    }
-
-                    Directory.CreateDirectory(ClonePath);
-                    File.WriteAllText($"{ClonePath}/workflow.json", OutputContent);
-
-                    break;
-                }
-            }
-
-            Console.WriteLine("Clone finished, please refresh workflow page");
-        }
-
         /// <summary>
         /// Retrieve the table name which contains all the workflow definitions
         /// </summary>
@@ -320,69 +188,6 @@ namespace LAVersionReverter
             }
 
             return string.Empty;
-        }
-
-        private static void RevertVersion(string WorkflowName, string Version)
-        {
-            string BackupFilePath = $"{Directory.GetCurrentDirectory()}/Backup/{WorkflowName}";
-            string[] Files = Directory.GetFiles(BackupFilePath, $"*{Version}.json");
-
-            if (Files == null || Files.Length == 0)
-            {
-                Console.WriteLine("No backup file found, please check the name and version of workflow");
-            }
-
-            string BackupDefinitionContent = File.ReadAllText(Files[0]);
-            string DefinitionTemplatePath = $"C:/home/site/wwwroot/{WorkflowName}/workflow.json";
-
-            File.WriteAllText(DefinitionTemplatePath, BackupDefinitionContent);
-
-            Console.WriteLine("Revert finished, please refresh the workflow page");
-        }
-
-        private static void BackupDefinitions(string LogicAppName, string ConnectionString)
-        {
-            string DefinitionTableName = GetMainTableName(LogicAppName, ConnectionString);
-            string BackupFolder = $"{Directory.GetCurrentDirectory()}/Backup";
-
-            TableClient tableClient = new TableClient(ConnectionString, DefinitionTableName);
-            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>();
-
-            foreach (TableEntity entity in tableEntities)
-            {
-                string RowKey = entity.GetString("RowKey");
-                string FlowSequenceId = entity.GetString("FlowSequenceId");
-                string FlowName = entity.GetString("FlowName");
-                string ModifiedDate = ((DateTimeOffset)entity.GetDateTimeOffset("ChangedTime")).ToString("yyyy_MM_dd_HH_mm_ss");
-
-                string BackupFlowPath = $"{BackupFolder}/{FlowName}";
-                string BackupFilePath = $"{BackupFlowPath}/{ModifiedDate}_{FlowSequenceId}.json";
-
-                //Filter for duplicate definition which in used
-                if (!RowKey.Contains("FLOWVERSION"))
-                {
-                    continue;
-                }
-
-                //The definition has been already backup
-                if (File.Exists(BackupFilePath))
-                {
-                    continue;
-                }
-
-                if (!Directory.Exists(BackupFlowPath))
-                {
-                    Directory.CreateDirectory(BackupFlowPath);
-                }
-
-                byte[] DefinitionCompressed = entity.GetBinary("DefinitionCompressed");
-                string Kind = entity.GetString("Kind");
-                string DecompressedDefinition = DecompressContent(DefinitionCompressed);
-
-                string OutputContent = $"{{\"definition\": {DecompressedDefinition},\"kind\": \"{Kind}\"}}";
-
-                File.WriteAllText(BackupFilePath, OutputContent);
-            }
         }
 
         private static string DecompressContent(byte[] Content)

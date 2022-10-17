@@ -246,6 +246,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Operations\Revert.cs" />
+    <Compile Include="Operations\ListVersion.cs" />
+    <Compile Include="Operations\RestoreAll.cs" />
+    <Compile Include="Operations\Decode.cs" />
+    <Compile Include="Operations\Backup.cs" />
+    <Compile Include="Operations\Clone.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StoragePrefixGenerator.cs" />
