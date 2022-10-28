@@ -7,13 +7,23 @@ namespace LAVersionReverter
 {
     partial class Program
     {
-        private static void BackupDefinitions(string LogicAppName, string ConnectionString)
+        private static void BackupDefinitions(string LogicAppName, string ConnectionString, uint Ago)
         {
             string DefinitionTableName = GetMainTableName(LogicAppName, ConnectionString);
             string BackupFolder = $"{Directory.GetCurrentDirectory()}/Backup";
 
             TableClient tableClient = new TableClient(ConnectionString, DefinitionTableName);
-            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>();
+            Pageable<TableEntity> tableEntities;
+
+            if (Ago != 0)
+            {
+                string TimeStamp = DateTime.Now.AddDays(-Ago).ToString("yyyy-MM-ddT00:00:00Z");
+                tableEntities = tableClient.Query<TableEntity>(filter: $"ChangedTime ge datetime'{TimeStamp}'");
+            }
+            else
+            { 
+                tableEntities = tableClient.Query<TableEntity>();
+            }
 
             foreach (TableEntity entity in tableEntities)
             {
@@ -31,7 +41,7 @@ namespace LAVersionReverter
                     continue;
                 }
 
-                //The definition has been already backup
+                //The definition has already been backup
                 if (File.Exists(BackupFilePath))
                 {
                     continue;

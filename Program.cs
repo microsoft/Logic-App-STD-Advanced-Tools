@@ -27,6 +27,7 @@ namespace LAVersionReverter
                 {
                     CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
                     CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
+                    CommandOption AgoCO = c.Option("-ago|--ago", "Only retrieve the past X(unsigned integer) days workflow definitions, if not provided then retrieve all existing definitions", CommandOptionType.SingleValue);
                     
                     c.HelpOption("-?");
 
@@ -34,7 +35,22 @@ namespace LAVersionReverter
                     {
                         string ConnectionString = ConnectionStringCO.Value();
                         string LogicAppName = LogicAppNameCO.Value();
-                        BackupDefinitions(LogicAppName, ConnectionString);
+                        string AgoStr = AgoCO.Value();
+
+                        uint Ago = 0;
+                        if (!String.IsNullOrEmpty(AgoStr))
+                        {
+                            bool ParseSuccess = uint.TryParse(AgoStr, out Ago);
+
+                            if (!ParseSuccess)
+                            {
+                                Console.WriteLine("Please provide a valide value for ago option");
+
+                                return 0;
+                            }
+                        }
+
+                        BackupDefinitions(LogicAppName, ConnectionString, Ago);
 
                         Console.WriteLine("Backup Succeeded. You can download the definition ");
 
@@ -59,7 +75,7 @@ namespace LAVersionReverter
                         string WorkflowName = WorkflowNameCO.Value();
                         string Version = VersionCO.Value();
 
-                        BackupDefinitions(LogicAppName, ConnectionString);
+                        BackupDefinitions(LogicAppName, ConnectionString, 0);
                         if (WorkflowName != null && Version != null)
                         {
                             RevertVersion(WorkflowName, Version);
@@ -181,7 +197,31 @@ namespace LAVersionReverter
                 });
                 #endregion
 
+                /*
+                #region Retrieve Failure Logs
+                app.Command("RetrieveFailures", c =>
+                {
+                    CommandOption LogicAppnameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
+                    CommandOption WorkflowCO = c.Option("-n|--name", "Workflow name (optional)", CommandOptionType.SingleValue);
+                    CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
+                    CommandOption DateCO = c.Option("-d|--date", "Date (format: \"yyyy-MM-dd\") of the logs need to be retrieved, utc time", CommandOptionType.SingleValue);
 
+                    c.HelpOption("-?");
+
+                    c.OnExecute(() =>
+                    {
+                        string LogicAppName = LogicAppnameCO.Value();
+                        string WorkflowName = WorkflowCO.Value();
+                        string ConnectionString = ConnectionStringCO.Value();
+                        string Date = DateCO.Value();
+
+                        RetrieveFailures(LogicAppName, WorkflowName, ConnectionString, Date);
+
+                        return 0;
+                    });
+                });
+                #endregion
+                */
 
                 app.Execute(args);
             }

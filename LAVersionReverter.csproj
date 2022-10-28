@@ -247,6 +247,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Operations\GenerateTablePrefix.cs" />
+    <Compile Include="Operations\RetrieveFailures.cs" />
     <Compile Include="Operations\Revert.cs" />
     <Compile Include="Operations\ListVersion.cs" />
     <Compile Include="Operations\RestoreAll.cs" />
