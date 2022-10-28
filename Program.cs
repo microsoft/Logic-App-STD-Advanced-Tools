@@ -139,7 +139,7 @@ namespace LAVersionReverter
                 });
                 #endregion
 
-                #region
+                #region Restore All workflows
                 app.Command("RestoreAll", c =>
                 {
                     CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
@@ -159,73 +159,36 @@ namespace LAVersionReverter
                 });
                 #endregion
 
+                #region Convert Logic App Name and Workflow Name to it's Storage Table prefix
+                app.Command("GenerateTablePrefix", c =>
+                {
+                    CommandOption LogicAppnameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
+                    CommandOption WorkflowCO = c.Option("-n|--name", "Workflow name (optional)", CommandOptionType.SingleValue);
+                    CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
+
+                    c.HelpOption("-?");
+
+                    c.OnExecute(() => 
+                    {
+                        string LogicAppName = LogicAppnameCO.Value();
+                        string WorkflowName = WorkflowCO.Value();
+                        string ConnectionString = ConnectionStringCO.Value();
+
+                        GenerateTablePrefix(LogicAppName, WorkflowName, ConnectionString);
+
+                        return 0;
+                    });
+                });
+                #endregion
+
+
+
                 app.Execute(args);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 Console.WriteLine(ex.StackTrace);
-            }
-        }
-
-        /// <summary>
-        /// Retrieve the table name which contains all the workflow definitions
-        /// </summary>
-        /// <param name="ConnectionString"></param>
-        /// <returns></returns>
-        private static string GetMainTableName(string LogicAppName, string ConnectionString)
-        {
-            string TableName = $"flow{StoragePrefixGenerator.Generate(LogicAppName)}flows";
-
-            TableServiceClient serviceClient = new TableServiceClient(ConnectionString);
-
-            //Double check whether the table exists
-            Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{TableName}'");
-
-            if (results.Count() != 0)
-            {
-                return TableName;
-            }
-
-            return string.Empty;
-        }
-
-        private static string DecompressContent(byte[] Content)
-        {
-            string Result = String.Empty;
-
-            MemoryStream output = new MemoryStream();
-
-            using (var compressStream = new MemoryStream(Content))
-            {
-                using (var decompressor = new DeflateStream(compressStream, CompressionMode.Decompress))
-                {
-                    decompressor.CopyTo(output);
-                }
-                output.Position = 0;
-            }
-
-            using (StreamReader reader = new StreamReader(output))
-            {
-                Result = reader.ReadToEnd();
-            }
-
-            return Result;
-        }
-
-        public class WorkflowDefinition
-        {
-            public string WorkflowName;
-            public string Version;
-            public string ModifiedData;
-            public string Definition;
-
-            public WorkflowDefinition(string WorkflowName, string Version, string ModifiedData, string Definition)
-            {
-                this.WorkflowName = WorkflowName;
-                this.Version = Version;
-                this.ModifiedData = ModifiedData;
-                this.Definition = Definition;
             }
         }
     }

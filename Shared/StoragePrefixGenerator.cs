@@ -11,9 +11,9 @@ namespace LAVersionReverter
 	//DO NOT change anything in MurmurHash64 method
 	public static class StoragePrefixGenerator
 	{
-		public static string Generate(string logicAppName)
+		public static string Generate(string name)
 		{
-			byte[] data = Encoding.UTF8.GetBytes(logicAppName.ToLower());
+			byte[] data = Encoding.UTF8.GetBytes(name);
 
 			string hashResult = MurmurHash64(data, 0U).ToString("X");
 

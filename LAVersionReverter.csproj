@@ -246,6 +246,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Operations\GenerateTablePrefix.cs" />
     <Compile Include="Operations\Revert.cs" />
     <Compile Include="Operations\ListVersion.cs" />
     <Compile Include="Operations\RestoreAll.cs" />
@@ -254,7 +255,8 @@
     <Compile Include="Operations\Clone.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StoragePrefixGenerator.cs" />
+    <Compile Include="Shared\Common.cs" />
+    <Compile Include="Shared\StoragePrefixGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
