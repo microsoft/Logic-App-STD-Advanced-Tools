@@ -1,6 +1,6 @@
 ## Release Note
 2022-10-28
-1. Added "GenerateTablePrefix" command to generate Logic App's table prefix as per Logic App name and workflow name.2
+1. Added "GenerateTablePrefix" command to generate Logic App's table prefix as per Logic App name and workflow name.
 2. Added a new option "-ago" in Backup command to only retrieve definitions for past X days.
 
 2022-09-30
