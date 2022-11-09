@@ -41,6 +41,7 @@ This tool can be used for revert the Logic App Standard workflow's previous vers
 ## Supported Command
 1. **Backup**: Backup all the existing definitions into Json files
 2. **Clone**: Clone a workflow to a new one, exactly the same as clone in Logic App comsumption
+3. **ConvertToStateful**: Clone a stateless workflow and create a stateful version
 3. **Decode** Decode a difinition into readable content
 4. **ListVersions** List all the existing versions of a workflow
 5. **Revert** Revert a workflow to previous version as per version ID.
