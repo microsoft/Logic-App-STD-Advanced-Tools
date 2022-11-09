@@ -35,6 +35,11 @@ namespace LAVersionReverter
 
         private static string DecompressContent(byte[] Content)
         {
+            if (Content == null)
+            {
+                return null;
+            }
+
             string Result = String.Empty;
 
             MemoryStream output = new MemoryStream();

@@ -246,6 +246,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Operations\ConvertToStateful.cs" />
     <Compile Include="Operations\GenerateTablePrefix.cs" />
     <Compile Include="Operations\RetrieveFailures.cs" />
     <Compile Include="Operations\Revert.cs" />

@@ -197,14 +197,13 @@ namespace LAVersionReverter
                 });
                 #endregion
 
-                /*
                 #region Retrieve Failure Logs
                 app.Command("RetrieveFailures", c =>
                 {
                     CommandOption LogicAppnameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
                     CommandOption WorkflowCO = c.Option("-n|--name", "Workflow name (optional)", CommandOptionType.SingleValue);
                     CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
-                    CommandOption DateCO = c.Option("-d|--date", "Date (format: \"yyyy-MM-dd\") of the logs need to be retrieved, utc time", CommandOptionType.SingleValue);
+                    CommandOption DateCO = c.Option("-d|--date", "Date (format: \"yyyyMMdd\") of the logs need to be retrieved, utc time", CommandOptionType.SingleValue);
 
                     c.HelpOption("-?");
 
@@ -221,7 +220,29 @@ namespace LAVersionReverter
                     });
                 });
                 #endregion
-                */
+
+                #region Stateless to Stateful
+                app.Command("ConvertToStateful", c =>
+                {
+                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
+                    CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
+                    CommandOption SourceNameCO = c.Option("-sn|--sourcename", "Source Workflow Name (Stateless)", CommandOptionType.SingleValue);
+                    CommandOption TargetNameCO = c.Option("-tn|--targetname", "Target Workflow Name (Stateful)", CommandOptionType.SingleValue);
+
+                    c.HelpOption("-?");
+                    c.OnExecute(() =>
+                    {
+                        string LogicAppName = LogicAppNameCO.Value();
+                        string ConnectionString = ConnectionStringCO.Value();
+                        string SourceName = SourceNameCO.Value();
+                        string TargetName = TargetNameCO.Value();
+
+                        ConvertToStateful(LogicAppName, ConnectionString, SourceName, TargetName);
+
+                        return 0;
+                    });
+                });
+                #endregion
 
                 app.Execute(args);
             }
