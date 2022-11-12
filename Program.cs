@@ -244,6 +244,10 @@ namespace LAVersionReverter
                 });
                 #endregion
 
+                #region Clear Queue
+                //TODO
+                #endregion
+
                 app.Execute(args);
             }
             catch (Exception ex)
