@@ -1,4 +1,7 @@
 ## Release Note
+2022-11-09
+1. Added "ConvertToStateful" command to clone a stateless workflow as a stateful workflow. Due to some built-in actions (eg: Service Bus peek-lock related) are not available in stateful workflow, the convert will success but run will fail.
+
 2022-10-28
 1. Added "GenerateTablePrefix" command to generate Logic App's table prefix as per Logic App name and workflow name.
 2. Added a new option "-ago" in Backup command to only retrieve definitions for past X days.
@@ -38,8 +41,10 @@ This tool can be used for revert the Logic App Standard workflow's previous vers
 ## Supported Command
 1. **Backup**: Backup all the existing definitions into Json files
 2. **Clone**: Clone a workflow to a new one, exactly the same as clone in Logic App comsumption
-3. **Decode** Decode a difinition into readable content
-4. **ListVersions** List all the existing versions of a workflow
-5. **Revert** Revert a workflow to previous version as per version ID.
-6. **RestoreAll** Retrieve all the exsiting definitions from Storage Table and restore in Logic App.
-7. **-?/[command] -?** help of the command
+3. **ConvertToStateful**: Clone a stateless workflow and create a stateful version
+4. **Decode** Decode a difinition into readable content
+5. **GenerateTablePrefix** Generate Logic App definition table name as per Logic App name
+6. **ListVersions** List all the existing versions of a workflow
+7. **Revert** Revert a workflow to previous version as per version ID.
+8. **RestoreAll** Retrieve all the exsiting definitions from Storage Table and restore in Logic App.
+9. **-?/[command] -?** help of the command
