@@ -1,4 +1,7 @@
 ## Release Note
+2022-11-12
+1. Added "RetrieveFailures" command which can fetch all the failed actions information for a single workflow and specific day.
+
 2022-11-09
 1. Added "ConvertToStateful" command to clone a stateless workflow as a stateful workflow. Due to some built-in actions (eg: Service Bus peek-lock related) are not available in stateful workflow, the convert will success but run will fail.
 
