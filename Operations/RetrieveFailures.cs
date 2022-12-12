@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using System.Text;
+using Microsoft.Extensions.CommandLineUtils;
 
 namespace LAVersionReverter
 {
