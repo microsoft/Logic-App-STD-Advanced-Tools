@@ -1,7 +1,7 @@
 ## Release Note
 2022-12-12
 1. Fixed when execute "GenerateTablePrefix" command for Logic App only, connection string still need be provided.
-2. Added a new command to clear Logic App job queue. This command can resolve some infinity reboot which caused by action high memory. Before run this command, make sure the Logic App Standard has been stopped. **All the data of running workflow instances will be lost！**
+2. Added a new command "ClearJobQueue" to clear Logic App job queue. This command can resolve some infinity reboot which caused by action high memory. Before run this command, make sure the Logic App Standard has been stopped. **All the data of running workflow instances will be lost！**
 
 2022-11-12
 1. Added "RetrieveFailures" command which can fetch all the failed actions information for a single workflow and specific day.
