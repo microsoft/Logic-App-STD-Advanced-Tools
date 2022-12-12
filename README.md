@@ -1,4 +1,7 @@
 ## Release Note
+2022-12-12
+1. Fixed when execute "GenerateTablePrefix" command for Logic App only, connection string still need be provided.
+
 2022-11-12
 1. Added "RetrieveFailures" command which can fetch all the failed actions information for a single workflow and specific day.
 
@@ -49,5 +52,6 @@ This tool can be used for revert the Logic App Standard workflow's previous vers
 5. **GenerateTablePrefix** Generate Logic App definition table name as per Logic App name
 6. **ListVersions** List all the existing versions of a workflow
 7. **Revert** Revert a workflow to previous version as per version ID.
+8. **RetrieveFailures(Preview)** Retrieve all the failed actions' input/output for a specific day.
 8. **RestoreAll** Retrieve all the exsiting definitions from Storage Table and restore in Logic App.
 9. **-?/[command] -?** help of the command
