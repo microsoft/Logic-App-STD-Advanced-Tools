@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace LAVersionReverter
 {
-    partial class Program
+    public partial class Program
     {
         /// <summary>
         /// Retrieve the table name which contains all the workflow definitions
@@ -33,7 +33,7 @@ namespace LAVersionReverter
             return string.Empty;
         }
 
-        private static string DecompressContent(byte[] Content)
+        public static string DecompressContent(byte[] Content)
         {
             if (Content == null)
             {

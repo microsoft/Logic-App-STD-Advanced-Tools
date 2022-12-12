@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace LAVersionReverter
 {
-    partial class Program
+    public partial class Program
     {
         static void Main(string[] args)
         {
@@ -245,7 +245,21 @@ namespace LAVersionReverter
                 #endregion
 
                 #region Clear Queue
-                //TODO
+                app.Command("ClearJobQueue", c => {
+                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
+                    CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
+
+                    c.HelpOption("-?");
+                    c.OnExecute(() =>
+                    {
+                        string LogicAppName = LogicAppNameCO.Value();
+                        string ConnectionString = ConnectionStringCO.Value();
+
+                        ClearJobQueue(LogicAppName, ConnectionString);
+
+                        return 0;
+                    });
+                });
                 #endregion
 
                 app.Execute(args);
