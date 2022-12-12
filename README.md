@@ -1,6 +1,7 @@
 ## Release Note
 2022-12-12
 1. Fixed when execute "GenerateTablePrefix" command for Logic App only, connection string still need be provided.
+2. Added a new command to clear Logic App job queue. This command can resolve some infinity reboot which caused by action high memory. Before run this command, make sure the Logic App Standard has been stopped. **All the data of running workflow instances will be lost！**
 
 2022-11-12
 1. Added "RetrieveFailures" command which can fetch all the failed actions information for a single workflow and specific day.
@@ -46,6 +47,7 @@ This tool can be used for revert the Logic App Standard workflow's previous vers
 
 ## Supported Command
 1. **Backup**: Backup all the existing definitions into Json files
+2. **ClearJobQueue**: Clear all incomplete jobs in the Storage Queue. **Be aware of this command will result to data losing for running workflow instances**
 2. **Clone**: Clone a workflow to a new one, exactly the same as clone in Logic App comsumption
 3. **ConvertToStateful**: Clone a stateless workflow and create a stateful version
 4. **Decode** Decode a difinition into readable content
@@ -53,5 +55,5 @@ This tool can be used for revert the Logic App Standard workflow's previous vers
 6. **ListVersions** List all the existing versions of a workflow
 7. **Revert** Revert a workflow to previous version as per version ID.
 8. **RetrieveFailures(Preview)** Retrieve all the failed actions' input/output for a specific day.
-8. **RestoreAll** Retrieve all the exsiting definitions from Storage Table and restore in Logic App.
-9. **-?/[command] -?** help of the command
+9. **RestoreAll** Retrieve all the exsiting definitions from Storage Table and restore in Logic App.
+10. **-?/[command] -?** help of the command
