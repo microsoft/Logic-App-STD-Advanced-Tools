@@ -35,7 +35,8 @@ This tool can be used for revert the Logic App Standard workflow's previous vers
 
 2. Use command **LAVersionReverter backup -la [LogicAppName]** to backup all the existing workflows. The connection string can be found in Storage Account - Access Key
    After run the command, the tool will create a new folder which called "**Backup**", the sub-folders will be named as workflow name. Each definition will be a seperate json file.
-![image](https://user-images.githubusercontent.com/72241569/182768428-33c48551-5b92-42ec-9e0e-324832b9aa13.png)
+![image](https://user-images.githubusercontent.com/72241569/207209672-5d056475-d210-4079-9011-858660c7010f.png)
+
 
 3. Recently we have to check the definition manually to see which version we would like to revert to. 
    The version is the last part of the file name.
