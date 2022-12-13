@@ -18,7 +18,7 @@ namespace LAVersionReverter
             CommandLineApplication app = new CommandLineApplication();
 
             app.HelpOption("-?");
-            app.Description = "Logic App Standard Definition Backup Tool";
+            app.Description = "Logic App Standard Management Tool";
 
             try
             {
@@ -26,14 +26,13 @@ namespace LAVersionReverter
                 app.Command("Backup", c =>
                 {
                     CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
-                    CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
                     CommandOption AgoCO = c.Option("-ago|--ago", "Only retrieve the past X(unsigned integer) days workflow definitions, if not provided then retrieve all existing definitions", CommandOptionType.SingleValue);
                     
                     c.HelpOption("-?");
 
                     c.OnExecute(() =>
                     {
-                        string ConnectionString = ConnectionStringCO.Value();
+                        string ConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
                         string LogicAppName = LogicAppNameCO.Value();
                         string AgoStr = AgoCO.Value();
 
@@ -63,7 +62,6 @@ namespace LAVersionReverter
                 app.Command("Revert", c =>
                 {
                     CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
-                    CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
                     CommandOption WorkflowNameCO = c.Option("-n|--name", "Workflow Name", CommandOptionType.SingleValue);
                     CommandOption VersionCO = c.Option("-v|--version", "Version, the first part of the backup file name", CommandOptionType.SingleValue);
 
@@ -71,7 +69,7 @@ namespace LAVersionReverter
                     c.OnExecute(() =>
                     {
                         string LogicAppName = LogicAppNameCO.Value();
-                        string ConnectionString = ConnectionStringCO.Value();
+                        string ConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
                         string WorkflowName = WorkflowNameCO.Value();
                         string Version = VersionCO.Value();
 
@@ -90,15 +88,14 @@ namespace LAVersionReverter
                 app.Command("Decode", c =>
                 {
                     CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
-                    CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
                     CommandOption WorkflowNameCO = c.Option("-n|--name", "Workflow Name", CommandOptionType.SingleValue);
                     CommandOption VersionCO = c.Option("-v|--version", "Version, the first part of the backup file name", CommandOptionType.SingleValue);
 
                     c.HelpOption("-?");
                     c.OnExecute(() =>
                     {
-                        string LogicAppName = LogicAppNameCO.Value(); 
-                        string ConnectionString = ConnectionStringCO.Value();
+                        string LogicAppName = LogicAppNameCO.Value();
+                        string ConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
                         string WorkflowName = WorkflowNameCO.Value();
                         string Version = VersionCO.Value();
 
@@ -113,7 +110,6 @@ namespace LAVersionReverter
                 app.Command("Clone", c =>
                 {
                     CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
-                    CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
                     CommandOption SourceNameCO = c.Option("-sn|--sourcename", "Source Workflow Name", CommandOptionType.SingleValue);
                     CommandOption TargetNameCO = c.Option("-tn|--targetname", "Target Workflow Name", CommandOptionType.SingleValue);
                     CommandOption versionCO = c.Option("-v|--version", "Version of the workflow (optional, the latest version will be cloned if not provided this parameter)", CommandOptionType.SingleValue);
@@ -122,7 +118,7 @@ namespace LAVersionReverter
                     c.OnExecute(() =>
                     {
                         string LogicAppName = LogicAppNameCO.Value();
-                        string ConnectionString = ConnectionStringCO.Value();
+                        string ConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
                         string SourceName = SourceNameCO.Value();
                         string TargetName = TargetNameCO.Value();
                         string Version = versionCO.Value();
@@ -138,14 +134,13 @@ namespace LAVersionReverter
                 app.Command("ListVersions", c =>
                 {
                     CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
-                    CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
                     CommandOption WorkflowNameCO = c.Option("-n|--name", "Workflow Name", CommandOptionType.SingleValue);
                     c.HelpOption("-?");
 
                     c.OnExecute(() => 
                     {
                         string LogicAppName = LogicAppNameCO.Value();
-                        string ConnectionString = ConnectionStringCO.Value();
+                        string ConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
                         string WorkflowName = WorkflowNameCO.Value();
 
                         ListVersions(LogicAppName, ConnectionString, WorkflowName);
@@ -159,14 +154,13 @@ namespace LAVersionReverter
                 app.Command("RestoreAll", c =>
                 {
                     CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
-                    CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
 
                     c.HelpOption("-?");
 
                     c.OnExecute(() =>
                     {
                         string LogicAppName = LogicAppNameCO.Value();
-                        string ConnectionString = ConnectionStringCO.Value();
+                        string ConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
 
                         RestoreAll(LogicAppName, ConnectionString);
 
@@ -180,7 +174,6 @@ namespace LAVersionReverter
                 {
                     CommandOption LogicAppnameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
                     CommandOption WorkflowCO = c.Option("-n|--name", "Workflow name (optional)", CommandOptionType.SingleValue);
-                    CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
 
                     c.HelpOption("-?");
 
@@ -188,7 +181,7 @@ namespace LAVersionReverter
                     {
                         string LogicAppName = LogicAppnameCO.Value();
                         string WorkflowName = WorkflowCO.Value();
-                        string ConnectionString = ConnectionStringCO.Value();
+                        string ConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
 
                         GenerateTablePrefix(LogicAppName, WorkflowName, ConnectionString);
 
@@ -202,7 +195,6 @@ namespace LAVersionReverter
                 {
                     CommandOption LogicAppnameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
                     CommandOption WorkflowCO = c.Option("-n|--name", "Workflow name (optional)", CommandOptionType.SingleValue);
-                    CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
                     CommandOption DateCO = c.Option("-d|--date", "Date (format: \"yyyyMMdd\") of the logs need to be retrieved, utc time", CommandOptionType.SingleValue);
 
                     c.HelpOption("-?");
@@ -211,7 +203,7 @@ namespace LAVersionReverter
                     {
                         string LogicAppName = LogicAppnameCO.Value();
                         string WorkflowName = WorkflowCO.Value();
-                        string ConnectionString = ConnectionStringCO.Value();
+                        string ConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
                         string Date = DateCO.Value();
 
                         RetrieveFailures(LogicAppName, WorkflowName, ConnectionString, Date);
@@ -225,7 +217,6 @@ namespace LAVersionReverter
                 app.Command("ConvertToStateful", c =>
                 {
                     CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
-                    CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
                     CommandOption SourceNameCO = c.Option("-sn|--sourcename", "Source Workflow Name (Stateless)", CommandOptionType.SingleValue);
                     CommandOption TargetNameCO = c.Option("-tn|--targetname", "Target Workflow Name (Stateful)", CommandOptionType.SingleValue);
 
@@ -233,7 +224,7 @@ namespace LAVersionReverter
                     c.OnExecute(() =>
                     {
                         string LogicAppName = LogicAppNameCO.Value();
-                        string ConnectionString = ConnectionStringCO.Value();
+                        string ConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
                         string SourceName = SourceNameCO.Value();
                         string TargetName = TargetNameCO.Value();
 
@@ -247,13 +238,12 @@ namespace LAVersionReverter
                 #region Clear Queue
                 app.Command("ClearJobQueue", c => {
                     CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
-                    CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "The ConnectionString of Logic App's Storage Account", CommandOptionType.SingleValue);
 
                     c.HelpOption("-?");
                     c.OnExecute(() =>
                     {
                         string LogicAppName = LogicAppNameCO.Value();
-                        string ConnectionString = ConnectionStringCO.Value();
+                        string ConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
 
                         ClearJobQueue(LogicAppName, ConnectionString);
 

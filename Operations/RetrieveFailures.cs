@@ -67,7 +67,6 @@ namespace LAVersionReverter
                     Records.Add(RunID, new List<FailureRecords>());
                 }
 
-
                 Records[RunID].Add(new FailureRecords(entity));
             }
 
