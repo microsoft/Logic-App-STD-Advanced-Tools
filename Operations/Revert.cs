@@ -8,11 +8,29 @@ namespace LAVersionReverter
         private static void RevertVersion(string WorkflowName, string Version)
         {
             string BackupFilePath = $"{Directory.GetCurrentDirectory()}/Backup/{WorkflowName}";
+
+            if (!Directory.Exists(BackupFilePath))
+            {
+                Console.WriteLine("Workflow name not found, please double check the provided workflow name.");
+
+                return;
+            }
+
             string[] Files = Directory.GetFiles(BackupFilePath, $"*{Version}.json");
 
             if (Files == null || Files.Length == 0)
             {
                 Console.WriteLine("No backup file found, please check the name and version of workflow");
+
+                return;
+            }
+
+            string ConfirmationMessage = $"CAUTION!!!\r\nThe current workflow: {WorkflowName} will be overwrite";
+            if (!PromptConfirmation(ConfirmationMessage))
+            {
+                Console.WriteLine("Operation Cancelled");
+
+                return;
             }
 
             string BackupDefinitionContent = File.ReadAllText(Files[0]);

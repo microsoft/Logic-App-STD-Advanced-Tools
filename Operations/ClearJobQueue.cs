@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Azure.Storage.Queues;
+using Microsoft.Extensions.CommandLineUtils;
 
 namespace LAVersionReverter
 {
@@ -22,8 +23,16 @@ namespace LAVersionReverter
                 return;
             }
 
+            string ConfirmationMessage = "CAUTION!!!\r\n1. Please make sure the Logic App has been stopped\r\n2. Clear Storage Queue will cause to lose data of all the running instances";
+            if (!PromptConfirmation(ConfirmationMessage))
+            {
+                Console.WriteLine("Operation Cancelled");
+
+                return;
+            }
+
             queueClient.ClearMessages();
-            Console.WriteLine($"Queue: {queueName} cleared");
+            Console.WriteLine($"Queue: {queueName} cleared, please restart Logic App");
         }
     }
 }

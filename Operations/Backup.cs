@@ -1,6 +1,10 @@
 ﻿using Azure;
 using Azure.Data.Tables;
+using Newtonsoft.Json;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 
 namespace LAVersionReverter
@@ -14,6 +18,11 @@ namespace LAVersionReverter
 
             TableClient tableClient = new TableClient(ConnectionString, DefinitionTableName);
             Pageable<TableEntity> tableEntities;
+
+            Directory.CreateDirectory(BackupFolder);
+
+            Hashtable Appsettings = (Hashtable)Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Process);
+            File.WriteAllText($"{BackupFolder}/appsettings.json", JsonConvert.SerializeObject(Appsettings, Formatting.Indented));
 
             if (Ago != 0)
             {

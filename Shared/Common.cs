@@ -33,6 +33,26 @@ namespace LAVersionReverter
             return string.Empty;
         }
 
+        /// <summary>
+        /// Prompt confirmation content for critical operations
+        /// temp workkaround, need to be change to built-in method once migrate to McMaster.Extension.CommandLineUtils
+        /// </summary>
+        /// <param name="DisplayContent"></param>
+        /// <returns></returns>
+        private static bool PromptConfirmation(string DisplayContent)
+        {
+            Console.WriteLine(DisplayContent);
+            Console.Write("Please input for confirmation [y/n]: ");
+            string Input = Console.ReadLine();
+
+            return Input.ToLower() == "y";
+        }
+
+        /// <summary>
+        /// Decompress the content which compressed by Inflate
+        /// </summary>
+        /// <param name="Content"></param>
+        /// <returns></returns>
         public static string DecompressContent(byte[] Content)
         {
             if (Content == null)
