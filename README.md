@@ -1,4 +1,7 @@
 ## Release Note
+2022-12-13
+1. The connection string will be read from Appsettings -> AzureWebJobsStorage now. No need to provide connection string anymore.
+
 2022-12-12
 1. Fixed when execute "GenerateTablePrefix" command for Logic App only, connection string still need be provided.
 2. Added a new command "ClearJobQueue" to clear Logic App job queue. This command can resolve some infinity reboot which caused by action high memory. Before run this command, make sure the Logic App Standard has been stopped. **All the data of running workflow instances will be lost！**
@@ -28,17 +31,19 @@ This tool can be used for revert the Logic App Standard workflow's previous vers
 
 ## How to use
 1. Open Kudu (Advanced Tools) of Logic App Standard and upload this tool into a folder
-![image](https://user-images.githubusercontent.com/72241569/139808016-75b98cb6-c976-4b90-a23b-c032020094c2.png)
+![image](https://user-images.githubusercontent.com/72241569/207210227-bc646632-4e91-4427-94c5-705055945711.png)
 
-2. Use command **LAVersionReverter backup -cs [ConnectionString] -la [LogicAppName]** to backup all the existing workflows. The connection string can be found in Storage Account - Access Key
+
+2. Use command **LAVersionReverter Backup -la [LogicAppName]** to backup all the existing workflows. The connection string can be found in Storage Account - Access Key
    After run the command, the tool will create a new folder which called "**Backup**", the sub-folders will be named as workflow name. Each definition will be a seperate json file.
-![image](https://user-images.githubusercontent.com/72241569/182768428-33c48551-5b92-42ec-9e0e-324832b9aa13.png)
+![image](https://user-images.githubusercontent.com/72241569/207209672-5d056475-d210-4079-9011-858660c7010f.png)
+
 
 3. Recently we have to check the definition manually to see which version we would like to revert to. 
    The version is the last part of the file name.
 ![image](https://user-images.githubusercontent.com/72241569/139812550-29420c41-ab80-4ccd-ad2e-59a471991ab1.png)
 
-4. Use command **LAVersionReverter Revert -cs [ConnectionString] -n [Workflow Name] -v [Version]** to revert to previous version
+4. Use command **LAVersionReverter Revert -n [Workflow Name] -v [Version]** to revert to previous version
 
 ## Limitation
 1. This tool only modify workflow.json, if the API connection metadata get lost in connections.json, the reverted workflow will not work.
