@@ -1,4 +1,5 @@
-﻿using System;
+﻿using McMaster.Extensions.CommandLineUtils;
+using System;
 using System.IO;
 
 namespace LAVersionReverter
@@ -25,8 +26,8 @@ namespace LAVersionReverter
                 return;
             }
 
-            string ConfirmationMessage = $"CAUTION!!!\r\nThe current workflow: {WorkflowName} will be overwrite";
-            if (!PromptConfirmation(ConfirmationMessage))
+            string ConfirmationMessage = $"CAUTION!!!\r\nThe current workflow: {WorkflowName} will be overwrite\r\n\r\nPlease input for confirmation:";
+            if (!Prompt.GetYesNo(ConfirmationMessage, false))
             {
                 Console.WriteLine("Operation Cancelled");
 

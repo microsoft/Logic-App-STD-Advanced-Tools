@@ -1,7 +1,7 @@
 ﻿using Azure;
 using Azure.Data.Tables;
 using Azure.Data.Tables.Models;
-using Microsoft.Extensions.CommandLineUtils;
+using McMaster.Extensions.CommandLineUtils;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
