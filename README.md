@@ -1,4 +1,8 @@
 ## Release Note
+2022-12-27
+1. Added prompt confirmation feature for critical operations(Revert, ClearJobQueue).
+2. Fixed a bug when backup files are not existing but still execute the REvert command.
+
 2022-12-13
 1. The connection string will be read from Appsettings -> AzureWebJobsStorage now. No need to provide connection string anymore.
 
@@ -53,12 +57,12 @@ This tool can be used for revert the Logic App Standard workflow's previous vers
 ## Supported Command
 1. **Backup**: Backup all the existing definitions into Json files
 2. **ClearJobQueue**: Clear all incomplete jobs in the Storage Queue. **Be aware of this command will result to data losing for running workflow instances**
-2. **Clone**: Clone a workflow to a new one, exactly the same as clone in Logic App comsumption
-3. **ConvertToStateful**: Clone a stateless workflow and create a stateful version
-4. **Decode** Decode a difinition into readable content
-5. **GenerateTablePrefix** Generate Logic App definition table name as per Logic App name
-6. **ListVersions** List all the existing versions of a workflow
-7. **Revert** Revert a workflow to previous version as per version ID.
-8. **RetrieveFailures(Preview)** Retrieve all the failed actions' input/output for a specific day.
-9. **RestoreAll** Retrieve all the exsiting definitions from Storage Table and restore in Logic App.
-10. **-?/[command] -?** help of the command
+3. **Clone**: Clone a workflow to a new one, exactly the same as clone in Logic App comsumption
+4. **ConvertToStateful**: Clone a stateless workflow and create a stateful version
+5. **Decode** Decode a difinition into readable content
+6. **GenerateTablePrefix** Generate Logic App definition table name as per Logic App name
+7. **ListVersions** List all the existing versions of a workflow
+8. **Revert** Revert a workflow to previous version as per version ID.
+9. **RetrieveFailures(Preview)** Retrieve all the failed actions' input/output for a specific day.
+10. **RestoreAll** Retrieve all the exsiting definitions from Storage Table and restore in Logic App.
+11. **-?/[command] -?** help of the command
