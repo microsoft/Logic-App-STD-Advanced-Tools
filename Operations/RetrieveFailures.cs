@@ -23,6 +23,8 @@ namespace LAVersionReverter
             if (tableEntities.Count() == 0)
             {
                 Console.WriteLine("No workflow found in table, please double check the workflow name");
+
+                return;
             }
 
             string logicAppPrefix = StoragePrefixGenerator.Generate(LogicAppName.ToLower());
@@ -101,9 +103,9 @@ namespace LAVersionReverter
             public int? RepeatItemIdenx { get; private set; }
 
             [JsonIgnore]
-            public ActionPayload InputsLink { get; private set; }
+            public CommonPayloadStructure InputsLink { get; private set; }
             [JsonIgnore]
-            public ActionPayload OutputsLink { get; private set; }
+            public CommonPayloadStructure OutputsLink { get; private set; }
 
             public FailureRecords(TableEntity te)
             {
@@ -113,20 +115,55 @@ namespace LAVersionReverter
                 this.RepeatItemName = te.GetString("RepeatItemScopeName");
                 this.RepeatItemIdenx = te.GetInt32("RepeatItemIndex");
 
-                string RawInput = DecompressContent(te.GetBinary("InputsLinkCompressed"));
-                this.InputsLink = String.IsNullOrEmpty(RawInput)? null : JsonConvert.DeserializeObject<ActionPayload>(RawInput);
-                this.InputContent = InputsLink == null ? null : JsonConvert.DeserializeObject(Encoding.UTF8.GetString(Convert.FromBase64String(InputsLink.inlinedContent)));
-
-                string RawOutput = DecompressContent(te.GetBinary("OutputsLinkCompressed"));
-                this.OutputsLink = String.IsNullOrEmpty(RawOutput) ? null : JsonConvert.DeserializeObject<ActionPayload>(RawOutput);
-                this.OutputContent = OutputsLink == null ? null : JsonConvert.DeserializeObject(Encoding.UTF8.GetString(Convert.FromBase64String(OutputsLink.inlinedContent)));
+                this.InputContent = DecodePayload(te.GetBinary("InputsLinkCompressed"));
+                this.OutputContent = DecodePayload(te.GetBinary("OutputsLinkCompressed"));
 
                 string RawError = DecompressContent(te.GetBinary("Error"));
                 this.Error = String.IsNullOrEmpty(RawError) ? null : JsonConvert.DeserializeObject<ActionError>(RawError);
             }
+
+            private dynamic DecodePayload(byte[] BinaryContent)
+            {
+                string RawContent = DecompressContent(BinaryContent);
+
+                if (RawContent == null)
+                {
+                    return null;
+                }
+
+                //Recently there are 2 different JSON schema for output payload, try connector schema first
+                ConnectorPayloadStructure ConnectorPayload = JsonConvert.DeserializeObject<ConnectorPayloadStructure>(RawContent);
+
+                dynamic Output = null;
+
+                if (ConnectorPayload.nestedContentLinks != null)
+                {
+                    string inlineContent = ConnectorPayload.nestedContentLinks.body.inlinedContent;
+                    Output = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(Convert.FromBase64String(inlineContent)));
+                    return Output;
+                }
+
+                CommonPayloadStructure Payload = JsonConvert.DeserializeObject<CommonPayloadStructure>(RawContent);
+                Output = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(Convert.FromBase64String(Payload.inlinedContent)));
+
+                return Output;
+            }
         }
 
-        public class ActionPayload
+        #region payload structure for connector action (built-in and Azure)
+        public class ConnectorPayloadStructure
+        {
+            public NestedContentLinks nestedContentLinks { get; set; }
+        }
+
+        public class NestedContentLinks
+        { 
+            public CommonPayloadStructure body { get; set; }
+        }
+        #endregion
+
+
+        public class CommonPayloadStructure
         {
             public string inlinedContent { get; set; }
             public string contentVersion { get; set; }
