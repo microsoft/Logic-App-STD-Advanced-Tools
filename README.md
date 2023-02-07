@@ -1,4 +1,7 @@
 ## Release Note
+2023-02-07
+1. Fixed a bug in RetrieveFailures command which cause parse action input/output failure.
+
 2022-12-27
 1. Added prompt confirmation feature for critical operations(Revert, ClearJobQueue).
 2. Fixed a bug when backup files are not existing but still execute the REvert command.
