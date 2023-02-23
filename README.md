@@ -1,4 +1,7 @@
 ## Release Note
+2023-02-23
+1. Upgrade to .Net 7.0 due to DeflateStream for compress result to different binary between .Net framewrok 4.7.2 and .Net 7.0 which required by new feature.
+
 2023-02-07
 1. Fixed a bug in RetrieveFailures command which cause parse action input/output failure.
 
