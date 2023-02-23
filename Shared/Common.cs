@@ -50,6 +50,20 @@ namespace LAVersionReverter
             return Result;
         }
 
+        public static string CompressContent(string Content)
+        {
+            if (string.IsNullOrEmpty(Content))
+            {
+                return null;
+            }
+
+            MemoryStream CompressedStream = DeflateCompressionUtility.Instance.DeflateString(Content);
+            byte[] CompressedBytes = CompressedStream.ToArray();
+            string Result = Convert.ToBase64String(CompressedBytes);
+
+            return Result;
+        }
+
         public class WorkflowDefinition
         {
             public string WorkflowName;
