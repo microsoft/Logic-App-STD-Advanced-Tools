@@ -66,8 +66,10 @@ namespace LAVersionReverter
                 string DecompressedDefinition = DecompressContent(DefinitionCompressed);
 
                 string OutputContent = $"{{\"definition\": {DecompressedDefinition},\"kind\": \"{Kind}\"}}";
+                dynamic JsonObject = JsonConvert.DeserializeObject(OutputContent);
+                string FormattedContent = JsonConvert.SerializeObject(JsonObject, Formatting.Indented);
 
-                File.WriteAllText(BackupFilePath, OutputContent);
+                File.WriteAllText(BackupFilePath, FormattedContent);
             }
         }
     }

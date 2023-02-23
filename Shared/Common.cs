@@ -1,12 +1,10 @@
 ﻿using Azure;
 using Azure.Data.Tables;
 using Azure.Data.Tables.Models;
+using Microsoft.WindowsAzure.ResourceStack.Common.Utilities;
 using System;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
-using System.Text;
 
 namespace LAVersionReverter
 {
@@ -47,23 +45,7 @@ namespace LAVersionReverter
                 return null;
             }
 
-            string Result = String.Empty;
-
-            MemoryStream output = new MemoryStream();
-
-            using (var compressStream = new MemoryStream(Content))
-            {
-                using (var decompressor = new DeflateStream(compressStream, CompressionMode.Decompress))
-                {
-                    decompressor.CopyTo(output);
-                }
-                output.Position = 0;
-            }
-
-            using (StreamReader reader = new StreamReader(output))
-            {
-                Result = reader.ReadToEnd();
-            }
+            string Result = DeflateCompressionUtility.Instance.InflateString(new MemoryStream(Content));
 
             return Result;
         }
