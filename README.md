@@ -1,4 +1,7 @@
 ## Release Note
+2023-02-24
+1. Rename the tool to "LogicAppAdvancedTool" since it contains more features not only vervison revert now.
+
 2023-02-23
 1. Upgrade to .Net 7.0 due to DeflateStream for compress result to different binary between .Net framewrok 4.7.2 and .Net 7.0 which required by new feature.
 2. Remove decompress related code, change to call workflow extension Dll method directly.
