@@ -1,6 +1,8 @@
 ## Release Note
 2023-02-23
 1. Upgrade to .Net 7.0 due to DeflateStream for compress result to different binary between .Net framewrok 4.7.2 and .Net 7.0 which required by new feature.
+2. Remove decompress related code, change to call workflow extension Dll method directly.
+3. Backup command now will create pretty print content.
 
 2023-02-07
 1. Fixed a bug in RetrieveFailures command which cause parse action input/output failure.
