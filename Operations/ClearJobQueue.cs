@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Azure.Storage.Queues;
 using McMaster.Extensions.CommandLineUtils;
 
-namespace LAVersionReverter
+namespace LogicAppAdvancedTool
 {
     partial class Program
     {

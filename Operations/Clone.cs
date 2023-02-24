@@ -3,7 +3,7 @@ using Azure.Data.Tables;
 using System;
 using System.IO;
 
-namespace LAVersionReverter
+namespace LogicAppAdvancedTool
 {
     partial class Program
     {

@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Linq;
 
-namespace LAVersionReverter
+namespace LogicAppAdvancedTool
 {
     partial class Program
     {

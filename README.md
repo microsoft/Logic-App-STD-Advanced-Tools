@@ -44,7 +44,7 @@ This tool can be used for revert the Logic App Standard workflow's previous vers
 ![image](https://user-images.githubusercontent.com/72241569/207210227-bc646632-4e91-4427-94c5-705055945711.png)
 
 
-2. Use command **LAVersionReverter Backup -la [LogicAppName]** to backup all the existing workflows. The connection string can be found in Storage Account - Access Key
+2. Use command **LogicAppAdvancedTool Backup -la [LogicAppName]** to backup all the existing workflows. The connection string can be found in Storage Account - Access Key
    After run the command, the tool will create a new folder which called "**Backup**", the sub-folders will be named as workflow name. Each definition will be a seperate json file.
 ![image](https://user-images.githubusercontent.com/72241569/207209672-5d056475-d210-4079-9011-858660c7010f.png)
 
@@ -53,7 +53,7 @@ This tool can be used for revert the Logic App Standard workflow's previous vers
    The version is the last part of the file name.
 ![image](https://user-images.githubusercontent.com/72241569/139812550-29420c41-ab80-4ccd-ad2e-59a471991ab1.png)
 
-4. Use command **LAVersionReverter Revert -n [Workflow Name] -v [Version]** to revert to previous version
+4. Use command **LogicAppAdvancedTool Revert -n [Workflow Name] -v [Version]** to revert to previous version
 
 ## Limitation
 1. This tool only modify workflow.json, if the API connection metadata get lost in connections.json, the reverted workflow will not work.

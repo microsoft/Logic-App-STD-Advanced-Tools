@@ -6,7 +6,7 @@ using System;
 using System.IO;
 using System.Linq;
 
-namespace LAVersionReverter
+namespace LogicAppAdvancedTool
 {
     public partial class Program
     {

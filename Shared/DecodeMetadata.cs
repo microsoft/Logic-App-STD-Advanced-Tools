@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LAVersionReverter
+namespace LogicAppAdvancedTool
 {
     //Testing code for decode Metadata in job definition table
     public static class Metadata

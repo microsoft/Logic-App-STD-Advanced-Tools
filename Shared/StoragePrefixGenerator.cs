@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LAVersionReverter
+namespace LogicAppAdvancedTool
 {
 	//method for generating the storage table name prefix
 	//In Logic App Standard, we need to map the Logic App Name to the storage table name (LAName -> flowxxxxxflows)
