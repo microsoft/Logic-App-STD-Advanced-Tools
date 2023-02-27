@@ -12,10 +12,9 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        private static void RetrieveFailures(string LogicAppName, string WorkflowName, string ConnectionString, string Date)
+        private static void RetrieveFailures(string LogicAppName, string WorkflowName, string Date)
         {
-            
-            string mainTableName = GetMainTableName(LogicAppName, ConnectionString);
+            string mainTableName = GetMainTableName(LogicAppName);
 
             TableClient tableClient = new TableClient(ConnectionString, mainTableName);
             Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{WorkflowName}'");

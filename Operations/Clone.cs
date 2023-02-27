@@ -14,9 +14,9 @@ namespace LogicAppAdvancedTool
         /// <param name="SourceName"></param>
         /// <param name="TargetName"></param>
         /// <param name="Version"></param>
-        private static void Clone(string LogicAppName, string ConnectionString, string SourceName, string TargetName, string Version)
+        private static void Clone(string LogicAppName, string SourceName, string TargetName, string Version)
         {
-            string TableName = GetMainTableName(LogicAppName, ConnectionString);
+            string TableName = GetMainTableName(LogicAppName);
 
             TableClient tableClient = new TableClient(ConnectionString, TableName);
             Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{SourceName}'");

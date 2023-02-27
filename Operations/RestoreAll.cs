@@ -9,9 +9,9 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        private static void RestoreAll(string LogicAppName, string ConnectionString)
+        private static void RestoreAll(string LogicAppName)
         {
-            string TableName = GetMainTableName(LogicAppName, ConnectionString);
+            string TableName = GetMainTableName(LogicAppName);
 
             TableClient tableClient = new TableClient(ConnectionString, TableName);
             Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(select: new string[] { "FlowName", "ChangedTime", "DefinitionCompressed", "Kind" });

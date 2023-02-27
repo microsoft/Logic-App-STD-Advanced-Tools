@@ -10,11 +10,11 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        public static void ClearJobQueue(string logicAppName, string connectionString)
+        public static void ClearJobQueue(string logicAppName)
         {
             string queueName = $"flow{StoragePrefixGenerator.Generate(logicAppName.ToLower())}jobtriggers00";
 
-            QueueClient queueClient = new QueueClient(connectionString, queueName);
+            QueueClient queueClient = new QueueClient(ConnectionString, queueName);
 
             if (!queueClient.Exists())
             {

@@ -7,9 +7,9 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        private static void ConvertToStateful(string LogicAppName, string ConnectionString, string SourceName, string TargetName)
+        private static void ConvertToStateful(string LogicAppName, string SourceName, string TargetName)
         {
-            string TableName = GetMainTableName(LogicAppName, ConnectionString);
+            string TableName = GetMainTableName(LogicAppName);
 
             TableClient tableClient = new TableClient(ConnectionString, TableName);
             Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{SourceName}'");

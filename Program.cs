@@ -1,4 +1,5 @@
 ﻿using Azure;
+using Azure.Core;
 using Azure.Data.Tables;
 using Azure.Data.Tables.Models;
 using McMaster.Extensions.CommandLineUtils;
@@ -30,10 +31,10 @@ namespace LogicAppAdvancedTool
                     CommandOption AgoCO = c.Option("-ago|--ago", "Only retrieve the past X(unsigned integer) days workflow definitions, if not provided then retrieve all existing definitions", CommandOptionType.SingleValue);
                     
                     c.HelpOption("-?");
+                    c.Description = "Retrieve all the existing defitnions from Storage Table and save as Json files. The storage table saves the definition for past 90 days by default even they have been deleted.";
 
                     c.OnExecute(() =>
                     {
-                        string ConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
                         string LogicAppName = LogicAppNameCO.Value();
                         string AgoStr = AgoCO.Value();
 
@@ -50,7 +51,7 @@ namespace LogicAppAdvancedTool
                             }
                         }
 
-                        BackupDefinitions(LogicAppName, ConnectionString, Ago);
+                        BackupDefinitions(LogicAppName, Ago);
 
                         Console.WriteLine("Backup Succeeded. You can download the definition ");
 
@@ -70,11 +71,10 @@ namespace LogicAppAdvancedTool
                     c.OnExecute(() =>
                     {
                         string LogicAppName = LogicAppNameCO.Value();
-                        string ConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
                         string WorkflowName = WorkflowNameCO.Value();
                         string Version = VersionCO.Value();
 
-                        BackupDefinitions(LogicAppName, ConnectionString, 0);
+                        BackupDefinitions(LogicAppName, 0);
                         if (WorkflowName != null && Version != null)
                         {
                             RevertVersion(WorkflowName, Version);
@@ -119,12 +119,11 @@ namespace LogicAppAdvancedTool
                     c.OnExecute(() =>
                     {
                         string LogicAppName = LogicAppNameCO.Value();
-                        string ConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
                         string SourceName = SourceNameCO.Value();
                         string TargetName = TargetNameCO.Value();
                         string Version = versionCO.Value();
 
-                        Clone(LogicAppName, ConnectionString, SourceName, TargetName, Version);
+                        Clone(LogicAppName, SourceName, TargetName, Version);
 
                         return 0;
                     });
@@ -141,10 +140,9 @@ namespace LogicAppAdvancedTool
                     c.OnExecute(() => 
                     {
                         string LogicAppName = LogicAppNameCO.Value();
-                        string ConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
                         string WorkflowName = WorkflowNameCO.Value();
 
-                        ListVersions(LogicAppName, ConnectionString, WorkflowName);
+                        ListVersions(LogicAppName, WorkflowName);
 
                         return 0;
                     });
@@ -161,9 +159,8 @@ namespace LogicAppAdvancedTool
                     c.OnExecute(() =>
                     {
                         string LogicAppName = LogicAppNameCO.Value();
-                        string ConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
 
-                        RestoreAll(LogicAppName, ConnectionString);
+                        RestoreAll(LogicAppName);
 
                         return 0;
                     });
@@ -182,9 +179,8 @@ namespace LogicAppAdvancedTool
                     {
                         string LogicAppName = LogicAppnameCO.Value();
                         string WorkflowName = WorkflowCO.Value();
-                        string ConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
 
-                        GenerateTablePrefix(LogicAppName, WorkflowName, ConnectionString);
+                        GenerateTablePrefix(LogicAppName, WorkflowName);
 
                         return 0;
                     });
@@ -204,10 +200,9 @@ namespace LogicAppAdvancedTool
                     {
                         string LogicAppName = LogicAppnameCO.Value();
                         string WorkflowName = WorkflowCO.Value();
-                        string ConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
                         string Date = DateCO.Value();
 
-                        RetrieveFailures(LogicAppName, WorkflowName, ConnectionString, Date);
+                        RetrieveFailures(LogicAppName, WorkflowName, Date);
 
                         return 0;
                     });
@@ -225,11 +220,10 @@ namespace LogicAppAdvancedTool
                     c.OnExecute(() =>
                     {
                         string LogicAppName = LogicAppNameCO.Value();
-                        string ConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
                         string SourceName = SourceNameCO.Value();
                         string TargetName = TargetNameCO.Value();
 
-                        ConvertToStateful(LogicAppName, ConnectionString, SourceName, TargetName);
+                        ConvertToStateful(LogicAppName, SourceName, TargetName);
 
                         return 0;
                     });
@@ -244,17 +238,34 @@ namespace LogicAppAdvancedTool
                     c.OnExecute(() =>
                     {
                         string LogicAppName = LogicAppNameCO.Value();
-                        string ConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
 
-                        ClearJobQueue(LogicAppName, ConnectionString);
+                        ClearJobQueue(LogicAppName);
 
                         return 0;
                     });
                 });
                 #endregion
 
-                #region Export Existing Workflows
+                #region !!!TODO - Export Existing Workflows
 
+                #endregion
+
+                #region Ingest workflow
+                app.Command("IngestWorkflow", c => {
+                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
+                    CommandOption WorkflowCO = c.Option("-wf|--workflow", "The name of workflow", CommandOptionType.SingleValue);
+
+                    c.HelpOption("-?");
+                    c.OnExecute(() =>
+                    {
+                        string LogicAppName = LogicAppNameCO.Value();
+                        string WorkflowName = WorkflowCO.Value();
+
+                        IngestWorkflow(LogicAppName, WorkflowName);
+
+                        return 0;
+                    });
+                });
                 #endregion
 
                 app.Execute(args);
@@ -263,6 +274,14 @@ namespace LogicAppAdvancedTool
             {
                 Console.WriteLine(ex.Message);
                 Console.WriteLine(ex.StackTrace);
+            }
+        }
+
+        public static string ConnectionString
+        {
+            get 
+            { 
+                return Environment.GetEnvironmentVariable("AzureWebJobsStorage");
             }
         }
     }

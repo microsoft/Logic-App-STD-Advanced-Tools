@@ -11,9 +11,10 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        private static void BackupDefinitions(string LogicAppName, string ConnectionString, uint Ago)
+        private static void BackupDefinitions(string LogicAppName, uint Ago)
         {
-            string DefinitionTableName = GetMainTableName(LogicAppName, ConnectionString);
+            string ConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
+            string DefinitionTableName = GetMainTableName(LogicAppName);
             string BackupFolder = $"{Directory.GetCurrentDirectory()}/Backup";
 
             TableClient tableClient = new TableClient(ConnectionString, DefinitionTableName);

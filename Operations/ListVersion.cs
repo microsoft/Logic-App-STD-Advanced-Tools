@@ -6,9 +6,9 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        private static void ListVersions(string LogicAppName, string ConnectionString, string WorkflowName)
+        private static void ListVersions(string LogicAppName, string WorkflowName)
         {
-            string TableName = GetMainTableName(LogicAppName, ConnectionString);
+            string TableName = GetMainTableName(LogicAppName);
 
             TableClient tableClient = new TableClient(ConnectionString, TableName);
             Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{WorkflowName}'");

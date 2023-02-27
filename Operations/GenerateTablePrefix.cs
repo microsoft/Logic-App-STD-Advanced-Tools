@@ -9,7 +9,7 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        private static void GenerateTablePrefix(string LogicAppName, string WorkflowName, string ConnectionString)
+        private static void GenerateTablePrefix(string LogicAppName, string WorkflowName)
         {
             string logicAppPrefix = StoragePrefixGenerator.Generate(LogicAppName.ToLower());
 
@@ -30,7 +30,7 @@ namespace LogicAppAdvancedTool
                 return;
             }
 
-            string mainTableName = GetMainTableName(LogicAppName, ConnectionString);
+            string mainTableName = GetMainTableName(LogicAppName);
 
             TableClient tableClient = new TableClient(ConnectionString, mainTableName);
             Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{WorkflowName}'");

@@ -15,7 +15,7 @@ namespace LogicAppAdvancedTool
         /// </summary>
         /// <param name="ConnectionString"></param>
         /// <returns></returns>
-        private static string GetMainTableName(string LogicAppName, string ConnectionString)
+        private static string GetMainTableName(string LogicAppName)
         {
             string TableName = $"flow{StoragePrefixGenerator.Generate(LogicAppName.ToLower())}flows";
 

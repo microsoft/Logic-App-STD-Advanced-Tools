@@ -10,7 +10,7 @@ namespace LogicAppAdvancedTool
     {
         private static void Decode(string LogicAppName, string ConnectionString, string WorkflowName, string Version)
         {
-            string TableName = GetMainTableName(LogicAppName, ConnectionString);
+            string TableName = GetMainTableName(LogicAppName);
 
             TableClient tableClient = new TableClient(ConnectionString, TableName);
             Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{WorkflowName}' and FlowSequenceId eq '{Version}'");
