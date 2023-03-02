@@ -1,4 +1,8 @@
 ## Release Note
+2023-03-02
+1. Added command description.
+2. Added an experimental command - "IngestWorkflow" which could bypass workflow validation and ingest workflow definition in Storage Table. In some situation, the worklfow definition could be failed, but the definiton still can work as expected (eg: using expression for dynamic assign API connection).
+
 2023-02-24
 1. Rename the tool to "LogicAppAdvancedTool" since it contains more features not only workflow verison revert now.
 
