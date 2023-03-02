@@ -34,6 +34,30 @@ namespace LogicAppAdvancedTool
         }
 
         /// <summary>
+        /// Retrieve the table name which contains all the workflow definitions
+        /// </summary>
+        /// <param name="ConnectionString"></param>
+        /// <returns></returns>
+        private static string GetMainTablePrefix(string LogicAppName)
+        {
+            string TablePrefix = StoragePrefixGenerator.Generate(LogicAppName.ToLower());
+            string TableName = $"flow{TablePrefix}flows";
+
+            TableServiceClient serviceClient = new TableServiceClient(ConnectionString);
+
+            //Double check whether the table exists
+            Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{TableName}'");
+
+            if (results.Count() != 0)
+            {
+                return TablePrefix;
+            }
+
+            Console.WriteLine("No table found in Azure Storage Account, please check whether the Logic App Name correct or not.");
+            return string.Empty;
+        }
+
+        /// <summary>
         /// Decompress the content which compressed by Inflate
         /// </summary>
         /// <param name="Content"></param>
@@ -50,7 +74,7 @@ namespace LogicAppAdvancedTool
             return Result;
         }
 
-        public static string CompressContent(string Content)
+        public static byte[] CompressContent(string Content)
         {
             if (string.IsNullOrEmpty(Content))
             {
@@ -59,9 +83,8 @@ namespace LogicAppAdvancedTool
 
             MemoryStream CompressedStream = DeflateCompressionUtility.Instance.DeflateString(Content);
             byte[] CompressedBytes = CompressedStream.ToArray();
-            string Result = Convert.ToBase64String(CompressedBytes);
 
-            return Result;
+            return CompressedBytes;
         }
 
         public class WorkflowDefinition
@@ -78,6 +101,12 @@ namespace LogicAppAdvancedTool
                 this.ModifiedData = ModifiedData;
                 this.Definition = Definition;
             }
+        }
+
+        public class WorkflowTemplate
+        {
+            public object definition { get; set; }
+            public string kind { get; set; }
         }
     }
 }

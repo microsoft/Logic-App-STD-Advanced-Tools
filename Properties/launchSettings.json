@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "LogicAppAdvancedTool": {
+      "commandName": "Project",
+      "commandLineArgs": "IngestWorkflow -la DracLogicApp -wf Test2"
+    }
+  }
+}
