@@ -50,13 +50,12 @@ This tool can be used for revert the Logic App Standard workflow's previous vers
 
 ## How to use
 1. Open Kudu (Advanced Tools) of Logic App Standard and upload this tool into a folder
-<img width="522" alt="image" src="https://user-images.githubusercontent.com/72241569/229700543-cc31a92e-168e-410f-b703-73f579eb6071.png">
+<img alt="image" src="https://user-images.githubusercontent.com/72241569/229700543-cc31a92e-168e-410f-b703-73f579eb6071.png">
 
 
 2. Use command **LogicAppAdvancedTool Backup -la [LogicAppName]** to backup all the existing workflows. The connection string can be found in Storage Account - Access Key
    After run the command, the tool will create a new folder which called "**Backup**", the sub-folders will be named as workflow name. Each definition will be a seperate json file.
-<img width="529" alt="image" src="https://user-images.githubusercontent.com/72241569/229700789-109db7ba-3b08-4681-bea7-0e74721842e4.png">
-
+![image](https://user-images.githubusercontent.com/72241569/229700789-109db7ba-3b08-4681-bea7-0e74721842e4.png)
 
 3. Recently we have to check the definition manually to see which version we would like to revert to. 
    The version is the last part of the file name.
