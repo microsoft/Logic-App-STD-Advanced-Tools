@@ -4,9 +4,10 @@ Please use command "**LogicAppAdvancedTool -?**" for more information of the com
 
 
 ## How to get application binary
-On the right handside of this Github page, you can directly download via "Release" link.
+You can directly download via "Release" link.
 ![image](https://user-images.githubusercontent.com/72241569/229997619-fb431ac9-fbfe-47da-82a4-ed37a0be3258.png)
 
+If you would like to compile the binary yourself, please always use "Publish" in Visual Studio, otherwise the DLLs will not be integrated into the exe.
 
 ## How to use (Sample of restore a workflow)
 1. Open Kudu (Advanced Tools) of Logic App Standard and upload this tool into a folder
