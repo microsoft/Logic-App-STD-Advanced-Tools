@@ -1,6 +1,5 @@
 ﻿using Azure;
 using Azure.Data.Tables;
-using McMaster.Extensions.CommandLineUtils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +9,7 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        private static void RestoreAll(string LogicAppName)
+        private static void RestoreSingleWorkflow(string LogicAppName, string WorkflowName)
         {
             string TableName = GetMainTableName(LogicAppName);
 
@@ -19,20 +18,19 @@ namespace LogicAppAdvancedTool
                 return;
             }
 
-            string ConfirmationMessage = "WARNING!!!\r\nThis operation will restore all the deleted workflows, if there's any invalid workflows, it might cause unexpected behavior on Logic App runtime.\r\nBe cautuion if you are running this command in PROD environment\r\nPlease input for confirmation:";
-            if (!Prompt.GetYesNo(ConfirmationMessage, false))
-            {
-                Console.WriteLine("Operation Cancelled");
-
-                return;
-            }
-
             TableClient tableClient = new TableClient(ConnectionString, TableName);
-            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(select: new string[] { "FlowName", "ChangedTime", "DefinitionCompressed", "Kind" });
+            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{WorkflowName}'", select: new string[] { "FlowName", "ChangedTime", "DefinitionCompressed", "Kind" });
 
             List<TableEntity> entities = (from n in tableEntities
                                           group n by n.GetString("FlowName") into g
                                           select g.OrderByDescending(x => x.GetDateTimeOffset("ChangedTime")).FirstOrDefault()).ToList();
+
+            if (entities.Count == 0)
+            {
+                Console.WriteLine($"No workflow found in the table named {WorkflowName}, please check workflow name");
+
+                return;
+            }
 
             foreach (TableEntity entity in entities)
             {
@@ -55,8 +53,6 @@ namespace LogicAppAdvancedTool
 
                 Console.WriteLine($"Workflow: {flowName} restored successfully.");
             }
-
-            Console.WriteLine("Restored all the workflows which found in Storage Table. Please refresh workflow page.");
         }
     }
 }

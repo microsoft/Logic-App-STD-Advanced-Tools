@@ -163,7 +163,7 @@ namespace LogicAppAdvancedTool
                     CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
 
                     c.HelpOption("-?");
-                    c.Description = "Restore all the workflows which de deleted accidentally.";
+                    c.Description = "Restore all the workflows which be deleted accidentally.";
 
                     c.OnExecute(() =>
                     {
@@ -255,6 +255,46 @@ namespace LogicAppAdvancedTool
                         string LogicAppName = LogicAppNameCO.Value();
 
                         ClearJobQueue(LogicAppName);
+
+                        return 0;
+                    });
+                });
+                #endregion
+
+                #region Restore single workflow
+                app.Command("RestoreSingleWorkflow", c =>
+                {
+                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
+                    CommandOption WorkflowNameCO = c.Option("-wf|--workflow", "The name of the workflow", CommandOptionType.SingleValue);
+
+                    c.HelpOption("-?");
+                    c.Description = "Restore a workflows which has been deleted accidentally.";
+
+                    c.OnExecute(() =>
+                    {
+                        string LogicAppName = LogicAppNameCO.Value();
+                        string WorkflowName = WorkflowNameCO.Value();
+
+                        RestoreSingleWorkflow(LogicAppName, WorkflowName);
+
+                        return 0;
+                    });
+                });
+                #endregion
+
+                #region List Workflows
+                app.Command("ListWorkflows", c =>
+                {
+                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue);
+
+                    c.HelpOption("-?");
+                    c.Description = "List all the exisiting workflows which can be found in storage table";
+
+                    c.OnExecute(() =>
+                    {
+                        string LogicAppName = LogicAppNameCO.Value();
+
+                        ListWorkflows(LogicAppName);
 
                         return 0;
                     });
