@@ -26,7 +26,7 @@ namespace LogicAppAdvancedTool
                 return;
             }
 
-            string ConfirmationMessage = $"CAUTION!!!\r\nThe current workflow: {WorkflowName} will be overwrite\r\n\r\nPlease input for confirmation:";
+            string ConfirmationMessage = $"WARNING!!!\r\nThe current workflow: {WorkflowName} will be overwrite\r\n\r\nPlease input for confirmation:";
             if (!Prompt.GetYesNo(ConfirmationMessage, false))
             {
                 Console.WriteLine("Operation Cancelled");
