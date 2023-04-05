@@ -1,6 +1,5 @@
 ## Introduction
-This tool integrated several common useful feature for Logic App Standard which not available in Logic App portal yet.
-
+This tool integrated several common useful feature for Logic App Standard which not available in Logic App portal yet.<br/>
 Please use **LogicAppAdvancedTool -?** for more information.
 
 
@@ -80,5 +79,3 @@ On the right handside of this Github page, you can directly download via "Releas
 2022-08-04
 1. Changed the mechanism of retrieving Logic App's definition table name to prevent wrong definition table get picked up if there are multiple Logic App Standard binding the same Storage Account. For all the command, we need to add an extra option **"-la [LogicAppName]"** to identify which Logic App we need to operate. This new option is not case sensetive and only Logic App name is required.
 ![image](https://user-images.githubusercontent.com/72241569/182770468-5ad3e8af-f990-445e-982d-47e7b338f158.png)
-
-2. Removed binary files, please compile the code locally.
