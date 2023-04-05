@@ -1,7 +1,7 @@
 ## Introduction
-This tool can be used for revert the Logic App Standard workflow's previous version which we don't have this this feature on portal yet.
+This tool integrated several common useful feature for Logic App Standard which not available in Logic App portal yet.
 
-##How to get application
+## How to get application
 On the right handside of this Github page, you can directly download via "Release" link.
 ![image](https://user-images.githubusercontent.com/72241569/229997619-fb431ac9-fbfe-47da-82a4-ed37a0be3258.png)
 
