@@ -1,6 +1,10 @@
 ## Introduction
 This tool can be used for revert the Logic App Standard workflow's previous version which we don't have this this feature on portal yet.
 
+##How to get application
+On the right handside of this Github page, you can directly download via "Release" link.
+![image](https://user-images.githubusercontent.com/72241569/229997619-fb431ac9-fbfe-47da-82a4-ed37a0be3258.png)
+
 ## How to use
 1. Open Kudu (Advanced Tools) of Logic App Standard and upload this tool into a folder
 <img alt="image" src="https://user-images.githubusercontent.com/72241569/229700543-cc31a92e-168e-410f-b703-73f579eb6071.png">
@@ -35,6 +39,11 @@ This tool can be used for revert the Logic App Standard workflow's previous vers
 11. **-?/[command] -?** help of the command
 
 ## Release Note
+2023-04-05
+1. Added warning message for RestoreAll command since if there's any invalid workflows in storage table, it might cause unexpected behavior for Logic App runtime.
+2. Added a new command "ListWorkflows" to list all the existing workflows in storage table.
+3. Added a new command "RestoreSingleWorkflow" to only restore a particular workflow.
+
 2023-03-02
 1. Added command description.
 2. Added an experimental command - "IngestWorkflow" which could bypass workflow validation and ingest workflow definition in Storage Table. In some situation, the worklfow definition could be failed, but the definiton still can work as expected (eg: using expression for dynamic assign API connection).
