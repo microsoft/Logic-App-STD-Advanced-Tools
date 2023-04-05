@@ -9,7 +9,7 @@ You can directly download via "Release" link.
 
 If you would like to compile the binary yourself, please always use "Publish" in Visual Studio, otherwise DLLs will not be integrated into the exe.
 <br/>
-## How to use (Sample of restore a workflow)
+## How to use (Demo of restore a workflow)
 1. Open Kudu (Advanced Tools) of Logic App Standard and upload this tool into a folder
 ![image](https://user-images.githubusercontent.com/72241569/230000172-99d7ad05-fd51-4917-9bc7-47d61cc7ccb6.png)
 
