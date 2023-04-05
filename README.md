@@ -1,6 +1,6 @@
 ## Introduction
 This tool integrated several common useful feature for Logic App Standard which not available in Logic App portal yet.<br/>
-Please use **LogicAppAdvancedTool -?** for more information.
+Please use command "**LogicAppAdvancedTool -?**" for more information.
 
 
 ## How to get application binary
@@ -13,11 +13,11 @@ On the right handside of this Github page, you can directly download via "Releas
 ![image](https://user-images.githubusercontent.com/72241569/230000172-99d7ad05-fd51-4917-9bc7-47d61cc7ccb6.png)
 
 
-2. Use command **LogicAppAdvancedTool ListWorkflows -la [LogicAppName]** to list all the workflows which can be found in storage table, if you don't remember which one need to be restored.
+2. Use command "**LogicAppAdvancedTool ListWorkflows -la [LogicAppName]**" to list all the workflows which can be found in storage table, if you don't remember which one need to be restored.
 ![image](https://user-images.githubusercontent.com/72241569/230001038-b91892f3-bcc8-4eb1-b3e7-cea6010d79e4.png)
 
 
-3. Use command **LogicAppAdvancedTool RestoreSingleWorkflow -la [LogicAppName] -wf [WorkflowName]** to restore the specific workflow
+3. Use command "**LogicAppAdvancedTool RestoreSingleWorkflow -la [LogicAppName] -wf [WorkflowName]**" to restore the specific workflow
 ![image](https://user-images.githubusercontent.com/72241569/230001799-e0d04308-d024-4ea4-bc14-3d74f3dbc37e.png)
 
 
