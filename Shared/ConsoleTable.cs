@@ -24,7 +24,7 @@ namespace LogicAppAdvancedTool
                 ColumnWidth = new List<int>();
                 foreach (string header in headers)
                 {
-                    ColumnWidth.Add(header.Length);
+                    ColumnWidth.Add(header.Length + 2);
                 }
             }
 
@@ -39,7 +39,7 @@ namespace LogicAppAdvancedTool
 
                 for (int i = 0; i < contents.Length; i++)
                 {
-                    if (ColumnWidth[i] < contents[i].Length - 2) 
+                    if (ColumnWidth[i] < contents[i].Length + 2) 
                     {
                         ColumnWidth[i] = contents[i].Length + 2;
                     }
@@ -66,7 +66,7 @@ namespace LogicAppAdvancedTool
                     for (int i = 0; i < row.Length; i++)
                     {
                         rowContent.Append("|");
-                        rowContent.Append(string.Format($"{row[i]}".PadRight(ColumnWidth[i])));
+                        rowContent.Append(string.Format($" {row[i]}".PadRight(ColumnWidth[i])));
                     }
 
                     rowContent.Append("|");

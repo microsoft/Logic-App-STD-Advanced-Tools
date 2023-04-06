@@ -4,6 +4,7 @@ using Azure.Data.Tables.Models;
 using Microsoft.WindowsAzure.ResourceStack.Common.Utilities;
 using System;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 
 namespace LogicAppAdvancedTool
@@ -55,6 +56,14 @@ namespace LogicAppAdvancedTool
 
             Console.WriteLine("No table found in Azure Storage Account, please check whether the Logic App Name correct or not.");
             return string.Empty;
+        }
+
+
+        private static void BackupCurrentSite()
+        {
+            string FilePath = $"{Directory.GetCurrentDirectory()}/Backup_{DateTime.Now.ToString("yyyyMMddHHmmss")}.zip";
+
+            ZipFile.CreateFromDirectory("C:/home/site/wwwroot/", FilePath, CompressionLevel.Fastest, false);
         }
 
         /// <summary>

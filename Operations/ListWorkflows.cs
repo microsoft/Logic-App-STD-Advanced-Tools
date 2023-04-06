@@ -32,7 +32,7 @@ namespace LogicAppAdvancedTool
                 return;
             }
 
-            ConsoleTable consoleTable = new ConsoleTable("Workflow Name", "Changed Time");
+            ConsoleTable consoleTable = new ConsoleTable("Workflow Name", "Last Updated (UTC)");
 
             foreach (TableEntity entity in entities)
             {
