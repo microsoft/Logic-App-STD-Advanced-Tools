@@ -35,6 +35,7 @@ If you would like to compile the binary yourself, please always use "Publish" in
 2023-04-06
 1. Added validation for required options.
 2. For risky operations (eg: RestoreAll, IngestWorkflow), the current wwwroot folder will be backup as an archive file in tool folder.
+3. Added a new command "SyncToLocal" which will retrieve all the files from wwwroot folder on cloud sice to local project.
 
 2023-04-05
 1. Added warning message for RestoreAll command since if there's any invalid workflows in storage table, it might cause unexpected behavior for Logic App runtime.
