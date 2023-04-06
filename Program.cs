@@ -301,8 +301,27 @@ namespace LogicAppAdvancedTool
                 });
                 #endregion
 
-                #region !!!TODO - Export Existing Workflows
+                #region Sync to local
+                app.Command("SyncToLocal", c => {
 
+                    CommandOption ShareNameCO = c.Option("-sn|--shareName", "File Share name of Loigc App storage account", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "Connection string of the File Share", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption LocalPathCO = c.Option("-path|--localPath", "Destination folder path on your local disk", CommandOptionType.SingleValue).IsRequired();
+
+                    c.HelpOption("-?");
+                    c.Description = "Sync remote wwwroot folder of Logic App Standard to local project. This command must run in local computer.";
+
+                    c.OnExecute(() =>
+                    {
+                        string ShareName = ShareNameCO.Value();
+                        string ConnectionString = ConnectionStringCO.Value();
+                        string LocalPath = LocalPathCO.Value();
+
+                        SyncToLocal(ShareName, ConnectionString, LocalPath);
+
+                        return 0;
+                    });
+                });
                 #endregion
 
                 #region Ingest workflow
