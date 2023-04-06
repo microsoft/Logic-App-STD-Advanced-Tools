@@ -1,6 +1,7 @@
 ﻿using Azure;
 using Azure.Data.Tables;
 using Azure.Data.Tables.Models;
+using Microsoft.VisualBasic;
 using Microsoft.WindowsAzure.ResourceStack.Common.Utilities;
 using System;
 using System.IO;
@@ -59,11 +60,13 @@ namespace LogicAppAdvancedTool
         }
 
 
-        private static void BackupCurrentSite()
+        private static string BackupCurrentSite()
         {
             string FilePath = $"{Directory.GetCurrentDirectory()}/Backup_{DateTime.Now.ToString("yyyyMMddHHmmss")}.zip";
 
             ZipFile.CreateFromDirectory("C:/home/site/wwwroot/", FilePath, CompressionLevel.Fastest, false);
+
+            return FilePath;
         }
 
         /// <summary>

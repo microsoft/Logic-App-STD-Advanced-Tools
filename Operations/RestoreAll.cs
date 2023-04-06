@@ -27,6 +27,9 @@ namespace LogicAppAdvancedTool
                 return;
             }
 
+            string BackupPath = BackupCurrentSite();
+            Console.WriteLine($"Backup current workflows, you can find in path: {BackupPath}");
+
             TableClient tableClient = new TableClient(ConnectionString, TableName);
             Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(select: new string[] { "FlowName", "ChangedTime", "DefinitionCompressed", "Kind" });
 
