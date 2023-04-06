@@ -1,40 +1,42 @@
 ## Introduction
-This tool can be used for revert the Logic App Standard workflow's previous version which we don't have this this feature on portal yet.
+This tool integrated several useful features for Logic App Standard which not available in Logic App portal yet.<br/>
+Please use command "**LogicAppAdvancedTool -?**" for more information of the commands.
 
-## How to use
+
+## How to get application binary
+You can directly download via "Release" link.
+![image](https://user-images.githubusercontent.com/72241569/229997619-fb431ac9-fbfe-47da-82a4-ed37a0be3258.png)
+
+If you would like to compile the binary yourself, please always use "Publish" in Visual Studio, otherwise DLLs will not be integrated into the exe.
+<br/>
+## How to use (Demo of restore a workflow)
 1. Open Kudu (Advanced Tools) of Logic App Standard and upload this tool into a folder
-<img alt="image" src="https://user-images.githubusercontent.com/72241569/229700543-cc31a92e-168e-410f-b703-73f579eb6071.png">
+![image](https://user-images.githubusercontent.com/72241569/230000172-99d7ad05-fd51-4917-9bc7-47d61cc7ccb6.png)
 
 
-2. Use command **LogicAppAdvancedTool Backup -la [LogicAppName]** to backup all the existing workflows. The connection string can be found in Storage Account - Access Key
-   After run the command, the tool will create a new folder which called "**Backup**", the sub-folders will be named as workflow name. Each definition will be a seperate json file.
-![image](https://user-images.githubusercontent.com/72241569/229700789-109db7ba-3b08-4681-bea7-0e74721842e4.png)
+2. Use command "**LogicAppAdvancedTool ListWorkflows -la [LogicAppName]**" to list all the workflows which can be found in storage table, if you don't remember which one need to be restored.
+![image](https://user-images.githubusercontent.com/72241569/230001038-b91892f3-bcc8-4eb1-b3e7-cea6010d79e4.png)
 
-3. Recently we have to check the definition manually to see which version we would like to revert to. 
-   The version is the last part of the file name.
-![image](https://user-images.githubusercontent.com/72241569/139812550-29420c41-ab80-4ccd-ad2e-59a471991ab1.png)
 
-4. Use command **LogicAppAdvancedTool Revert -n [Workflow Name] -v [Version]** to revert to previous version
+3. Use command "**LogicAppAdvancedTool RestoreSingleWorkflow -la [LogicAppName] -wf [WorkflowName]**" to restore the specific workflow
+![image](https://user-images.githubusercontent.com/72241569/230001799-e0d04308-d024-4ea4-bc14-3d74f3dbc37e.png)
+
+
+4. Refresh Logic App - Workflow page, we can find the deleted workflow has been recovered.
+
 
 ## Limitation
 1. This tool only modify workflow.json, if the API connection metadata get lost in connections.json, the reverted workflow will not work.
 2. If the definition not be used in 90 days, the backend service will remove it from storage table, so this tool will not be able to retrieve the definitions older than 90 days.
 3. Before execute Revert command, we need to backup first since the Revert command is reading workflow definitions from backup folder.
 
-## Supported Command
-1. **Backup**: Backup all the existing definitions into Json files
-2. **ClearJobQueue**: Clear all incomplete jobs in the Storage Queue. **Be aware of this command will result to data losing for running workflow instances**
-3. **Clone**: Clone a workflow to a new one, exactly the same as clone in Logic App comsumption
-4. **ConvertToStateful**: Clone a stateless workflow and create a stateful version
-5. **Decode** Decode a difinition into readable content
-6. **GenerateTablePrefix** Generate Logic App definition table name as per Logic App name
-7. **ListVersions** List all the existing versions of a workflow
-8. **Revert** Revert a workflow to previous version as per version ID.
-9. **RetrieveFailures(Preview)** Retrieve all the failed actions' input/output for a specific day.
-10. **RestoreAll** Retrieve all the exsiting definitions from Storage Table and restore in Logic App.
-11. **-?/[command] -?** help of the command
 
 ## Release Note
+2023-04-05
+1. Added warning message for RestoreAll command since if there's any invalid workflows in storage table, it might cause unexpected behavior for Logic App runtime.
+2. Added a new command "ListWorkflows" to list all the existing workflows in storage table.
+3. Added a new command "RestoreSingleWorkflow" to only restore a particular workflow.
+
 2023-03-02
 1. Added command description.
 2. Added an experimental command - "IngestWorkflow" which could bypass workflow validation and ingest workflow definition in Storage Table. In some situation, the worklfow definition could be failed, but the definiton still can work as expected (eg: using expression for dynamic assign API connection).
@@ -78,5 +80,3 @@ This tool can be used for revert the Logic App Standard workflow's previous vers
 2022-08-04
 1. Changed the mechanism of retrieving Logic App's definition table name to prevent wrong definition table get picked up if there are multiple Logic App Standard binding the same Storage Account. For all the command, we need to add an extra option **"-la [LogicAppName]"** to identify which Logic App we need to operate. This new option is not case sensetive and only Logic App name is required.
 ![image](https://user-images.githubusercontent.com/72241569/182770468-5ad3e8af-f990-445e-982d-47e7b338f158.png)
-
-2. Removed binary files, please compile the code locally.
