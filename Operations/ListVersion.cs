@@ -18,6 +18,8 @@ namespace LogicAppAdvancedTool
             TableClient tableClient = new TableClient(ConnectionString, TableName);
             Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{WorkflowName}'");
 
+            ConsoleTable consoleTable = new ConsoleTable("Version ID", "Updated Time (UTC)");
+
             foreach (TableEntity entity in tableEntities)
             {
                 string RowKey = entity.GetString("RowKey");
@@ -25,11 +27,13 @@ namespace LogicAppAdvancedTool
                 if (RowKey.Contains("FLOWVERSION"))
                 {
                     string Version = entity.GetString("FlowSequenceId");
-                    DateTimeOffset? UpdateTime = entity.GetDateTimeOffset("FlowUpdatedTime");
+                    string UpdateTime = entity.GetDateTimeOffset("FlowUpdatedTime")?.ToString("yyyy-MM-ddTHH:mm:ssZ");
 
-                    Console.WriteLine($"Version ID:{Version}    UpdateTime:{UpdateTime}");
+                    consoleTable.AddRow(Version, UpdateTime);
                 }
             }
+
+            consoleTable.Print();
         }
     }
 }
