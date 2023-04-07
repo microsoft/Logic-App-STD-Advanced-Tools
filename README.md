@@ -9,6 +9,26 @@ You can directly download via "Release" link.
 
 If you would like to compile the binary yourself, please always use "Publish" in Visual Studio, otherwise DLLs will not be integrated into the exe.
 <br/>
+
+
+## Commands
+| Command | Description |
+| --- | --- |
+| Backup | Retrieve all the definitions which can be found in Storage Table and save as Json files. The storage table saves the definition for past 90 days by default even they have been deleted.|
+|ClearJobQueue | Clear Logic App storage queue for stopping any running instances, this action could casue data lossing.|
+| Clone | Clone a workflow to a new workflow, only support for same Logic App and same kind (stateful or stateless).|
+| ConvertToStateful | Clone a stateless workflow and create a new stateful workflow.|
+| Decode | Decode a workflow based on provided version to human readable content.|
+| GenerateTablePrefix | Generate Logic App/Workflow's storage table prefix.|
+| IngestWorkflow | **This is an experimental feature.  NOT fully tested, DON'T use in PROD environment!!!** Ingest a workflow directly into Storage Table directly to bypass workflow definition validation.|
+| ListVersions | List all the exisiting versions of a workflow.|
+| ListWorkflows | List all the exisiting workflows which can be found in storage table.|
+| RestoreAll | Restore all the workflows which be deleted accidentally. **This operation may cause unexpected behavior on Logic App runtime if you have any invalid workflows in storage table**.|
+| RestoreSingleWorkflow | Restore a workflows which has been deleted accidentally.|
+| RetrieveFailures | Retrieve all the detail failure information of a workflow for a specific day.|
+| Revert | Revert a workflow to a previous version, this command will backup all the workflows in advance to prevent any unexpected incidents.|
+| SyncToLocal | Sync remote wwwroot folder of Logic App Standard to local project. This command must run in local computer.|
+
 ## How to use (Demo of restore a workflow)
 1. Open Kudu (Advanced Tools) of Logic App Standard and upload this tool into a folder
 ![image](https://user-images.githubusercontent.com/72241569/230000172-99d7ad05-fd51-4917-9bc7-47d61cc7ccb6.png)
