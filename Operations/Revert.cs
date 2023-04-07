@@ -19,7 +19,7 @@ namespace LogicAppAdvancedTool
 
             if (Files == null || Files.Length == 0)
             {
-                throw new UserInputException("No backup file found, run Backup command first.");
+                throw new UserInputException("No backup file found, please check whether Version is correct.");
             }
 
             string ConfirmationMessage = $"WARNING!!!\r\nThe current workflow: {WorkflowName} will be overwrite\r\n\r\nPlease input for confirmation:";

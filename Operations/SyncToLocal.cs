@@ -16,13 +16,36 @@ namespace LogicAppAdvancedTool
 
             ShareDirectoryClient directoryClient = shareClient.GetDirectoryClient("site/wwwroot/");
 
+            string ConfirmationMessage = "WARNING!!!\r\nThis operation will overwrite your local project files.\r\nPlease input for confirmation:";
+            if (!Prompt.GetYesNo(ConfirmationMessage, false))
+            {
+                Console.WriteLine("Operation Cancelled");
 
+                return;
+            }
+
+            string SyncModeMessage = "Whether clean up workflows in local project which cannot be found on cloud?\r\n\tYes: Clean up all the subfolders which not in clould (except .git, .vscode).\r\n\tNo: Only overwrite the files which modified on cloud, no files will be deleted.\r\nPlease input for confirmation:";
+            if (Prompt.GetYesNo(SyncModeMessage, false))
+            {
+                List<string> ExcludeFolders = new List<string>() { ".git", ".vscode" };
+
+                DirectoryInfo DI = new DirectoryInfo(LocalPath);
+                DirectoryInfo[] SubFolders = DI.GetDirectories();
+
+                foreach (DirectoryInfo SubFolder in SubFolders)
+                {
+                    if (!ExcludeFolders.Contains(SubFolder.Name))
+                    { 
+                        Directory.Delete(SubFolder.FullName, true);
+                    }
+                }
+            }
 
             Sync(LocalPath, directoryClient);
         }
 
         private static void Sync(string localFolder, ShareDirectoryClient client)
-        { 
+        {
             Pageable<ShareFileItem> items = client.GetFilesAndDirectories();
             foreach (ShareFileItem item in items)
             {
