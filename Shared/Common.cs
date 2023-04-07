@@ -31,8 +31,7 @@ namespace LogicAppAdvancedTool
                 return TableName;
             }
 
-            Console.WriteLine("No table found in Azure Storage Account, please check whether the Logic App Name correct or not.");
-            return string.Empty;
+            throw new UserInputException("No table found in Azure Storage Account, please check whether the Logic App Name correct or not.");
         }
 
         /// <summary>
@@ -119,6 +118,11 @@ namespace LogicAppAdvancedTool
         {
             public object definition { get; set; }
             public string kind { get; set; }
+        }
+
+        public class UserInputException : Exception 
+        {     
+            public UserInputException(string Message) : base(Message) { }
         }
     }
 }

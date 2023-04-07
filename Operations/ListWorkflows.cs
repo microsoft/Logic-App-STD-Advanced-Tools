@@ -13,11 +13,6 @@ namespace LogicAppAdvancedTool
         {
             string TableName = GetMainTableName(LogicAppName);
 
-            if (String.IsNullOrEmpty(TableName))
-            {
-                return;
-            }
-
             TableClient tableClient = new TableClient(ConnectionString, TableName);
             Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(select: new string[] { "FlowName", "ChangedTime", "DefinitionCompressed", "Kind" });
 
@@ -27,9 +22,7 @@ namespace LogicAppAdvancedTool
 
             if (entities.Count == 0)
             {
-                Console.WriteLine($"No workflow found.");
-
-                return;
+                throw new UserInputException("No workflow found.");
             }
 
             ConsoleTable consoleTable = new ConsoleTable("Workflow Name", "Last Updated (UTC)");

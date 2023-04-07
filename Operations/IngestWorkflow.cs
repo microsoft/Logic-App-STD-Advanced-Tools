@@ -33,12 +33,6 @@ namespace LogicAppAdvancedTool
 
             string MainTableName = GetMainTableName(LogicAppName);
 
-            if (string.IsNullOrEmpty(MainTableName))
-            {
-                Console.WriteLine("Cannot find the definition table as per Logic App name, please check whether the Logic App is correct or not");
-                return;
-            }
-
             string BackupPath = BackupCurrentSite();
             Console.WriteLine($"Backup current workflows, you can find in path: {BackupPath}");
 

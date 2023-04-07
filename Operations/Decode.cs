@@ -2,6 +2,7 @@
 using Azure.Data.Tables;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace LogicAppAdvancedTool
@@ -13,12 +14,11 @@ namespace LogicAppAdvancedTool
             string TableName = GetMainTableName(LogicAppName);
 
             TableClient tableClient = new TableClient(ConnectionString, TableName);
-            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{WorkflowName}' and FlowSequenceId eq '{Version}'");
+            List<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{WorkflowName}' and FlowSequenceId eq '{Version}'").ToList();
 
             if (tableEntities.Count<TableEntity>() == 0)
             {
-                Console.WriteLine("No Record Found! Please check the Workflow name and the Version(FlowSequenceId)");
-                return;
+                throw new UserInputException($"{WorkflowName} with version {Version} cannot be found in storage table, pleaase check your input.");
             }
 
             string Content = String.Empty;

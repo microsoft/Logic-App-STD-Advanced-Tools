@@ -40,7 +40,7 @@ namespace LogicAppAdvancedTool
 
                     if (Directory.Exists(ClonePath))
                     {
-                        Console.WriteLine("Workflow already exists, workflow will not be cloned. Please use another target name.");
+                        throw new UserInputException("Workflow already exists, workflow will not be cloned. Please use another target name.");
                     }
 
                     Directory.CreateDirectory(ClonePath);

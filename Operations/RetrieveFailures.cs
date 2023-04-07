@@ -21,9 +21,7 @@ namespace LogicAppAdvancedTool
 
             if (tableEntities.Count() == 0)
             {
-                Console.WriteLine("No workflow found in table, please double check the workflow name");
-
-                return;
+                throw new UserInputException($"{WorkflowName} cannot be found in storage table, please check whether workflow is correct.");
             }
 
             string logicAppPrefix = StoragePrefixGenerator.Generate(LogicAppName.ToLower());
@@ -39,9 +37,7 @@ namespace LogicAppAdvancedTool
 
             if (results.Count() == 0)
             {
-                Console.WriteLine($"action table - {actionTableName} not exist, please double check the parameters.");
-
-                return;
+                throw new UserInputException($"action table - {actionTableName} not exist, please check whether Date is correct.");
             }
 
             Console.WriteLine($"action table - {actionTableName} found, retrieving action logs...");

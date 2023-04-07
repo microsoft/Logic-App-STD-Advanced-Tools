@@ -1,6 +1,8 @@
 ﻿using Azure;
 using Azure.Data.Tables;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LogicAppAdvancedTool
 {
@@ -10,13 +12,13 @@ namespace LogicAppAdvancedTool
         {
             string TableName = GetMainTableName(LogicAppName);
 
-            if (string.IsNullOrEmpty(TableName))
-            {
-                return;
-            }
-
             TableClient tableClient = new TableClient(ConnectionString, TableName);
-            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{WorkflowName}'");
+            List<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{WorkflowName}'").ToList();
+
+            if (tableEntities.Count == 0)
+            {
+                throw new UserInputException($"{WorkflowName} cannot be found in storage table, please check whether workflow is correct.");
+            }
 
             ConsoleTable consoleTable = new ConsoleTable("Version ID", "Updated Time (UTC)");
 

@@ -349,7 +349,11 @@ namespace LogicAppAdvancedTool
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.StackTrace);
+
+                if (!(ex is UserInputException))     //Print stack trace if it is not related to user input
+                {
+                    Console.WriteLine(ex.StackTrace);
+                }
             }
         }        
 

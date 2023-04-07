@@ -16,6 +16,8 @@ namespace LogicAppAdvancedTool
 
             ShareDirectoryClient directoryClient = shareClient.GetDirectoryClient("site/wwwroot/");
 
+
+
             Sync(LocalPath, directoryClient);
         }
 

@@ -12,18 +12,14 @@ namespace LogicAppAdvancedTool
 
             if (!Directory.Exists(BackupFilePath))
             {
-                Console.WriteLine("Workflow name not found, please double check the provided workflow name.");
-
-                return;
+                throw new UserInputException($"{WorkflowName} folder cannot be found in wwwroot folder, please check the workflow name.");
             }
 
             string[] Files = Directory.GetFiles(BackupFilePath, $"*{Version}.json");
 
             if (Files == null || Files.Length == 0)
             {
-                Console.WriteLine("No backup file found, please check the name and version of workflow");
-
-                return;
+                throw new UserInputException("No backup file found, run Backup command first.");
             }
 
             string ConfirmationMessage = $"WARNING!!!\r\nThe current workflow: {WorkflowName} will be overwrite\r\n\r\nPlease input for confirmation:";

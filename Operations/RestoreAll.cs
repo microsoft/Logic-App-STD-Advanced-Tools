@@ -14,11 +14,6 @@ namespace LogicAppAdvancedTool
         {
             string TableName = GetMainTableName(LogicAppName);
 
-            if (String.IsNullOrEmpty(TableName))
-            {
-                return;
-            }
-
             string ConfirmationMessage = "WARNING!!!\r\nThis operation will restore all the deleted workflows, if there's any invalid workflows, it might cause unexpected behavior on Logic App runtime.\r\nBe cautuion if you are running this command in PROD environment\r\nPlease input for confirmation:";
             if (!Prompt.GetYesNo(ConfirmationMessage, false))
             {

@@ -13,11 +13,6 @@ namespace LogicAppAdvancedTool
         {
             string TableName = GetMainTableName(LogicAppName);
 
-            if (String.IsNullOrEmpty(TableName))
-            {
-                return;
-            }
-
             TableClient tableClient = new TableClient(ConnectionString, TableName);
             Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{WorkflowName}'", select: new string[] { "FlowName", "ChangedTime", "DefinitionCompressed", "Kind" });
 
@@ -27,9 +22,7 @@ namespace LogicAppAdvancedTool
 
             if (entities.Count == 0)
             {
-                Console.WriteLine($"No workflow found in the table named {WorkflowName}, please check workflow name");
-
-                return;
+                throw new UserInputException($"{WorkflowName} cannot be found in storage table, please check whether workflow is correct.");
             }
 
             foreach (TableEntity entity in entities)

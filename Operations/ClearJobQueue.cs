@@ -18,9 +18,7 @@ namespace LogicAppAdvancedTool
 
             if (!queueClient.Exists())
             {
-                Console.WriteLine($"Queue: {queueName} is not exist in Storage Account");
-
-                return;
+                throw new UserInputException($"Queue: {queueName} is not exist in Storage Account");
             }
 
             string ConfirmationMessage = "WARNING!!!\r\n1. Please make sure the Logic App has been stopped\r\n2. Clear Storage Queue will cause to lose data of all the running instances\r\nPlease input for confirmation:";
