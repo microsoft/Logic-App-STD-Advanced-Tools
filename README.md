@@ -13,7 +13,7 @@ If you would like to compile the binary yourself, please always use "Publish" in
 
 ## Commands
 | Command | Description |
-| - | --- |
+| --- | --- |
 | Backup | Retrieve all the existing defitnions from Storage Table and save as Json files. The storage table saves the definition for past 90 days by default even they have been deleted.|
 |ClearJobQueue | Clear Logic App storage queue for stopping any running instances, this action could casue data lossing.|
 | Clone | Clone a workflow to a new workflow, only support for same Logic App.|
