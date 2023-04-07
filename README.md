@@ -52,6 +52,10 @@ If you would like to compile the binary yourself, please always use "Publish" in
 
 
 ## Release Note
+2023-04-07
+1. Improved the exception handle for invalid user input
+2. Add a new featue in "SyncToLocal" command, provide an option to determine whehter need to clean workflows in local project which have been delete on cloud.
+
 2023-04-06
 1. Added validation for required options.
 2. For risky operations (eg: RestoreAll, IngestWorkflow), the current wwwroot folder will be backup as an archive file in tool folder.
