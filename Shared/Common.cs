@@ -68,6 +68,14 @@ namespace LogicAppAdvancedTool
             return FilePath;
         }
 
+        public static string ConnectionString
+        {
+            get
+            {
+                return Environment.GetEnvironmentVariable("AzureWebJobsStorage");
+            }
+        }
+
         /// <summary>
         /// Decompress the content which compressed by Inflate
         /// </summary>

@@ -22,7 +22,7 @@ namespace LogicAppAdvancedTool
             }
 
             string ConfirmationMessage = "WARNING!!!\r\n1. Please make sure the Logic App has been stopped\r\n2. Clear Storage Queue will cause to lose data of all the running instances\r\nPlease input for confirmation:";
-            if (!Prompt.GetYesNo(ConfirmationMessage, false))
+            if (!Prompt.GetYesNo(ConfirmationMessage, false, ConsoleColor.Red))
             {
                 Console.WriteLine("Operation Cancelled");
 

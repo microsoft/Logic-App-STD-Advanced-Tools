@@ -30,7 +30,7 @@ namespace LogicAppAdvancedTool
                 app.Command("Backup", c =>
                 {
                     CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
-                    CommandOption AgoCO = c.Option("-ago|--ago", "Only retrieve the past X(unsigned integer) days workflow definitions, if not provided then retrieve all existing definitions", CommandOptionType.SingleValue);
+                    CommandOption AgoCO = c.Option("-ago|--ago", "(Optional) Only retrieve the past X(unsigned integer) days workflow definitions, if not provided then retrieve all existing definitions", CommandOptionType.SingleValue);
                     
                     c.HelpOption("-?");
                     c.Description = "Retrieve all the existing defitnions from Storage Table and save as Json files. The storage table saves the definition for past 90 days by default even they have been deleted.";
@@ -55,7 +55,7 @@ namespace LogicAppAdvancedTool
 
                         BackupDefinitions(LogicAppName, Ago);
 
-                        Console.WriteLine("Backup Succeeded. You can download the definition ");
+                        Console.WriteLine("Backup Succeeded. You can download the definition.");
 
                         return 0;
                     });
@@ -117,7 +117,7 @@ namespace LogicAppAdvancedTool
                     CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
                     CommandOption SourceNameCO = c.Option("-sn|--sourcename", "Source Workflow Name", CommandOptionType.SingleValue).IsRequired();
                     CommandOption TargetNameCO = c.Option("-tn|--targetname", "Target Workflow Name", CommandOptionType.SingleValue).IsRequired();
-                    CommandOption versionCO = c.Option("-v|--version", "Version of the workflow (optional, the latest version will be cloned if not provided this parameter)", CommandOptionType.SingleValue);
+                    CommandOption versionCO = c.Option("-v|--version", "(Optional) Version of the workflow the latest version will be cloned, if not provided the latest version will be selected.)", CommandOptionType.SingleValue);
 
                     c.HelpOption("-?");
                     c.Description = "Clone a workflow to a new workflow, only support for same Logic App.";
@@ -143,7 +143,7 @@ namespace LogicAppAdvancedTool
                     CommandOption WorkflowNameCO = c.Option("-wf|--workflow", "Workflow Name", CommandOptionType.SingleValue).IsRequired();
                     
                     c.HelpOption("-?");
-                    c.Description = "List all the exisiting versions of a workflow";
+                    c.Description = "List all the exisiting versions of a workflow.";
 
                     c.OnExecute(() => 
                     {
@@ -180,7 +180,7 @@ namespace LogicAppAdvancedTool
                 app.Command("GenerateTablePrefix", c =>
                 {
                     CommandOption LogicAppnameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
-                    CommandOption WorkflowCO = c.Option("-wf|--workflow", "Workflow name (optional, if not provided, only Logic App prefix will be generated)", CommandOptionType.SingleValue);
+                    CommandOption WorkflowCO = c.Option("-wf|--workflow", "(Optional) Workflow name, if not provided, only Logic App prefix will be generated)", CommandOptionType.SingleValue);
 
                     c.HelpOption("-?");
                     c.Description = "Generate Logic App/Workflow's storage table prefix.";
@@ -288,7 +288,7 @@ namespace LogicAppAdvancedTool
                     CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
-                    c.Description = "List all the exisiting workflows which can be found in storage table";
+                    c.Description = "List all the exisiting workflows which can be found in storage table.";
 
                     c.OnExecute(() =>
                     {
@@ -318,6 +318,31 @@ namespace LogicAppAdvancedTool
                         string LocalPath = LocalPathCO.Value();
 
                         SyncToLocal(ShareName, ConnectionString, LocalPath);
+
+                        return 0;
+                    });
+                });
+                #endregion
+
+                #region Sync to local
+                app.Command("AutoSyncToLocal", c => {
+
+                    CommandOption ShareNameCO = c.Option("-sn|--shareName", "File Share name of Loigc App storage account", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "Connection string of the File Share", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption LocalPathCO = c.Option("-path|--localPath", "Destination folder path on your local disk", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption ExcludesCO = c.Option("-ex|--excludes", "(Optional) The folders which need to be excluded (use comma for split), .git, .vscode will be excluded by default.", CommandOptionType.SingleValue);
+
+                    c.HelpOption("-?");
+                    c.Description = "Sync remote wwwroot folder of Logic App Standard to local project without prompt confirmation which can be used as a schedule task. This command must run in local computer.";
+
+                    c.OnExecute(() =>
+                    {
+                        string ShareName = ShareNameCO.Value();
+                        string ConnectionString = ConnectionStringCO.Value();
+                        string LocalPath = LocalPathCO.Value();
+                        string Excludes = ExcludesCO.Value();
+
+                        AutoSyncToLocal(ShareName, ConnectionString, LocalPath, Excludes);
 
                         return 0;
                     });
@@ -354,14 +379,6 @@ namespace LogicAppAdvancedTool
                 {
                     Console.WriteLine(ex.StackTrace);
                 }
-            }
-        }        
-
-        public static string ConnectionString
-        {
-            get 
-            { 
-                return Environment.GetEnvironmentVariable("AzureWebJobsStorage");
             }
         }
     }
