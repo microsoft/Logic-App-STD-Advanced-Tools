@@ -29,7 +29,7 @@ namespace LogicAppAdvancedTool
                 #region Backup
                 app.Command("Backup", c =>
                 {
-                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
                     CommandOption AgoCO = c.Option("-ago|--ago", "(Optional) Only retrieve the past X(unsigned integer) days workflow definitions, if not provided then retrieve all existing definitions", CommandOptionType.SingleValue);
                     
                     c.HelpOption("-?");
@@ -65,9 +65,9 @@ namespace LogicAppAdvancedTool
                 #region Revert
                 app.Command("Revert", c =>
                 {
-                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
-                    CommandOption WorkflowNameCO = c.Option("-wf|--workflow", "Workflow Name", CommandOptionType.SingleValue).IsRequired();
-                    CommandOption VersionCO = c.Option("-v|--version", "Version, the first part of the backup file name", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption WorkflowNameCO = c.Option("-wf|--workflow", "(Mandatory) Workflow Name", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption VersionCO = c.Option("-v|--version", "(Mandatory) Version, the first part of the backup file name", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
                     c.Description = "Revert a workflow to a previous version, this command will backup all the workflows in advance to prevent any unexpected incidents.";
@@ -90,9 +90,9 @@ namespace LogicAppAdvancedTool
                 #region Decode
                 app.Command("Decode", c =>
                 {
-                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
-                    CommandOption WorkflowNameCO = c.Option("-wf|--workflow", "Workflow Name", CommandOptionType.SingleValue).IsRequired();
-                    CommandOption VersionCO = c.Option("-v|--version", "Version, the first part of the backup file name", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption WorkflowNameCO = c.Option("-wf|--workflow", "(Mandatory) Workflow Name", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption VersionCO = c.Option("-v|--version", "(Mandatory) Version, the first part of the backup file name", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
                     c.Description = "Decode a workflow based on the version to human readable content.";
@@ -114,9 +114,9 @@ namespace LogicAppAdvancedTool
                 #region Clone
                 app.Command("Clone", c =>
                 {
-                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
-                    CommandOption SourceNameCO = c.Option("-sn|--sourcename", "Source Workflow Name", CommandOptionType.SingleValue).IsRequired();
-                    CommandOption TargetNameCO = c.Option("-tn|--targetname", "Target Workflow Name", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption SourceNameCO = c.Option("-sn|--sourcename", "(Mandatory) Source Workflow Name", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption TargetNameCO = c.Option("-tn|--targetname", "(Mandatory) Target Workflow Name", CommandOptionType.SingleValue).IsRequired();
                     CommandOption versionCO = c.Option("-v|--version", "(Optional) Version of the workflow the latest version will be cloned, if not provided the latest version will be selected.)", CommandOptionType.SingleValue);
 
                     c.HelpOption("-?");
@@ -139,8 +139,8 @@ namespace LogicAppAdvancedTool
                 #region List versions
                 app.Command("ListVersions", c =>
                 {
-                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
-                    CommandOption WorkflowNameCO = c.Option("-wf|--workflow", "Workflow Name", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption WorkflowNameCO = c.Option("-wf|--workflow", "(Mandatory) Workflow Name", CommandOptionType.SingleValue).IsRequired();
                     
                     c.HelpOption("-?");
                     c.Description = "List all the exisiting versions of a workflow.";
@@ -160,7 +160,7 @@ namespace LogicAppAdvancedTool
                 #region Restore All workflows
                 app.Command("RestoreAll", c =>
                 {
-                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
                     c.Description = "Restore all the workflows which be deleted accidentally.";
@@ -179,7 +179,7 @@ namespace LogicAppAdvancedTool
                 #region Convert Logic App Name and Workflow Name to it's Storage Table prefix
                 app.Command("GenerateTablePrefix", c =>
                 {
-                    CommandOption LogicAppnameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption LogicAppnameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
                     CommandOption WorkflowCO = c.Option("-wf|--workflow", "(Optional) Workflow name, if not provided, only Logic App prefix will be generated)", CommandOptionType.SingleValue);
 
                     c.HelpOption("-?");
@@ -200,9 +200,9 @@ namespace LogicAppAdvancedTool
                 #region Retrieve Failure Logs
                 app.Command("RetrieveFailures", c =>
                 {
-                    CommandOption LogicAppnameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
-                    CommandOption WorkflowCO = c.Option("-wf|--workflow", "Workflow name", CommandOptionType.SingleValue).IsRequired();
-                    CommandOption DateCO = c.Option("-d|--date", "Date (format: \"yyyyMMdd\") of the logs need to be retrieved, UTC time", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption LogicAppnameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption WorkflowCO = c.Option("-wf|--workflow", "(Mandatory) Workflow name", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption DateCO = c.Option("-d|--date", "(Mandatory) Date (format: \"yyyyMMdd\") of the logs need to be retrieved, UTC time", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
                     c.Description = "Retrieve all the detail failure information of a workflow for a specific day.";
@@ -223,9 +223,9 @@ namespace LogicAppAdvancedTool
                 #region Stateless to Stateful
                 app.Command("ConvertToStateful", c =>
                 {
-                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
-                    CommandOption SourceNameCO = c.Option("-sn|--sourcename", "Source Workflow Name (Stateless)", CommandOptionType.SingleValue).IsRequired();
-                    CommandOption TargetNameCO = c.Option("-tn|--targetname", "Target Workflow Name (Stateful)", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption SourceNameCO = c.Option("-sn|--sourcename", "(Mandatory) Source Workflow Name (Stateless)", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption TargetNameCO = c.Option("-tn|--targetname", "(Mandatory) Target Workflow Name (Stateful)", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
                     c.Description = "Clone a stateless workflow and create a new stateful workflow.";
@@ -245,7 +245,7 @@ namespace LogicAppAdvancedTool
 
                 #region Clear Queue
                 app.Command("ClearJobQueue", c => {
-                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
                     c.Description = "Clear Logic App storage queue for stopping any running instances, this action could casue data lossing.";
@@ -264,8 +264,8 @@ namespace LogicAppAdvancedTool
                 #region Restore single workflow
                 app.Command("RestoreSingleWorkflow", c =>
                 {
-                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
-                    CommandOption WorkflowNameCO = c.Option("-wf|--workflow", "The name of the workflow", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption WorkflowNameCO = c.Option("-wf|--workflow", "(Mandatory) The name of the workflow", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
                     c.Description = "Restore a workflows which has been deleted accidentally.";
@@ -285,7 +285,7 @@ namespace LogicAppAdvancedTool
                 #region List Workflows
                 app.Command("ListWorkflows", c =>
                 {
-                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
                     c.Description = "List all the exisiting workflows which can be found in storage table.";
@@ -304,55 +304,93 @@ namespace LogicAppAdvancedTool
                 #region Sync to local
                 app.Command("SyncToLocal", c => {
 
-                    CommandOption ShareNameCO = c.Option("-sn|--shareName", "File Share name of Loigc App storage account", CommandOptionType.SingleValue).IsRequired();
-                    CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "Connection string of the File Share", CommandOptionType.SingleValue).IsRequired();
-                    CommandOption LocalPathCO = c.Option("-path|--localPath", "Destination folder path on your local disk", CommandOptionType.SingleValue).IsRequired();
-
                     c.HelpOption("-?");
                     c.Description = "Sync remote wwwroot folder of Logic App Standard to local project. This command must run in local computer.";
 
-                    c.OnExecute(() =>
+                    #region Normal Mode
+                    c.Command("Normal", sub =>
                     {
-                        string ShareName = ShareNameCO.Value();
-                        string ConnectionString = ConnectionStringCO.Value();
-                        string LocalPath = LocalPathCO.Value();
+                        sub.HelpOption("-?");
+                        sub.Description = "Normal mode for manual sync, provides prompt dialog for confirmation of each step.";
 
-                        SyncToLocal(ShareName, ConnectionString, LocalPath);
+                        CommandOption ShareNameCO = sub.Option("-sn|--shareName", "(Mandatory) File Share name of Loigc App storage account", CommandOptionType.SingleValue).IsRequired();
+                        CommandOption ConnectionStringCO = sub.Option("-cs|--connectionString", "(Mandatory) Connection string of the File Share", CommandOptionType.SingleValue).IsRequired();
+                        CommandOption LocalPathCO = sub.Option("-path|--localPath", "(Mandatory) Destination folder path on your local disk", CommandOptionType.SingleValue).IsRequired();
 
-                        return 0;
+                        sub.OnExecute(() =>
+                        {
+                            string ShareName = ShareNameCO.Value();
+                            string ConnectionString = ConnectionStringCO.Value();
+                            string LocalPath = LocalPathCO.Value();
+
+                            SyncToLocal(ShareName, ConnectionString, LocalPath);
+
+                            return 0;
+                        });
                     });
-                });
-                #endregion
+                    #endregion
 
-                #region Sync to local
-                app.Command("AutoSyncToLocal", c => {
+                    #region Auto Mode
+                    c.Command("Auto", sub =>
+                    {
+                        sub.HelpOption("-?");
+                        sub.Description = "Auto mode, there's no prompt dialog and can be set as schedule task for regular execution.";
 
-                    CommandOption ShareNameCO = c.Option("-sn|--shareName", "File Share name of Loigc App storage account", CommandOptionType.SingleValue).IsRequired();
-                    CommandOption ConnectionStringCO = c.Option("-cs|--connectionString", "Connection string of the File Share", CommandOptionType.SingleValue).IsRequired();
-                    CommandOption LocalPathCO = c.Option("-path|--localPath", "Destination folder path on your local disk", CommandOptionType.SingleValue).IsRequired();
-                    CommandOption ExcludesCO = c.Option("-ex|--excludes", "(Optional) The folders which need to be excluded (use comma for split), .git, .vscode will be excluded by default.", CommandOptionType.SingleValue);
+                        CommandOption ShareNameCO = sub.Option("-sn|--shareName", "(Mandatory) File Share name of Loigc App storage account", CommandOptionType.SingleValue).IsRequired();
+                        CommandOption ConnectionStringCO = sub.Option("-cs|--connectionString", "(Mandatory) Connection string of the File Share", CommandOptionType.SingleValue).IsRequired();
+                        CommandOption LocalPathCO = sub.Option("-path|--localPath", "(Mandatory) Destination folder path on your local disk", CommandOptionType.SingleValue).IsRequired();
+                        CommandOption ExcludesCO = sub.Option("-ex|--excludes", "(Optional) The folders which need to be excluded (use comma for split), .git, .vscode will be excluded by default.", CommandOptionType.SingleValue);
 
-                    c.HelpOption("-?");
-                    c.Description = "Sync remote wwwroot folder of Logic App Standard to local project without prompt confirmation which can be used as a schedule task. This command must run in local computer.";
+                        sub.OnExecute(() =>
+                        {
+                            string ShareName = ShareNameCO.Value();
+                            string ConnectionString = ConnectionStringCO.Value();
+                            string LocalPath = LocalPathCO.Value();
+                            string Excludes = ExcludesCO.Value();
+
+                            List<string> ExcludeItems = new List<string>();
+                            if (!string.IsNullOrEmpty(Excludes))
+                            { 
+                                ExcludeItems = Excludes.Split(',').ToList();
+                            }
+
+                            AutoSyncToLocal(ShareName, ConnectionString, LocalPath, ExcludeItems);
+
+                            return 0;
+                        });
+                    });
+                    #endregion
+
+                    #region Batch Mode
+                    c.Command("Batch", sub =>
+                    {
+                        sub.HelpOption("-?");
+                        sub.Description = "Batch mode, read configuration file (JSON format) from local folder and sync all the Logic Apps which provided in config without prompt confirmation dialog.";
+
+                        CommandOption ConfigFileCO = sub.Option("-cf|--configFile", "(Mandatory) The local configuration file for application to read sync information. Reference can be found on github - sample/BatchSync_SampleConfig.json", CommandOptionType.SingleValue).IsRequired();
+
+                        sub.OnExecute(() =>
+                        {
+                            string ConfigFile = ConfigFileCO.Value();
+
+                            BatchSyncToLocal(ConfigFile);
+
+                            return 0;
+                        });
+                    });
+                    #endregion
 
                     c.OnExecute(() =>
                     {
-                        string ShareName = ShareNameCO.Value();
-                        string ConnectionString = ConnectionStringCO.Value();
-                        string LocalPath = LocalPathCO.Value();
-                        string Excludes = ExcludesCO.Value();
-
-                        AutoSyncToLocal(ShareName, ConnectionString, LocalPath, Excludes);
-
-                        return 0;
+                        throw new UserInputException("Please provide sub command, use -? for help.");
                     });
                 });
                 #endregion
 
                 #region Ingest workflow
                 app.Command("IngestWorkflow", c => {
-                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
-                    CommandOption WorkflowCO = c.Option("-wf|--workflow", "The name of workflow", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption WorkflowCO = c.Option("-wf|--workflow", "(Mandatory) The name of workflow", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
                     c.Description = "Ingest a workflow directly into Storage Table directly to bypass workflow definition validation. NOT fully tested, DON'T use in PROD environment.";

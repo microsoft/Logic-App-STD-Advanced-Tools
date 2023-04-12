@@ -2,6 +2,7 @@
 using Azure.Storage.Files.Shares;
 using McMaster.Extensions.CommandLineUtils;
 using System;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using Azure;
@@ -10,6 +11,7 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
+        #region Normal Sync
         private static void SyncToLocal(string ShareName, string ConnectionString, string LocalPath)
         {
             ShareClient shareClient = new ShareClient(ConnectionString, ShareName);
@@ -36,7 +38,7 @@ namespace LogicAppAdvancedTool
                 {
                     string[] exclude = CustomizedExcludes.Split(',');
                     foreach (string excludeItem in exclude)
-                    { 
+                    {
                         ExcludeFolders.Add(excludeItem.Trim());
                     }
                 }
@@ -47,26 +49,47 @@ namespace LogicAppAdvancedTool
                 foreach (DirectoryInfo SubFolder in SubFolders)
                 {
                     if (!ExcludeFolders.Contains(SubFolder.Name))
-                    { 
+                    {
                         Directory.Delete(SubFolder.FullName, true);
                     }
                 }
             }
 
             Sync(LocalPath, directoryClient);
+
+            Console.WriteLine($"Sync to local successed, File Share name {ShareName}.");
+        }
+        #endregion
+
+        private static void BatchSyncToLocal(string ConfigFile)
+        {
+            if (!File.Exists(ConfigFile))
+            {
+                throw new UserInputException($"{ConfigFile} cannot be found, please check your input");
+            }
+
+            string ConfigContent = File.ReadAllText(ConfigFile);
+            List<SyncConfig> SyncConfigs = JsonConvert.DeserializeObject<List<SyncConfig>>(ConfigContent);
+
+            foreach (SyncConfig config in SyncConfigs)
+            {
+                AutoSyncToLocal(config.FileShareName, config.ConnectionString, config.LocalPath, config.Excludes);
+            }
+
+            Console.WriteLine("All the projects have been synced");
         }
 
-        private static void AutoSyncToLocal(string ShareName, string ConnectionString, string LocalPath, string Excludes)
+        #region Auto sync
+        private static void AutoSyncToLocal(string ShareName, string ConnectionString, string LocalPath, List<string> Excludes)
         {
             ShareClient shareClient = new ShareClient(ConnectionString, ShareName);
             ShareDirectoryClient directoryClient = shareClient.GetDirectoryClient("site/wwwroot/");
 
             List<string> ExcludeFolders = new List<string>() { ".git", ".vscode" };
 
-            if (!string.IsNullOrEmpty(Excludes))
+            if (Excludes != null)
             {
-                string[] exclude = Excludes.Split(',');
-                foreach (string excludeItem in exclude)
+                foreach (string excludeItem in Excludes)
                 {
                     ExcludeFolders.Add(excludeItem.Trim());
                 }
@@ -84,7 +107,10 @@ namespace LogicAppAdvancedTool
             }
 
             Sync(LocalPath, directoryClient);
+
+            Console.WriteLine($"Sync to local successed, File Share name {ShareName}.");
         }
+        #endregion
 
         private static void Sync(string localFolder, ShareDirectoryClient client)
         {
@@ -110,6 +136,14 @@ namespace LogicAppAdvancedTool
                     }
                 }
             }
+        }
+
+        internal class SyncConfig
+        { 
+            public string FileShareName { get; set; }
+            public string ConnectionString { get; set; }
+            public string LocalPath { get; set; }
+            public List<string> Excludes { get; set; }
         }
     }
 }

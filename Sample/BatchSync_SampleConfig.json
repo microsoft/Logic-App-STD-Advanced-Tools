@@ -1,0 +1,16 @@
+[
+  {
+    "FileShareName": "File Share Name which Logic App 1 binding",
+    "ConnectionString": "ConnectionStringOfStorageAccount",
+    "LocalPath": "D:/Project 1"
+  },
+  {
+    "FileShareName": "File Share Name which Logic App 1 binding",
+    "ConnectionString": "ConnectionStringOfStorageAccount",
+    "LocalPath": "D:/Project 2",
+    "Excludes": [
+      "bin",
+      "package"
+    ]
+  }
+]
