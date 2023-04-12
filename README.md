@@ -27,7 +27,7 @@ If you would like to compile the binary yourself, please always use "Publish" in
 | RestoreSingleWorkflow | Restore a workflows which has been deleted accidentally.|
 | RetrieveFailures | Retrieve all the detail failure information of a workflow for a specific day.|
 | Revert | Revert a workflow to a previous version, this command will backup all the workflows in advance to prevent any unexpected incidents.|
-| (Auto)SyncToLocal | Sync remote wwwroot folder of Logic App Standard to local project. This command must run in local computer. The command with "Auto" will not provide prompt confirmation dialog which can be used as a schedule task.|
+| SyncToLocal | Sync remote wwwroot folder of Logic App Standard to local project. This command must run in local computer. There are 3 subcommands for different usage, please use -? for more information.|
 
 ## How to use (Demo of restore a workflow)
 1. Open Kudu (Advanced Tools) of Logic App Standard and upload this tool into a folder
@@ -52,6 +52,11 @@ If you would like to compile the binary yourself, please always use "Publish" in
 
 
 ## Release Note
+2023-04-12
+1. Added subcommands in SyncToLocal for different usage.
+2. All the required options now have "Mandatory" mark in option description.
+3. Remove AutoSyncToLocal command since it is a subcommand now.
+
 2023-04-10
 1. Added "Exclude" option in SyncToLocal command to manually exclude folders which need to be always kept in local project.
 2. Added new command "AutoSyncToLocal" to avoid prompt confirmation dialog if you would like to use as a local schedule task.
