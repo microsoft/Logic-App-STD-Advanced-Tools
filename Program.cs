@@ -387,6 +387,25 @@ namespace LogicAppAdvancedTool
                 });
                 #endregion
 
+                #region Check Connectivity
+                app.Command("CheckConnectivity", c =>
+                {
+                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
+
+                    c.HelpOption("-?");
+                    c.Description = "Check the connectivity between Logic App STD and it's Storage Account";
+
+                    c.OnExecute(() =>
+                    {
+                        string LogicAppName = LogicAppNameCO.Value();
+
+                        CheckConnectivity(LogicAppName);
+
+                        return 0;
+                    });
+                });
+                #endregion
+
                 #region Ingest workflow
                 app.Command("IngestWorkflow", c => {
                     CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
