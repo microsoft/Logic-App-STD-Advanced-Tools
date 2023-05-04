@@ -1,14 +1,11 @@
-﻿using Azure;
-using Azure.Data.Tables;
+﻿using Azure.Data.Tables;
 using System;
-using Azure.Storage.Sas;
-using System.IO;
-using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using System.Net;
-using Microsoft.Extensions.FileSystemGlobbing.Internal;
 using System.Net.Sockets;
 using Azure.Storage.Queues;
+using Azure.Storage.Files.Shares;
+using Azure.Storage.Blobs;
 
 namespace LogicAppAdvancedTool
 {
@@ -19,19 +16,19 @@ namespace LogicAppAdvancedTool
             string FileShareName = Environment.GetEnvironmentVariable("WEBSITE_CONTENTSHARE");
 
             ConnectionInfo connectionInfo = new ConnectionInfo(ConnectionString);
-            ConnectionValidator connectionValidator = new ConnectionValidator(connectionInfo);
+            ConnectionValidator connectionValidator = new ConnectionValidator(connectionInfo, LogicAppName);
 
             List<ValidationInfo> Results = connectionValidator.Validate();
 
             if (Results != null) 
             {
-                ConsoleTable consoleTable = new ConsoleTable("EndPoint", "Type", "DNS Test", "Endpoint IP", "TCP Port (443)");
+                ConsoleTable consoleTable = new ConsoleTable("EndPoint", "Type", "DNS Test", "Endpoint IP", "TCP Port (443)", "Auth Status");
 
                 foreach (ValidationInfo result in Results)
                 { 
                     string Endpoint = result.Endpoint;
 
-                    consoleTable.AddRow(Endpoint, result.Type.ToString(), result.DNSPass.ToString(), result.GetIPsAsString(), result.PingPass.ToString());
+                    consoleTable.AddRow(Endpoint, result.ServiceType.ToString(), result.DNSStatus.ToString(), result.GetIPsAsString(), result.PingStatus.ToString(), result.AuthStatus.ToString());
                 }
 
                 consoleTable.Print();
@@ -40,11 +37,13 @@ namespace LogicAppAdvancedTool
 
         public class ConnectionValidator
         {
+            private string LogicAppName;
             private ConnectionInfo connectionInfo;
             private List<ValidationInfo> Results;
-            public ConnectionValidator(ConnectionInfo connectionInfo)
+            public ConnectionValidator(ConnectionInfo connectionInfo, string LogicAppName)
             {
                 this.connectionInfo = connectionInfo;
+                this.LogicAppName = LogicAppName;
 
                 Results = new List<ValidationInfo>
                 {
@@ -55,6 +54,7 @@ namespace LogicAppAdvancedTool
                 };
             }
 
+            //temp resolution, need to improve in the future
             public List<ValidationInfo> Validate()
             {
                 foreach (ValidationInfo info in Results)
@@ -64,17 +64,17 @@ namespace LogicAppAdvancedTool
                         IPAddress[] IPs = Dns.GetHostAddresses(info.Endpoint);
 
                         info.IPs = IPs;
-                        info.DNSPass = ValidateStatus.Succeeded;
+                        info.DNSStatus = ValidateStatus.Succeeded;
                     }
                     catch
                     {
-                        info.DNSPass = ValidateStatus.Failed;
+                        info.DNSStatus = ValidateStatus.Failed;
                     }
                 }
 
                 foreach (ValidationInfo info in Results)
                 {
-                    if (!(info.DNSPass == ValidateStatus.Succeeded))
+                    if (info.DNSStatus != ValidateStatus.Succeeded)
                     {
                         continue;
                     }
@@ -86,12 +86,50 @@ namespace LogicAppAdvancedTool
                             using (TcpClient client = new TcpClient(ip.ToString(), 443)) { };
                         }
 
-                        info.PingPass = ValidateStatus.Succeeded;
+                        info.PingStatus = ValidateStatus.Succeeded;
                         
                     }
                     catch
                     {
-                        info.PingPass = ValidateStatus.Failed;
+                        info.PingStatus = ValidateStatus.Failed;
+                    }
+                }
+
+                foreach (ValidationInfo info in Results)
+                {
+                    try
+                    {
+                        if (info.PingStatus != ValidateStatus.Succeeded)
+                        {
+                            continue;
+                        }
+
+                        switch (info.ServiceType)
+                        {
+                            case StorageType.Blob:
+                                BlobServiceClient blobClient = new BlobServiceClient(ConnectionString);
+                                blobClient.GetProperties();
+                                break;
+                            case StorageType.File:
+                                ShareServiceClient shareClient = new ShareServiceClient(ConnectionString);
+                                shareClient.GetProperties();
+                                break;
+                            case StorageType.Queue:
+                                QueueServiceClient queueClient = new QueueServiceClient(ConnectionString);
+                                queueClient.GetProperties();
+                                break;
+                            case StorageType.Table:
+                                TableServiceClient tableClient = new TableServiceClient(ConnectionString);
+                                tableClient.GetProperties();
+                                break;
+                            default: break;
+                        }
+
+                        info.AuthStatus = ValidateStatus.Succeeded;
+                    }
+                    catch(Exception ex)
+                    { 
+                        info.AuthStatus = ValidateStatus.Failed;
                     }
                 }
 
@@ -117,17 +155,19 @@ namespace LogicAppAdvancedTool
         public class ValidationInfo
         {
             public string Endpoint;
-            public StorageType Type;
+            public StorageType ServiceType;
             public IPAddress[] IPs;
-            public ValidateStatus DNSPass;
-            public ValidateStatus PingPass;
+            public ValidateStatus DNSStatus;
+            public ValidateStatus PingStatus;
+            public ValidateStatus AuthStatus;
 
-            public ValidationInfo(string Endpoint, StorageType Type)
+            public ValidationInfo(string Endpoint, StorageType ServiceType)
             {
                 this.Endpoint = Endpoint;
-                this.Type = Type;
-                DNSPass = ValidateStatus.NotApplicable;
-                PingPass = ValidateStatus.NotApplicable;
+                this.ServiceType = ServiceType;
+                DNSStatus = ValidateStatus.NotApplicable;
+                PingStatus = ValidateStatus.NotApplicable;
+                AuthStatus = ValidateStatus.NotApplicable;
             }
 
             public string GetIPsAsString()
@@ -143,7 +183,7 @@ namespace LogicAppAdvancedTool
                     return IPsAsString.TrimEnd();
                 }
 
-                return String.Empty;
+                return "N/A";
             }
         }
 
