@@ -53,6 +53,9 @@ If you would like to compile the binary yourself, please always use "Publish" in
 
 
 ## Release Note
+2023-05-04
+1. Added authentication validation in "CheckConnectivity" command.
+
 2023-05-02
 1. Added a new commmand "CheckConnectivity" for validating connectivity between Logic App and Storage Account, need Kudu site is available.
 
