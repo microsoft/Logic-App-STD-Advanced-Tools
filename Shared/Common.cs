@@ -58,6 +58,25 @@ namespace LogicAppAdvancedTool
             return string.Empty;
         }
 
+        private static string GenerateWorkflowTablePrefix(string LogicAppName, string WorkflowName)
+        {
+            string mainTableName = GetMainTableName(LogicAppName);
+
+            TableClient tableClient = new TableClient(ConnectionString, mainTableName);
+            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{WorkflowName}'");
+
+            if (tableEntities.Count() == 0)
+            {
+                throw new UserInputException($"{WorkflowName} cannot be found in storage table, please check whether workflow name is correct.");
+            }
+
+            string logicAppPrefix = StoragePrefixGenerator.Generate(LogicAppName.ToLower());
+
+            string workflowID = tableEntities.First<TableEntity>().GetString("FlowId");
+            string workflowPrefix = StoragePrefixGenerator.Generate(workflowID.ToLower());
+
+            return $"{logicAppPrefix}{workflowPrefix}";
+        }
 
         private static string BackupCurrentSite()
         {

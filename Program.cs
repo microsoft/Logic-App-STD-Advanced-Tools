@@ -426,6 +426,30 @@ namespace LogicAppAdvancedTool
                 });
                 #endregion
 
+                #region GenerateRunHistoryUrl
+                app.Command("GenerateRunHistoryUrl", c =>
+                {
+                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive).", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption WorkflowCO = c.Option("-wf|--workflow", "(Mandatory) The name of workflow.", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption DateCO = c.Option("-d|--date", "(Mandatory) The date you would like to retrieve.", CommandOptionType.SingleValue).IsRequired();
+
+                    c.HelpOption("-?");
+                    c.Description = "Generate run history of workflow failure runs of a specific day.";
+
+                    c.OnExecute(() =>
+                    {
+                        string LogicAppName = LogicAppNameCO.Value();
+                        string WorkflowName = WorkflowCO.Value();
+                        string Date = DateCO.Value();
+
+                        GenerateRunHistoryUrl(LogicAppName, WorkflowName, Date);
+
+                        return 0;
+                    });
+                    
+                });
+                #endregion
+
                 app.Execute(args);
             }
             catch (Exception ex)

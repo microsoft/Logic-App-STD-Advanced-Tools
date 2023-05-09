@@ -14,22 +14,9 @@ namespace LogicAppAdvancedTool
     {
         private static void RetrieveFailures(string LogicAppName, string WorkflowName, string Date)
         {
-            string mainTableName = GetMainTableName(LogicAppName);
+            string Prefix = GenerateWorkflowTablePrefix(LogicAppName, WorkflowName);
 
-            TableClient tableClient = new TableClient(ConnectionString, mainTableName);
-            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{WorkflowName}'");
-
-            if (tableEntities.Count() == 0)
-            {
-                throw new UserInputException($"{WorkflowName} cannot be found in storage table, please check whether workflow is correct.");
-            }
-
-            string logicAppPrefix = StoragePrefixGenerator.Generate(LogicAppName.ToLower());
-
-            string workflowID = tableEntities.First<TableEntity>().GetString("FlowId");
-            string workflowPrefix = StoragePrefixGenerator.Generate(workflowID.ToLower());
-
-            string actionTableName = $"flow{logicAppPrefix}{workflowPrefix}{Date}t000000zactions";
+            string actionTableName = $"flow{Prefix}{Date}t000000zactions";
 
             //Double check whether the action table exists
             TableServiceClient serviceClient = new TableServiceClient(ConnectionString);
@@ -42,8 +29,8 @@ namespace LogicAppAdvancedTool
 
             Console.WriteLine($"action table - {actionTableName} found, retrieving action logs...");
 
-            tableClient = new TableClient(ConnectionString, actionTableName);
-            tableEntities = tableClient.Query<TableEntity>(filter: "Status eq 'Failed'");
+            TableClient tableClient = new TableClient(ConnectionString, actionTableName);
+            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: "Status eq 'Failed'");
 
             Dictionary<string, List<FailureRecords>> Records = new Dictionary<string, List<FailureRecords>>();
 
