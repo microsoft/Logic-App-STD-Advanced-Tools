@@ -431,7 +431,7 @@ namespace LogicAppAdvancedTool
                 {
                     CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive).", CommandOptionType.SingleValue).IsRequired();
                     CommandOption WorkflowCO = c.Option("-wf|--workflow", "(Mandatory) The name of workflow.", CommandOptionType.SingleValue).IsRequired();
-                    CommandOption DateCO = c.Option("-d|--date", "(Mandatory) The date you would like to retrieve.", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption DateCO = c.Option("-d|--date", "(Mandatory) The date (format: \"yyyyMMdd\") you would like to retrieve logs, UTC time.", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
                     c.Description = "Generate run history of workflow failure runs of a specific day.";
@@ -447,6 +447,30 @@ namespace LogicAppAdvancedTool
                         return 0;
                     });
                     
+                });
+                #endregion
+
+                #region CleanUpContainer
+                app.Command("CleanUpContainer", c =>
+                {
+                    CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive).", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption WorkflowCO = c.Option("-wf|--workflow", "(Optional) The name of workflow. If not provided, then all the workflows container will be deleted.", CommandOptionType.SingleValue);
+                    CommandOption DateCO = c.Option("-d|--date", "(Mandatory) Delete containers before this date (format: \"yyyyMMdd\") , UTC time.", CommandOptionType.SingleValue).IsRequired();
+
+                    c.HelpOption("-?");
+                    c.Description = "Clean up the blob container of Logic App run history to reduce the Storage Account cost.";
+
+                    c.OnExecute(() =>
+                    {
+                        string LogicAppName = LogicAppNameCO.Value();
+                        string WorkflowName = WorkflowCO.Value();
+                        string Date = DateCO.Value();
+
+                        CleanUpContainer(LogicAppName, WorkflowName, Date);
+
+                        return 0;
+                    });
+
                 });
                 #endregion
 

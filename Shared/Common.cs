@@ -58,6 +58,20 @@ namespace LogicAppAdvancedTool
             return string.Empty;
         }
 
+        private static string GenerateLogicAppPrefix(string LogicAppName) 
+        {
+            string TablePrefix = StoragePrefixGenerator.Generate(LogicAppName.ToLower());
+
+            return TablePrefix;
+        }
+
+        /// <summary>
+        /// Generate workflow table prefix in Storage Table
+        /// </summary>
+        /// <param name="LogicAppName"></param>
+        /// <param name="WorkflowName"></param>
+        /// <returns></returns>
+        /// <exception cref="UserInputException"></exception>
         private static string GenerateWorkflowTablePrefix(string LogicAppName, string WorkflowName)
         {
             string mainTableName = GetMainTableName(LogicAppName);

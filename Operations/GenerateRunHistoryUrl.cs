@@ -50,12 +50,18 @@ namespace LogicAppAdvancedTool
             foreach (TableEntity entity in tableEntities)
             {
                 string RunID = entity.GetString("FlowRunSequenceId");
-                Runs.Add(new WorkflowRunInfo(SubscriptionID, ResourceGroup, LogicAppName, WorkflowName, RunID, Location));
+                string StartTime = entity.GetDateTimeOffset("CreatedTime")?.ToString("yyyy-MM-ddTHH:mm:ssZ");
+                string EndTime = entity.GetDateTimeOffset("EndTime")?.ToString("yyyy-MM-ddTHH:mm:ssZ");
+
+                Runs.Add(new WorkflowRunInfo(SubscriptionID, ResourceGroup, LogicAppName, WorkflowName, RunID, Location, StartTime, EndTime));
             }
 
             string JsonContent = JsonConvert.SerializeObject(Runs, Formatting.Indented);
 
-            Console.WriteLine(JsonContent);
+            string FileName = $"RunHistoryUrl_{LogicAppName}_{WorkflowName}_{Date}.json";
+            File.AppendAllText(FileName, JsonContent);
+
+            Console.WriteLine($"Failed run history url generated success, please check file {FileName}");
         }
     }
 
@@ -67,6 +73,8 @@ namespace LogicAppAdvancedTool
         private string WorkflowName { get; set; }
         private string Location { get; set; }
         public string RunID { get; private set; }
+        public string StartTime { get; private set; }
+        public string EndTime { get; private set; }
         private string ID
         {
             get 
@@ -94,13 +102,15 @@ namespace LogicAppAdvancedTool
             }
         }
 
-        public WorkflowRunInfo(string SubscriptionID, string ResourceGroup, string LogicAppName, string WorkflowName, string RunID, string Location)
+        public WorkflowRunInfo(string SubscriptionID, string ResourceGroup, string LogicAppName, string WorkflowName, string RunID, string Location, string StartTime, string EndTime)
         {
             this.SubscriptionID = SubscriptionID;
             this.ResourceGroup = ResourceGroup;
             this.LogicAppName = LogicAppName;
             this.WorkflowName = WorkflowName;
             this.RunID = RunID;
+            this.StartTime = StartTime;
+            this.EndTime = EndTime;
             this.Location = UrlEncoder.Default.Encode(Location);
         }
     }

@@ -2,7 +2,7 @@
   "profiles": {
     "LogicAppAdvancedTool": {
       "commandName": "Project",
-      "commandLineArgs": "GenerateRunHistoryUrl -la DracLogicApp -wf test -d 20230502"
+      "commandLineArgs": "CleanUpContainer -la DracLogicApp -d 20230509"
     }
   }
 }
