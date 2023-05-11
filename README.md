@@ -53,6 +53,10 @@ If you would like to compile the binary yourself, please always use "Publish" in
 
 
 ## Release Note
+2023-05-11
+1. Added a new command "CleanUpContainer" to manually delete Logic App run history's blob containers.
+2. Optimize the code for generating Logic App and workflow table prefix.
+
 2023-05-04
 1. Added authentication validation in "CheckConnectivity" command.
 
