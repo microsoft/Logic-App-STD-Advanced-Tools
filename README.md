@@ -1,6 +1,6 @@
 ## Introduction
 This tool integrated several useful features for Logic App Standard which not available in Logic App portal yet.<br/>
-Please use command "**LogicAppAdvancedTool -?**" for more information of the commands.
+Please use command "**LogicAppAdvancedTool -?/LogicAppAdvancedTool [COMMAND] -?**" for more information of the commands.
 
 
 ## How to get application binary
