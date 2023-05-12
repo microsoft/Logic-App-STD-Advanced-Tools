@@ -29,6 +29,8 @@ If you would like to compile the binary yourself, please always use "Publish" in
 | Revert | Revert a workflow to a previous version, this command will backup all the workflows in advance to prevent any unexpected incidents.|
 | SyncToLocal | Sync remote wwwroot folder of Logic App Standard to local project. This command must run in local computer. There are 3 subcommands for different usage, please use -? for more information.|
 | CheckConnectivity | Check the connection between Logic App and Storage Account via DNS resolution and tcp ping of 443 port. This command need Kudu site is available. |
+| GenerateRunHistoryUrl | Generate run history of failure runs of a specific workflow on a specific day. The url can directly open the run history page |
+| CleanUpContainer | Delete all the Logic App auto-generated blob containers for run history before a specific date. |
 
 ## How to use (Demo of restore a workflow)
 1. Open Kudu (Advanced Tools) of Logic App Standard and upload this tool into a folder
