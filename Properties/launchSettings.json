@@ -1,8 +1,7 @@
 {
   "profiles": {
     "LogicAppAdvancedTool": {
-      "commandName": "Project",
-      "commandLineArgs": "RetrieveFailures Run -la DracLogicApp -wf BlobTest -id 08585174859489259056757917021CU00"
+      "commandName": "Project"
     }
   }
 }
