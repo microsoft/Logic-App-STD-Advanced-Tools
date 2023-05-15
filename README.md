@@ -25,7 +25,7 @@ If you would like to compile the binary yourself, please always use "Publish" in
 | ListWorkflows | List all the exisiting workflows which can be found in storage table.|
 | RestoreAll | Restore all the workflows which be deleted accidentally. **This operation may cause unexpected behavior on Logic App runtime if you have any invalid workflows in storage table**.|
 | RestoreSingleWorkflow | Restore a workflows which has been deleted accidentally.|
-| RetrieveFailures | Retrieve all the detail failure information of a workflow for a specific day.|
+| RetrieveFailures | Retrieve all the detail failure information of a workflow for a specific day/run.|
 | Revert | Revert a workflow to a previous version, this command will backup all the workflows in advance to prevent any unexpected incidents.|
 | SyncToLocal | Sync remote wwwroot folder of Logic App Standard to local project. This command must run in local computer. There are 3 subcommands for different usage, please use -? for more information.|
 | CheckConnectivity | Check the connection between Logic App and Storage Account via DNS resolution and tcp ping of 443 port. This command need Kudu site is available. |
@@ -55,6 +55,11 @@ If you would like to compile the binary yourself, please always use "Publish" in
 
 
 ## Release Note
+2023-05-15
+1. Added new optional parameter "-f|--filter" in "GenerateRunHistoryUrl" command for searching failed run of specific exception message.
+2. Change "RetrieveFailures" commmand mechansim, now it need to use sub-command to retrieve by date or run id.
+3. Seperate all data structure class to a new file (structure.cs).
+
 2023-05-11
 1. Added a new command "CleanUpContainer" to manually delete Logic App run history's blob containers.
 2. Added a new command "GenerateRunHistoryUrl" to retrieve failure runs of a workflow and generate run history url which can directly open the workflow run history page.
