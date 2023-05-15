@@ -2,7 +2,7 @@
   "profiles": {
     "LogicAppAdvancedTool": {
       "commandName": "Project",
-      "commandLineArgs": "CleanUpContainer -la DracLogicApp -d 20230509"
+      "commandLineArgs": "GenerateRunHistoryUrl -la DracLogicApp -wf BlobTest -d 20230515 -f \"The request had some invalid properties\""
     }
   }
 }

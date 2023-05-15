@@ -97,72 +97,12 @@ namespace LogicAppAdvancedTool
                 this.RepeatItemName = te.GetString("RepeatItemScopeName");
                 this.RepeatItemIdenx = te.GetInt32("RepeatItemIndex");
 
-                this.InputContent = DecodePayload(te.GetBinary("InputsLinkCompressed"));
-                this.OutputContent = DecodePayload(te.GetBinary("OutputsLinkCompressed"));
+                this.InputContent = DecodeActionPayload(te.GetBinary("InputsLinkCompressed"));
+                this.OutputContent = DecodeActionPayload(te.GetBinary("OutputsLinkCompressed"));
 
                 string RawError = DecompressContent(te.GetBinary("Error"));
                 this.Error = String.IsNullOrEmpty(RawError) ? null : JsonConvert.DeserializeObject<ActionError>(RawError);
             }
-
-            private dynamic DecodePayload(byte[] BinaryContent)
-            {
-                string RawContent = DecompressContent(BinaryContent);
-
-                if (RawContent == null)
-                {
-                    return null;
-                }
-
-                //Recently there are 2 different JSON schema for output payload, try connector schema first
-                ConnectorPayloadStructure ConnectorPayload = JsonConvert.DeserializeObject<ConnectorPayloadStructure>(RawContent);
-
-                dynamic Output = null;
-
-                if (ConnectorPayload.nestedContentLinks != null)
-                {
-                    string inlineContent = ConnectorPayload.nestedContentLinks.body.inlinedContent;
-                    Output = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(Convert.FromBase64String(inlineContent)));
-                    return Output;
-                }
-
-                CommonPayloadStructure Payload = JsonConvert.DeserializeObject<CommonPayloadStructure>(RawContent);
-                Output = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(Convert.FromBase64String(Payload.inlinedContent)));
-
-                return Output;
-            }
-        }
-
-        #region payload structure for connector action (built-in and Azure)
-        public class ConnectorPayloadStructure
-        {
-            public NestedContentLinks nestedContentLinks { get; set; }
-        }
-
-        public class NestedContentLinks
-        { 
-            public CommonPayloadStructure body { get; set; }
-        }
-        #endregion
-
-
-        public class CommonPayloadStructure
-        {
-            public string inlinedContent { get; set; }
-            public string contentVersion { get; set; }
-            public int contentSize { get; set; }
-            public ContentHash contentHash { get; set; }
-        }
-
-        public class ContentHash
-        {
-            public string algorithm { get; set; }
-            public string value { get; set; }
-        }
-
-        public class ActionError
-        { 
-            public string code { get; set; }
-            public string message { get; set; }
         }
     }
 }

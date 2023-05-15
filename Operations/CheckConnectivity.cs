@@ -127,7 +127,7 @@ namespace LogicAppAdvancedTool
 
                         info.AuthStatus = ValidateStatus.Succeeded;
                     }
-                    catch(Exception ex)
+                    catch
                     { 
                         info.AuthStatus = ValidateStatus.Failed;
                     }

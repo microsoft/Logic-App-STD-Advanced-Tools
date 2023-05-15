@@ -432,6 +432,7 @@ namespace LogicAppAdvancedTool
                     CommandOption LogicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive).", CommandOptionType.SingleValue).IsRequired();
                     CommandOption WorkflowCO = c.Option("-wf|--workflow", "(Mandatory) The name of workflow.", CommandOptionType.SingleValue).IsRequired();
                     CommandOption DateCO = c.Option("-d|--date", "(Mandatory) The date (format: \"yyyyMMdd\") you would like to retrieve logs, UTC time.", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption FilterCO = c.Option("-f|--filter", "(Optional) Filter for specific exception messages", CommandOptionType.SingleValue);
 
                     c.HelpOption("-?");
                     c.Description = "Generate run history of workflow failure runs of a specific day.";
@@ -441,8 +442,9 @@ namespace LogicAppAdvancedTool
                         string LogicAppName = LogicAppNameCO.Value();
                         string WorkflowName = WorkflowCO.Value();
                         string Date = DateCO.Value();
+                        string Filter = FilterCO.Value();
 
-                        GenerateRunHistoryUrl(LogicAppName, WorkflowName, Date);
+                        GenerateRunHistoryUrl(LogicAppName, WorkflowName, Date, Filter);
 
                         return 0;
                     });
@@ -470,7 +472,6 @@ namespace LogicAppAdvancedTool
 
                         return 0;
                     });
-
                 });
                 #endregion
 

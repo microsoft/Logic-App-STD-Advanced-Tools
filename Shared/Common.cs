@@ -3,10 +3,12 @@ using Azure.Data.Tables;
 using Azure.Data.Tables.Models;
 using Microsoft.VisualBasic;
 using Microsoft.WindowsAzure.ResourceStack.Common.Utilities;
+using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Text;
 
 namespace LogicAppAdvancedTool
 {
@@ -110,6 +112,38 @@ namespace LogicAppAdvancedTool
         }
 
         /// <summary>
+        /// Decode run history actions input/output content
+        /// </summary>
+        /// <param name="BinaryContent"></param>
+        /// <returns></returns>
+        public static dynamic DecodeActionPayload(byte[] BinaryContent)
+        {
+            string RawContent = DecompressContent(BinaryContent);
+
+            if (RawContent == null)
+            {
+                return null;
+            }
+
+            //Recently there are 2 different JSON schema for output payload, try connector schema first
+            ConnectorPayloadStructure ConnectorPayload = JsonConvert.DeserializeObject<ConnectorPayloadStructure>(RawContent);
+
+            dynamic Output = null;
+
+            if (ConnectorPayload.nestedContentLinks != null)
+            {
+                string inlineContent = ConnectorPayload.nestedContentLinks.body.inlinedContent;
+                Output = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(Convert.FromBase64String(inlineContent)));
+                return Output;
+            }
+
+            CommonPayloadStructure Payload = JsonConvert.DeserializeObject<CommonPayloadStructure>(RawContent);
+            Output = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(Convert.FromBase64String(Payload.inlinedContent)));
+
+            return Output;
+        }
+
+        /// <summary>
         /// Decompress the content which compressed by Inflate
         /// </summary>
         /// <param name="Content"></param>
@@ -126,6 +160,11 @@ namespace LogicAppAdvancedTool
             return Result;
         }
 
+        /// <summary>
+        /// Compress string to Inflate stream
+        /// </summary>
+        /// <param name="Content"></param>
+        /// <returns></returns>
         public static byte[] CompressContent(string Content)
         {
             if (string.IsNullOrEmpty(Content))
@@ -137,33 +176,6 @@ namespace LogicAppAdvancedTool
             byte[] CompressedBytes = CompressedStream.ToArray();
 
             return CompressedBytes;
-        }
-
-        public class WorkflowDefinition
-        {
-            public string WorkflowName;
-            public string Version;
-            public string ModifiedData;
-            public string Definition;
-
-            public WorkflowDefinition(string WorkflowName, string Version, string ModifiedData, string Definition)
-            {
-                this.WorkflowName = WorkflowName;
-                this.Version = Version;
-                this.ModifiedData = ModifiedData;
-                this.Definition = Definition;
-            }
-        }
-
-        public class WorkflowTemplate
-        {
-            public object definition { get; set; }
-            public string kind { get; set; }
-        }
-
-        public class UserInputException : Exception 
-        {     
-            public UserInputException(string Message) : base(Message) { }
         }
     }
 }

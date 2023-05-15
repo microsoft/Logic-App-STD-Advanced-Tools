@@ -16,34 +16,34 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        private static void GenerateRunHistoryUrl(string LogicAppName, string WorkflowName, string Date)
+        private static void GenerateRunHistoryUrl(string LogicAppName, string WorkflowName, string Date, string Filter)
         {
             string SubscriptionID = Environment.GetEnvironmentVariable("WEBSITE_OWNER_NAME").Split('+')[0];
             string ResourceGroup = Environment.GetEnvironmentVariable("WEBSITE_RESOURCE_GROUP");
             string Location = Environment.GetEnvironmentVariable("REGION_NAME");
 
             string Prefix = GenerateWorkflowTablePrefix(LogicAppName, WorkflowName);
-            string runTableName = $"flow{Prefix}runs";
+            string RunTableName = $"flow{Prefix}runs";
 
-            DateTime minTimeStamp = DateTime.ParseExact(Date, "yyyyMMdd", CultureInfo.InvariantCulture);
-            DateTime maxTimeStamp = minTimeStamp.AddDays(1);
+            DateTime MinTimeStamp = DateTime.ParseExact(Date, "yyyyMMdd", CultureInfo.InvariantCulture);
+            DateTime MaxTimeStamp = MinTimeStamp.AddDays(1);
             
             TableServiceClient serviceClient = new TableServiceClient(ConnectionString);
-            Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{runTableName}'");
+            Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{RunTableName}'");
 
             if (results.Count() == 0)
             {
-                throw new UserInputException($"Run history table - {runTableName} not exist, please check whether Date is correct.");
+                throw new UserInputException($"Run history table - {RunTableName} not exist, please check whether Date is correct.");
             }
 
-            Console.WriteLine($"Run history table - {runTableName} found, retrieving action logs...");
+            Console.WriteLine($"Run history table - {RunTableName} found, retrieving action logs...");
 
-            TableClient tableClient = new TableClient(ConnectionString, runTableName);
-            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"Status eq 'Failed' and CreatedTime ge datetime'{minTimeStamp.ToString("yyyy-MM-ddTHH:mm:ssZ")}' and EndTime le datetime'{maxTimeStamp.ToString("yyyy-MM-ddTHH:mm:ssZ")}'");
+            TableClient tableClient = new TableClient(ConnectionString, RunTableName);
+            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"Status eq 'Failed' and CreatedTime ge datetime'{MinTimeStamp.ToString("yyyy-MM-ddTHH:mm:ssZ")}' and EndTime le datetime'{MaxTimeStamp.ToString("yyyy-MM-ddTHH:mm:ssZ")}'");
 
             if (tableEntities.Count() == 0)
             {
-                throw new UserInputException($"No failure runs detected for workflow {WorkflowName} on {minTimeStamp.ToString("yyyy-MM-dd")}");
+                throw new UserInputException($"No failure runs detected for workflow {WorkflowName} on {MinTimeStamp.ToString("yyyy-MM-dd")}");
             }
 
             List<WorkflowRunInfo> Runs = new List<WorkflowRunInfo>();
@@ -53,7 +53,40 @@ namespace LogicAppAdvancedTool
                 string StartTime = entity.GetDateTimeOffset("CreatedTime")?.ToString("yyyy-MM-ddTHH:mm:ssZ");
                 string EndTime = entity.GetDateTimeOffset("EndTime")?.ToString("yyyy-MM-ddTHH:mm:ssZ");
 
-                Runs.Add(new WorkflowRunInfo(SubscriptionID, ResourceGroup, LogicAppName, WorkflowName, RunID, Location, StartTime, EndTime));
+                if (string.IsNullOrEmpty(Filter))
+                {
+                    Runs.Add(new WorkflowRunInfo(SubscriptionID, ResourceGroup, LogicAppName, WorkflowName, RunID, Location, StartTime, EndTime));
+                }
+                else
+                {
+                    string ActionTableName = $"flow{Prefix}{Date}t000000zactions";
+
+                    tableClient = new TableClient(ConnectionString, ActionTableName);
+                    tableEntities = tableClient.Query<TableEntity>(filter: $"Status eq 'Failed' and FlowRunSequenceId eq '{RunID}'");
+
+                    if (tableEntities.Count() == 0)
+                    {
+                        continue;
+                    }
+
+                    foreach (TableEntity te in tableEntities)
+                    {
+                        string OutputContent = JsonConvert.SerializeObject(DecodeActionPayload(te.GetBinary("OutputsLinkCompressed")));
+                        string RawError = JsonConvert.SerializeObject(DecompressContent(te.GetBinary("Error")));
+
+                        if (OutputContent.Contains(Filter) || RawError.Contains(Filter))
+                        {
+                            Runs.Add(new WorkflowRunInfo(SubscriptionID, ResourceGroup, LogicAppName, WorkflowName, RunID, Location, StartTime, EndTime));
+
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (Runs.Count == 0)
+            {
+                throw new UserInputException($"There's no failure run detect for filter: {Filter}");
             }
 
             string JsonContent = JsonConvert.SerializeObject(Runs, Formatting.Indented);
