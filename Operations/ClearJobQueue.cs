@@ -14,7 +14,7 @@ namespace LogicAppAdvancedTool
         {
             string queueName = $"flow{StoragePrefixGenerator.Generate(logicAppName.ToLower())}jobtriggers00";
 
-            QueueClient queueClient = new QueueClient(ConnectionString, queueName);
+            QueueClient queueClient = new QueueClient(connectionString, queueName);
 
             if (!queueClient.Exists())
             {

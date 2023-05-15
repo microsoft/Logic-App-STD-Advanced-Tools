@@ -23,7 +23,7 @@ namespace LogicAppAdvancedTool
 
             string mainTableName = GetMainTableName(LogicAppName);
 
-            TableClient tableClient = new TableClient(ConnectionString, mainTableName);
+            TableClient tableClient = new TableClient(connectionString, mainTableName);
             Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{WorkflowName}'");
 
             if (tableEntities.Count() == 0)

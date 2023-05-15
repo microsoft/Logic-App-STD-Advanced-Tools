@@ -15,7 +15,7 @@ namespace LogicAppAdvancedTool
         {
             string FileShareName = Environment.GetEnvironmentVariable("WEBSITE_CONTENTSHARE");
 
-            ConnectionInfo connectionInfo = new ConnectionInfo(ConnectionString);
+            ConnectionInfo connectionInfo = new ConnectionInfo(connectionString);
             ConnectionValidator connectionValidator = new ConnectionValidator(connectionInfo, LogicAppName);
 
             List<ValidationInfo> Results = connectionValidator.Validate();
@@ -40,10 +40,10 @@ namespace LogicAppAdvancedTool
             private string LogicAppName;
             private ConnectionInfo connectionInfo;
             private List<ValidationInfo> Results;
-            public ConnectionValidator(ConnectionInfo connectionInfo, string LogicAppName)
+            public ConnectionValidator(ConnectionInfo connectionInfo, string logicAppName)
             {
                 this.connectionInfo = connectionInfo;
-                this.LogicAppName = LogicAppName;
+                this.LogicAppName = logicAppName;
 
                 Results = new List<ValidationInfo>
                 {
@@ -107,19 +107,19 @@ namespace LogicAppAdvancedTool
                         switch (info.ServiceType)
                         {
                             case StorageType.Blob:
-                                BlobServiceClient blobClient = new BlobServiceClient(ConnectionString);
+                                BlobServiceClient blobClient = new BlobServiceClient(connectionString);
                                 blobClient.GetProperties();
                                 break;
                             case StorageType.File:
-                                ShareServiceClient shareClient = new ShareServiceClient(ConnectionString);
+                                ShareServiceClient shareClient = new ShareServiceClient(connectionString);
                                 shareClient.GetProperties();
                                 break;
                             case StorageType.Queue:
-                                QueueServiceClient queueClient = new QueueServiceClient(ConnectionString);
+                                QueueServiceClient queueClient = new QueueServiceClient(connectionString);
                                 queueClient.GetProperties();
                                 break;
                             case StorageType.Table:
-                                TableServiceClient tableClient = new TableServiceClient(ConnectionString);
+                                TableServiceClient tableClient = new TableServiceClient(connectionString);
                                 tableClient.GetProperties();
                                 break;
                             default: break;

@@ -28,7 +28,7 @@ namespace LogicAppAdvancedTool
             DateTime MinTimeStamp = DateTime.ParseExact(Date, "yyyyMMdd", CultureInfo.InvariantCulture);
             DateTime MaxTimeStamp = MinTimeStamp.AddDays(1);
             
-            TableServiceClient serviceClient = new TableServiceClient(ConnectionString);
+            TableServiceClient serviceClient = new TableServiceClient(connectionString);
             Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{RunTableName}'");
 
             if (results.Count() == 0)
@@ -38,7 +38,7 @@ namespace LogicAppAdvancedTool
 
             Console.WriteLine($"Run history table - {RunTableName} found, retrieving action logs...");
 
-            TableClient tableClient = new TableClient(ConnectionString, RunTableName);
+            TableClient tableClient = new TableClient(connectionString, RunTableName);
             Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"Status eq 'Failed' and CreatedTime ge datetime'{MinTimeStamp.ToString("yyyy-MM-ddTHH:mm:ssZ")}' and EndTime le datetime'{MaxTimeStamp.ToString("yyyy-MM-ddTHH:mm:ssZ")}'");
 
             if (tableEntities.Count() == 0)
@@ -61,7 +61,7 @@ namespace LogicAppAdvancedTool
                 {
                     string ActionTableName = $"flow{Prefix}{Date}t000000zactions";
 
-                    tableClient = new TableClient(ConnectionString, ActionTableName);
+                    tableClient = new TableClient(connectionString, ActionTableName);
                     tableEntities = tableClient.Query<TableEntity>(filter: $"Status eq 'Failed' and FlowRunSequenceId eq '{RunID}'");
 
                     if (tableEntities.Count() == 0)
@@ -71,6 +71,7 @@ namespace LogicAppAdvancedTool
 
                     foreach (TableEntity te in tableEntities)
                     {
+                        //TODO: improve DecodeActionPayload method for directly return string
                         string OutputContent = JsonConvert.SerializeObject(DecodeActionPayload(te.GetBinary("OutputsLinkCompressed")));
                         string RawError = JsonConvert.SerializeObject(DecompressContent(te.GetBinary("Error")));
 

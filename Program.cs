@@ -200,22 +200,56 @@ namespace LogicAppAdvancedTool
                 #region Retrieve Failure Logs
                 app.Command("RetrieveFailures", c =>
                 {
-                    CommandOption LogicAppnameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
-                    CommandOption WorkflowCO = c.Option("-wf|--workflow", "(Mandatory) Workflow name", CommandOptionType.SingleValue).IsRequired();
-                    CommandOption DateCO = c.Option("-d|--date", "(Mandatory) Date (format: \"yyyyMMdd\") of the logs need to be retrieved, UTC time", CommandOptionType.SingleValue).IsRequired();
-
                     c.HelpOption("-?");
-                    c.Description = "Retrieve all the detail failure information of a workflow for a specific day.";
+                    c.Description = "Retrieve all the detail failure information of a workflow";
+
+                    #region Retrieve by date
+                    c.Command("Date", sub => {
+                        CommandOption LogicAppnameCO = sub.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
+                        CommandOption WorkflowCO = sub.Option("-wf|--workflow", "(Mandatory) Workflow name", CommandOptionType.SingleValue).IsRequired();
+                        CommandOption DateCO = sub.Option("-d|--date", "(Mandatory) Date (format: \"yyyyMMdd\") of the logs need to be retrieved, UTC time", CommandOptionType.SingleValue).IsRequired();
+
+                        sub.HelpOption("-?");
+                        sub.Description = "Retrieve all the detail failure information of a workflow for a specific day.";
+
+                        sub.OnExecute(() =>
+                        {
+                            string LogicAppName = LogicAppnameCO.Value();
+                            string WorkflowName = WorkflowCO.Value();
+                            string Date = DateCO.Value();
+
+                            RetrieveFailuresByDate(LogicAppName, WorkflowName, Date);
+
+                            return 0;
+                        });
+                    });
+                    #endregion
+
+                    #region Retrieve by run id
+                    c.Command("Run", sub => {
+                        CommandOption LogicAppnameCO = sub.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
+                        CommandOption WorkflowCO = sub.Option("-wf|--workflow", "(Mandatory) Workflow name", CommandOptionType.SingleValue).IsRequired();
+                        CommandOption RunIDCO = sub.Option("-id|--id", "(Mandatory) The workflow run id", CommandOptionType.SingleValue).IsRequired();
+
+                        sub.HelpOption("-?");
+                        sub.Description = "Retrieve all the detail failure information of a workflow for a specific run.";
+
+                        sub.OnExecute(() =>
+                        {
+                            string LogicAppName = LogicAppnameCO.Value();
+                            string WorkflowName = WorkflowCO.Value();
+                            string RunID = RunIDCO.Value();
+
+                            RetrieveFailuresByRun(LogicAppName, WorkflowName, RunID);
+
+                            return 0;
+                        });
+                    });
+                    #endregion
 
                     c.OnExecute(() =>
                     {
-                        string LogicAppName = LogicAppnameCO.Value();
-                        string WorkflowName = WorkflowCO.Value();
-                        string Date = DateCO.Value();
-
-                        RetrieveFailures(LogicAppName, WorkflowName, Date);
-
-                        return 0;
+                        throw new UserInputException("Please provide sub command, use -? for help.");
                     });
                 });
                 #endregion
