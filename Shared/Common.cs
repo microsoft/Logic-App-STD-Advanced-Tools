@@ -23,7 +23,7 @@ namespace LogicAppAdvancedTool
         {
             string TableName = $"flow{StoragePrefixGenerator.Generate(LogicAppName.ToLower())}flows";
 
-            TableServiceClient serviceClient = new TableServiceClient(connectionString);
+            TableServiceClient serviceClient = new TableServiceClient(ConnectionString);
 
             //Double check whether the table exists
             Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{TableName}'");
@@ -46,7 +46,7 @@ namespace LogicAppAdvancedTool
             string TablePrefix = StoragePrefixGenerator.Generate(LogicAppName.ToLower());
             string TableName = $"flow{TablePrefix}flows";
 
-            TableServiceClient serviceClient = new TableServiceClient(connectionString);
+            TableServiceClient serviceClient = new TableServiceClient(ConnectionString);
 
             //Double check whether the table exists
             Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{TableName}'");
@@ -78,7 +78,7 @@ namespace LogicAppAdvancedTool
         {
             string mainTableName = GetMainTableName(LogicAppName);
 
-            TableClient tableClient = new TableClient(connectionString, mainTableName);
+            TableClient tableClient = new TableClient(ConnectionString, mainTableName);
             Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{WorkflowName}'");
 
             if (tableEntities.Count() == 0)
@@ -103,7 +103,7 @@ namespace LogicAppAdvancedTool
             return FilePath;
         }
 
-        public static string connectionString
+        public static string ConnectionString
         {
             get
             {

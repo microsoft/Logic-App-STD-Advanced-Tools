@@ -6,34 +6,34 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        private static void RevertVersion(string WorkflowName, string Version)
+        private static void RevertVersion(string workflowName, string version)
         {
-            string BackupFilePath = $"{Directory.GetCurrentDirectory()}/Backup/{WorkflowName}";
+            string backupFilePath = $"{Directory.GetCurrentDirectory()}/Backup/{workflowName}";
 
-            if (!Directory.Exists(BackupFilePath))
+            if (!Directory.Exists(backupFilePath))
             {
-                throw new UserInputException($"{WorkflowName} folder cannot be found in wwwroot folder, please check the workflow name.");
+                throw new UserInputException($"{workflowName} folder cannot be found in wwwroot folder, please check the workflow name.");
             }
 
-            string[] Files = Directory.GetFiles(BackupFilePath, $"*{Version}.json");
+            string[] files = Directory.GetFiles(backupFilePath, $"*{version}.json");
 
-            if (Files == null || Files.Length == 0)
+            if (files == null || files.Length == 0)
             {
                 throw new UserInputException("No backup file found, please check whether Version is correct.");
             }
 
-            string ConfirmationMessage = $"WARNING!!!\r\nThe current workflow: {WorkflowName} will be overwrite\r\n\r\nPlease input for confirmation:";
-            if (!Prompt.GetYesNo(ConfirmationMessage, false, ConsoleColor.Red))
+            string confirmationMessage = $"WARNING!!!\r\nThe current workflow: {workflowName} will be overwrite\r\n\r\nPlease input for confirmation:";
+            if (!Prompt.GetYesNo(confirmationMessage, false, ConsoleColor.Red))
             {
                 Console.WriteLine("Operation Cancelled");
 
                 return;
             }
 
-            string BackupDefinitionContent = File.ReadAllText(Files[0]);
-            string DefinitionTemplatePath = $"C:/home/site/wwwroot/{WorkflowName}/workflow.json";
+            string backupDefinitionContent = File.ReadAllText(files[0]);
+            string definitionTemplatePath = $"C:/home/site/wwwroot/{workflowName}/workflow.json";
 
-            File.WriteAllText(DefinitionTemplatePath, BackupDefinitionContent);
+            File.WriteAllText(definitionTemplatePath, backupDefinitionContent);
 
             Console.WriteLine("Revert finished, please refresh the workflow page");
         }

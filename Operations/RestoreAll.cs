@@ -10,22 +10,22 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        private static void RestoreAll(string LogicAppName)
+        private static void RestoreAll(string logicAppName)
         {
-            string TableName = GetMainTableName(LogicAppName);
+            string tableName = GetMainTableName(logicAppName);
 
-            string ConfirmationMessage = "WARNING!!!\r\nThis operation will restore all the deleted workflows, if there's any invalid workflows, it might cause unexpected behavior on Logic App runtime.\r\nBe cautuion if you are running this command in PROD environment\r\nPlease input for confirmation:";
-            if (!Prompt.GetYesNo(ConfirmationMessage, false, ConsoleColor.Red))
+            string confirmationMessage = "WARNING!!!\r\nThis operation will restore all the deleted workflows, if there's any invalid workflows, it might cause unexpected behavior on Logic App runtime.\r\nBe cautuion if you are running this command in PROD environment\r\nPlease input for confirmation:";
+            if (!Prompt.GetYesNo(confirmationMessage, false, ConsoleColor.Red))
             {
                 Console.WriteLine("Operation Cancelled");
 
                 return;
             }
 
-            string BackupPath = BackupCurrentSite();
-            Console.WriteLine($"Backup current workflows, you can find in path: {BackupPath}");
+            string backupPath = BackupCurrentSite();
+            Console.WriteLine($"Backup current workflows, you can find in path: {backupPath}");
 
-            TableClient tableClient = new TableClient(connectionString, TableName);
+            TableClient tableClient = new TableClient(ConnectionString, tableName);
             Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(select: new string[] { "FlowName", "ChangedTime", "DefinitionCompressed", "Kind" });
 
             List<TableEntity> entities = (from n in tableEntities

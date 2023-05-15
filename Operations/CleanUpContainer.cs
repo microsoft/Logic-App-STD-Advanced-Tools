@@ -14,67 +14,67 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        public static void CleanUpContainer(string LogicAppName, string WorkflowName, string Date)
+        public static void CleanUpContainer(string logicAppName, string workflowName, string date)
         {
-            int TargetDate = Int32.Parse(Date);
-            string FormattedDate = DateTime.ParseExact(Date, "yyyyMMdd", CultureInfo.InvariantCulture).ToString("yyyy-MM-dd");
+            int targetDate = Int32.Parse(date);
+            string formattedDate = DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture).ToString("yyyy-MM-dd");
 
-            string Prefix;
-            if (string.IsNullOrEmpty(WorkflowName))
+            string tablePrefix;
+            if (string.IsNullOrEmpty(workflowName))
             {
-                Prefix = GenerateLogicAppPrefix(LogicAppName);
+                tablePrefix = GenerateLogicAppPrefix(logicAppName);
             }
             else
             {
-                Prefix = GenerateWorkflowTablePrefix(LogicAppName, WorkflowName);
+                tablePrefix = GenerateWorkflowTablePrefix(logicAppName, workflowName);
             }
 
-            Prefix = $"flow{Prefix}";
+            tablePrefix = $"flow{tablePrefix}";
 
-            BlobServiceClient client = new BlobServiceClient(connectionString);
-            List<BlobContainerItem> containers = client.GetBlobContainers(BlobContainerTraits.Metadata, BlobContainerStates.None, Prefix).ToList();
+            BlobServiceClient client = new BlobServiceClient(ConnectionString);
+            List<BlobContainerItem> containers = client.GetBlobContainers(BlobContainerTraits.Metadata, BlobContainerStates.None, tablePrefix).ToList();
 
             if (containers.Count == 0)
             {
-                Console.WriteLine($"No blob containers found for Logic App: {LogicAppName}");
+                Console.WriteLine($"No blob containers found for Logic App: {logicAppName}");
             }
 
-            List<string> ContainerList = new List<string>();
+            List<string> containerList = new List<string>();
 
             foreach (BlobContainerItem item in containers)
             { 
-                int CreatedDate = Int32.Parse(item.Name.Substring(34, 8));
+                int createdDate = Int32.Parse(item.Name.Substring(34, 8));
 
-                if (CreatedDate < TargetDate)
+                if (createdDate < targetDate)
                 {
-                    ContainerList.Add(item.Name);   
+                    containerList.Add(item.Name);   
                 }
             }
 
-            Console.WriteLine($"There are {ContainerList.Count} containers found, please enter \"P\" to print the list or press any other key to continue without print list");
+            Console.WriteLine($"There are {containerList.Count} containers found, please enter \"P\" to print the list or press any other key to continue without print list");
             if (Console.ReadKey().Key.ToString().ToLower() == "p")
             {
                 ConsoleTable table = new ConsoleTable("Contianer Name");
 
-                foreach (string ContainerName in ContainerList)
+                foreach (string containerName in containerList)
                 {
-                    table.AddRow(ContainerName);
+                    table.AddRow(containerName);
                 }
 
                 table.Print();
             }
 
-            string ConfirmationMessage = $"WARNING!!!\r\nDeleted those container will cause run history data lossing which executed before {FormattedDate} \r\nPlease input for confirmation:";
-            if (!Prompt.GetYesNo(ConfirmationMessage, false, ConsoleColor.Red))
+            string confirmationMessage = $"WARNING!!!\r\nDeleted those container will cause run history data lossing which executed before {formattedDate} \r\nPlease input for confirmation:";
+            if (!Prompt.GetYesNo(confirmationMessage, false, ConsoleColor.Red))
             {
                 Console.WriteLine("Operation Cancelled");
 
                 return;
             }
 
-            foreach (string ContainerName in ContainerList)
+            foreach (string containerName in containerList)
             { 
-                client.DeleteBlobContainer(ContainerName);
+                client.DeleteBlobContainer(containerName);
             }
 
             Console.WriteLine("Clean up succeeded");

@@ -9,12 +9,12 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        private static void RestoreSingleWorkflow(string LogicAppName, string WorkflowName)
+        private static void RestoreSingleWorkflow(string logicAppName, string workflowName)
         {
-            string TableName = GetMainTableName(LogicAppName);
+            string tableName = GetMainTableName(logicAppName);
 
-            TableClient tableClient = new TableClient(connectionString, TableName);
-            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{WorkflowName}'", select: new string[] { "FlowName", "ChangedTime", "DefinitionCompressed", "Kind" });
+            TableClient tableClient = new TableClient(ConnectionString, tableName);
+            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{workflowName}'", select: new string[] { "FlowName", "ChangedTime", "DefinitionCompressed", "Kind" });
 
             List<TableEntity> entities = (from n in tableEntities
                                           group n by n.GetString("FlowName") into g
@@ -22,7 +22,7 @@ namespace LogicAppAdvancedTool
 
             if (entities.Count == 0)
             {
-                throw new UserInputException($"{WorkflowName} cannot be found in storage table, please check whether workflow is correct.");
+                throw new UserInputException($"{workflowName} cannot be found in storage table, please check whether workflow is correct.");
             }
 
             foreach (TableEntity entity in entities)

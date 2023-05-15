@@ -11,40 +11,38 @@ namespace LogicAppAdvancedTool
         /// Clone a workflow definition (also can be a old version) to a new one
         /// </summary>
         /// <param name="ConnectionString"></param>
-        /// <param name="SourceName"></param>
+        /// <param name="sourceName"></param>
         /// <param name="TargetName"></param>
-        /// <param name="Version"></param>
-        private static void Clone(string LogicAppName, string SourceName, string TargetName, string Version)
+        /// <param name="version"></param>
+        private static void Clone(string logicAppName, string sourceName, string targetName, string version)
         {
-            string TableName = GetMainTableName(LogicAppName);
+            string tableName = GetMainTableName(logicAppName);
 
-            TableClient tableClient = new TableClient(connectionString, TableName);
-            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{SourceName}'");
+            TableClient tableClient = new TableClient(ConnectionString, tableName);
+            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{sourceName}'");
 
-            string Content = String.Empty;
-
-            string Identity = string.IsNullOrEmpty(Version) ? "FLOWIDENTIFIER" : Version;
+            string identity = string.IsNullOrEmpty(version) ? "FLOWIDENTIFIER" : version;
 
             foreach (TableEntity entity in tableEntities)
             {
-                string RowKey = entity.GetString("RowKey");
+                string rowKey = entity.GetString("RowKey");
 
-                if (RowKey.Contains(Identity))
+                if (rowKey.Contains(identity))
                 {
-                    byte[] DefinitionCompressed = entity.GetBinary("DefinitionCompressed");
-                    string Kind = entity.GetString("Kind");
-                    string DecompressedDefinition = DecompressContent(DefinitionCompressed);
+                    byte[] definitionCompressed = entity.GetBinary("DefinitionCompressed");
+                    string kind = entity.GetString("Kind");
+                    string decompressedDefinition = DecompressContent(definitionCompressed);
 
-                    string OutputContent = $"{{\"definition\": {DecompressedDefinition},\"kind\": \"{Kind}\"}}";
-                    string ClonePath = $"C:/home/site/wwwroot/{TargetName}";
+                    string outputContent = $"{{\"definition\": {decompressedDefinition},\"kind\": \"{kind}\"}}";
+                    string clonePath = $"C:/home/site/wwwroot/{targetName}";
 
-                    if (Directory.Exists(ClonePath))
+                    if (Directory.Exists(clonePath))
                     {
                         throw new UserInputException("Workflow already exists, workflow will not be cloned. Please use another target name.");
                     }
 
-                    Directory.CreateDirectory(ClonePath);
-                    File.WriteAllText($"{ClonePath}/workflow.json", OutputContent);
+                    Directory.CreateDirectory(clonePath);
+                    File.WriteAllText($"{clonePath}/workflow.json", outputContent);
 
                     break;
                 }

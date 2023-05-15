@@ -9,26 +9,26 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        private static void GenerateTablePrefix(string LogicAppName, string WorkflowName)
+        private static void GenerateTablePrefix(string logicAppName, string workflowName)
         {
-            string logicAppPrefix = StoragePrefixGenerator.Generate(LogicAppName.ToLower());
+            string logicAppPrefix = StoragePrefixGenerator.Generate(logicAppName.ToLower());
 
             //if we don't need to generate workflow prefix, just output Logic App prefix
-            if (String.IsNullOrEmpty(WorkflowName))
+            if (String.IsNullOrEmpty(workflowName))
             {
                 Console.WriteLine($"Logic App Prefix: {logicAppPrefix}");
 
                 return;
             }
 
-            string mainTableName = GetMainTableName(LogicAppName);
+            string mainTableName = GetMainTableName(logicAppName);
 
-            TableClient tableClient = new TableClient(connectionString, mainTableName);
-            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{WorkflowName}'");
+            TableClient tableClient = new TableClient(ConnectionString, mainTableName);
+            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{workflowName}'");
 
             if (tableEntities.Count() == 0)
             {
-                throw new UserInputException($"{WorkflowName} cannot be found in storage table, please check whether workflow is correct.");
+                throw new UserInputException($"{workflowName} cannot be found in storage table, please check whether workflow is correct.");
             }
 
             string workflowID = tableEntities.First<TableEntity>().GetString("FlowId");

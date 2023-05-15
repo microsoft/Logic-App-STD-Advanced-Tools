@@ -12,66 +12,66 @@ namespace LogicAppAdvancedTool
     partial class Program
     {
         #region Normal Sync
-        private static void SyncToLocal(string ShareName, string ConnectionString, string LocalPath)
+        private static void SyncToLocal(string shareName, string connectionString, string localPath)
         {
-            ShareClient shareClient = new ShareClient(ConnectionString, ShareName);
+            ShareClient shareClient = new ShareClient(connectionString, shareName);
 
             ShareDirectoryClient directoryClient = shareClient.GetDirectoryClient("site/wwwroot/");
 
-            string ConfirmationMessage = "WARNING!!!\r\nThis operation will overwrite your local project files.\r\nPlease input for confirmation:";
-            if (!Prompt.GetYesNo(ConfirmationMessage, false, ConsoleColor.Red))
+            string confirmationMessage = "WARNING!!!\r\nThis operation will overwrite your local project files.\r\nPlease input for confirmation:";
+            if (!Prompt.GetYesNo(confirmationMessage, false, ConsoleColor.Red))
             {
                 Console.WriteLine("Operation Cancelled");
 
                 return;
             }
 
-            string SyncModeMessage = "Whether clean up workflows in local project which cannot be found on cloud?\r\n\tYes: Clean up all the subfolders which not in clould (except .git, .vscode).\r\n\tNo: Only overwrite the files which modified on cloud, no files will be deleted.\r\nPlease input for confirmation:";
-            if (Prompt.GetYesNo(SyncModeMessage, false, ConsoleColor.Green))
+            string syncModeMessage = "Whether clean up workflows in local project which cannot be found on cloud?\r\n\tYes: Clean up all the subfolders which not in clould (except .git, .vscode).\r\n\tNo: Only overwrite the files which modified on cloud, no files will be deleted.\r\nPlease input for confirmation:";
+            if (Prompt.GetYesNo(syncModeMessage, false, ConsoleColor.Green))
             {
-                List<string> ExcludeFolders = new List<string>() { ".git", ".vscode" };
+                List<string> excludeFolders = new List<string>() { ".git", ".vscode" };
 
-                string ExcludeFoldersMessage = "Please provide the folders which you would like to exclude for clean up, use comma for split.\r\nIf no extra folder need to be excluded, just press Enter. (.git, .vscode folder will be excluded by default)";
+                string excludeFoldersMessage = "Please provide the folders which you would like to exclude for clean up, use comma for split.\r\nIf no extra folder need to be excluded, just press Enter. (.git, .vscode folder will be excluded by default)";
 
-                string CustomizedExcludes = Prompt.GetString(ExcludeFoldersMessage, null, ConsoleColor.Green);
-                if (!string.IsNullOrEmpty(CustomizedExcludes))
+                string customizedExcludes = Prompt.GetString(excludeFoldersMessage, null, ConsoleColor.Green);
+                if (!string.IsNullOrEmpty(customizedExcludes))
                 {
-                    string[] exclude = CustomizedExcludes.Split(',');
+                    string[] exclude = customizedExcludes.Split(',');
                     foreach (string excludeItem in exclude)
                     {
-                        ExcludeFolders.Add(excludeItem.Trim());
+                        excludeFolders.Add(excludeItem.Trim());
                     }
                 }
 
-                DirectoryInfo DI = new DirectoryInfo(LocalPath);
-                DirectoryInfo[] SubFolders = DI.GetDirectories();
+                DirectoryInfo directoryInfo = new DirectoryInfo(localPath);
+                DirectoryInfo[] subFolders = directoryInfo.GetDirectories();
 
-                foreach (DirectoryInfo SubFolder in SubFolders)
+                foreach (DirectoryInfo subFolder in subFolders)
                 {
-                    if (!ExcludeFolders.Contains(SubFolder.Name))
+                    if (!excludeFolders.Contains(subFolder.Name))
                     {
-                        Directory.Delete(SubFolder.FullName, true);
+                        Directory.Delete(subFolder.FullName, true);
                     }
                 }
             }
 
-            Sync(LocalPath, directoryClient);
+            Sync(localPath, directoryClient);
 
-            Console.WriteLine($"Sync to local successed, File Share name {ShareName}.");
+            Console.WriteLine($"Sync to local successed, File Share name {shareName}.");
         }
         #endregion
 
-        private static void BatchSyncToLocal(string ConfigFile)
+        private static void BatchSyncToLocal(string configFile)
         {
-            if (!File.Exists(ConfigFile))
+            if (!File.Exists(configFile))
             {
-                throw new UserInputException($"{ConfigFile} cannot be found, please check your input");
+                throw new UserInputException($"{configFile} cannot be found, please check your input");
             }
 
-            string ConfigContent = File.ReadAllText(ConfigFile);
-            List<SyncConfig> SyncConfigs = JsonConvert.DeserializeObject<List<SyncConfig>>(ConfigContent);
+            string configContent = File.ReadAllText(configFile);
+            List<SyncConfig> syncConfigs = JsonConvert.DeserializeObject<List<SyncConfig>>(configContent);
 
-            foreach (SyncConfig config in SyncConfigs)
+            foreach (SyncConfig config in syncConfigs)
             {
                 AutoSyncToLocal(config.FileShareName, config.ConnectionString, config.LocalPath, config.Excludes);
             }
@@ -80,35 +80,35 @@ namespace LogicAppAdvancedTool
         }
 
         #region Auto sync
-        private static void AutoSyncToLocal(string ShareName, string ConnectionString, string LocalPath, List<string> Excludes)
+        private static void AutoSyncToLocal(string shareName, string connectionString, string localPath, List<string> excludes)
         {
-            ShareClient shareClient = new ShareClient(ConnectionString, ShareName);
+            ShareClient shareClient = new ShareClient(connectionString, shareName);
             ShareDirectoryClient directoryClient = shareClient.GetDirectoryClient("site/wwwroot/");
 
-            List<string> ExcludeFolders = new List<string>() { ".git", ".vscode" };
+            List<string> excludeFolders = new List<string>() { ".git", ".vscode" };
 
-            if (Excludes != null)
+            if (excludes != null)
             {
-                foreach (string excludeItem in Excludes)
+                foreach (string excludeItem in excludes)
                 {
-                    ExcludeFolders.Add(excludeItem.Trim());
+                    excludeFolders.Add(excludeItem.Trim());
                 }
             }
 
-            DirectoryInfo DI = new DirectoryInfo(LocalPath);
-            DirectoryInfo[] SubFolders = DI.GetDirectories();
+            DirectoryInfo directoryInfo = new DirectoryInfo(localPath);
+            DirectoryInfo[] subFolders = directoryInfo.GetDirectories();
 
-            foreach (DirectoryInfo SubFolder in SubFolders)
+            foreach (DirectoryInfo subFolder in subFolders)
             {
-                if (!ExcludeFolders.Contains(SubFolder.Name))
+                if (!excludeFolders.Contains(subFolder.Name))
                 {
-                    Directory.Delete(SubFolder.FullName, true);
+                    Directory.Delete(subFolder.FullName, true);
                 }
             }
 
-            Sync(LocalPath, directoryClient);
+            Sync(localPath, directoryClient);
 
-            Console.WriteLine($"Sync to local successed, File Share name {ShareName}.");
+            Console.WriteLine($"Sync to local successed, File Share name {shareName}.");
         }
         #endregion
 

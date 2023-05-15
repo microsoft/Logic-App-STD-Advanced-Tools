@@ -9,29 +9,27 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        private static void Decode(string LogicAppName, string ConnectionString, string WorkflowName, string Version)
+        private static void Decode(string logicAppName, string workflowName, string version)
         {
-            string TableName = GetMainTableName(LogicAppName);
+            string tableName = GetMainTableName(logicAppName);
 
-            TableClient tableClient = new TableClient(ConnectionString, TableName);
-            List<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{WorkflowName}' and FlowSequenceId eq '{Version}'").ToList();
+            TableClient tableClient = new TableClient(ConnectionString, tableName);
+            List<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{workflowName}' and FlowSequenceId eq '{version}'").ToList();
 
             if (tableEntities.Count<TableEntity>() == 0)
             {
-                throw new UserInputException($"{WorkflowName} with version {Version} cannot be found in storage table, pleaase check your input.");
+                throw new UserInputException($"{workflowName} with version {version} cannot be found in storage table, pleaase check your input.");
             }
-
-            string Content = String.Empty;
 
             foreach (TableEntity entity in tableEntities)
             {
-                byte[] DefinitionCompressed = entity.GetBinary("DefinitionCompressed");
-                string DecompressedDefinition = DecompressContent(DefinitionCompressed);
+                byte[] definitionCompressed = entity.GetBinary("DefinitionCompressed");
+                string decompressedDefinition = DecompressContent(definitionCompressed);
 
-                dynamic JsonObject = JsonConvert.DeserializeObject(DecompressedDefinition);
-                string FormattedContent = JsonConvert.SerializeObject(JsonObject, Formatting.Indented);
+                dynamic jsonObject = JsonConvert.DeserializeObject(decompressedDefinition);
+                string formattedContent = JsonConvert.SerializeObject(jsonObject, Formatting.Indented);
 
-                Console.Write(FormattedContent);
+                Console.Write(formattedContent);
 
                 break;
             }

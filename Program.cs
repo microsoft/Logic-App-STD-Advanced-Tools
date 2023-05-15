@@ -100,11 +100,10 @@ namespace LogicAppAdvancedTool
                     c.OnExecute(() =>
                     {
                         string LogicAppName = LogicAppNameCO.Value();
-                        string ConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
                         string WorkflowName = WorkflowNameCO.Value();
                         string Version = VersionCO.Value();
 
-                        Decode(LogicAppName, ConnectionString, WorkflowName, Version);
+                        Decode(LogicAppName, WorkflowName, Version);
 
                         return 0;
                     });

@@ -8,30 +8,30 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        private static void ListVersions(string LogicAppName, string WorkflowName)
+        private static void ListVersions(string logicAppName, string workflowName)
         {
-            string TableName = GetMainTableName(LogicAppName);
+            string tableName = GetMainTableName(logicAppName);
 
-            TableClient tableClient = new TableClient(connectionString, TableName);
-            List<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{WorkflowName}'").ToList();
+            TableClient tableClient = new TableClient(ConnectionString, tableName);
+            List<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{workflowName}'").ToList();
 
             if (tableEntities.Count == 0)
             {
-                throw new UserInputException($"{WorkflowName} cannot be found in storage table, please check whether workflow is correct.");
+                throw new UserInputException($"{workflowName} cannot be found in storage table, please check whether workflow is correct.");
             }
 
             ConsoleTable consoleTable = new ConsoleTable("Version ID", "Updated Time (UTC)");
 
             foreach (TableEntity entity in tableEntities)
             {
-                string RowKey = entity.GetString("RowKey");
+                string rowKey = entity.GetString("RowKey");
 
-                if (RowKey.Contains("FLOWVERSION"))
+                if (rowKey.Contains("FLOWVERSION"))
                 {
-                    string Version = entity.GetString("FlowSequenceId");
-                    string UpdateTime = entity.GetDateTimeOffset("FlowUpdatedTime")?.ToString("yyyy-MM-ddTHH:mm:ssZ");
+                    string version = entity.GetString("FlowSequenceId");
+                    string updateTime = entity.GetDateTimeOffset("FlowUpdatedTime")?.ToString("yyyy-MM-ddTHH:mm:ssZ");
 
-                    consoleTable.AddRow(Version, UpdateTime);
+                    consoleTable.AddRow(version, updateTime);
                 }
             }
 

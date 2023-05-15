@@ -9,11 +9,11 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        private static void ListWorkflows(string LogicAppName)
+        private static void ListWorkflows(string logicAppName)
         {
-            string TableName = GetMainTableName(LogicAppName);
+            string tableName = GetMainTableName(logicAppName);
 
-            TableClient tableClient = new TableClient(connectionString, TableName);
+            TableClient tableClient = new TableClient(ConnectionString, tableName);
             Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(select: new string[] { "FlowName", "ChangedTime", "DefinitionCompressed", "Kind" });
 
             List<TableEntity> entities = (from n in tableEntities

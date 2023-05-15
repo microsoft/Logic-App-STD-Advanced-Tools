@@ -14,9 +14,9 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        public static void IngestWorkflow(string LogicAppName, string WorkflowName)
+        public static void IngestWorkflow(string logicAppName, string workflowName)
         {
-            string WorkflowPath = $"C:/home/site/wwwroot/{WorkflowName}/workflow.json";
+            string WorkflowPath = $"C:/home/site/wwwroot/{workflowName}/workflow.json";
 
             if (!File.Exists(WorkflowPath))
             {
@@ -25,19 +25,19 @@ namespace LogicAppAdvancedTool
                 return;
             }
 
-            string Content = File.ReadAllText(WorkflowPath);
+            string content = File.ReadAllText(WorkflowPath);
 
-            WorkflowTemplate Template = JsonConvert.DeserializeObject<WorkflowTemplate>(Content);
-            string Definition = JsonConvert.SerializeObject(Template.definition);
-            byte[] CompressedDefinition = CompressContent(Definition);
+            WorkflowTemplate template = JsonConvert.DeserializeObject<WorkflowTemplate>(content);
+            string definition = JsonConvert.SerializeObject(template.definition);
+            byte[] compressedDefinition = CompressContent(definition);
 
-            string MainTableName = GetMainTableName(LogicAppName);
+            string mainTableName = GetMainTableName(logicAppName);
 
-            string BackupPath = BackupCurrentSite();
-            Console.WriteLine($"Backup current workflows, you can find in path: {BackupPath}");
+            string backupPath = BackupCurrentSite();
+            Console.WriteLine($"Backup current workflows, you can find in path: {backupPath}");
 
-            TableClient tableClient = new TableClient(connectionString, MainTableName);
-            Pageable<TableEntity> mainTableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{WorkflowName}'");
+            TableClient tableClient = new TableClient(ConnectionString, mainTableName);
+            Pageable<TableEntity> mainTableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{workflowName}'");
             List<TableEntity> mainLatestEntities = mainTableEntities.OrderByDescending(tableEntity => tableEntity.GetDateTimeOffset("ChangedTime")).Take(4).ToList();
 
             DateTimeOffset currentTime = DateTimeOffset.Now;
@@ -45,24 +45,24 @@ namespace LogicAppAdvancedTool
             foreach (TableEntity entity in mainLatestEntities)
             { 
                 TableEntity newEntity = new TableEntity(entity.PartitionKey, entity.RowKey);
-                newEntity.Add("DefinitionCompressed", CompressedDefinition);
+                newEntity.Add("DefinitionCompressed", compressedDefinition);
                 newEntity.Add("ChangedTime", currentTime);
                 tableClient.UpdateEntity(newEntity, entity.ETag, TableUpdateMode.Merge);
             }
 
-            string logicAppPrefix = GetMainTablePrefix(LogicAppName);
+            string logicAppPrefix = GetMainTablePrefix(logicAppName);
             string workflowID = mainTableEntities.First<TableEntity>().GetString("FlowId");
             string workflowPrefix = StoragePrefixGenerator.Generate(workflowID);
             string workflowTableName = $"flow{logicAppPrefix}{workflowPrefix}flows";
 
-            tableClient = new TableClient(connectionString, workflowTableName);
-            Pageable<TableEntity> wfTableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{WorkflowName}'");
+            tableClient = new TableClient(ConnectionString, workflowTableName);
+            Pageable<TableEntity> wfTableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{workflowName}'");
             List<TableEntity> wfLatestEntities = wfTableEntities.OrderByDescending(tableEntity => tableEntity.GetDateTimeOffset("ChangedTime")).Take(2).ToList();
 
             foreach (TableEntity entity in wfLatestEntities)
             {
                 TableEntity newEntity = new TableEntity(entity.PartitionKey, entity.RowKey);
-                newEntity.Add("DefinitionCompressed", CompressedDefinition);
+                newEntity.Add("DefinitionCompressed", compressedDefinition);
                 newEntity.Add("ChangedTime", currentTime);
                 tableClient.UpdateEntity(newEntity, entity.ETag, TableUpdateMode.Merge);
             }

@@ -18,7 +18,7 @@ namespace LogicAppAdvancedTool
             string actionTableName = $"flow{prefix}{date}t000000zactions";
 
             //Double check whether the action table exists
-            TableServiceClient serviceClient = new TableServiceClient(connectionString);
+            TableServiceClient serviceClient = new TableServiceClient(ConnectionString);
             Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{actionTableName}'");
 
             if (results.Count() == 0)
@@ -28,7 +28,7 @@ namespace LogicAppAdvancedTool
 
             Console.WriteLine($"action table - {actionTableName} found, retrieving action logs...");
 
-            TableClient tableClient = new TableClient(connectionString, actionTableName);
+            TableClient tableClient = new TableClient(ConnectionString, actionTableName);
             List<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: "Status eq 'Failed'").ToList();
 
             string fileName = $"{logicAppName}_{workflowName}_{date}_FailureLogs.json";
@@ -38,11 +38,11 @@ namespace LogicAppAdvancedTool
 
         private static void RetrieveFailuresByRun(string logicAppName, string workflowName, string runID)
         {
-            string Prefix = GenerateWorkflowTablePrefix(logicAppName, workflowName);
-            string runTableName = $"flow{Prefix}runs";
+            string prefix = GenerateWorkflowTablePrefix(logicAppName, workflowName);
+            string runTableName = $"flow{prefix}runs";
 
             //Double check whether the action table exists
-            TableServiceClient serviceClient = new TableServiceClient(connectionString);
+            TableServiceClient serviceClient = new TableServiceClient(ConnectionString);
             Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{runTableName}'");
 
             if (results.Count() == 0)
@@ -52,7 +52,7 @@ namespace LogicAppAdvancedTool
 
             Console.WriteLine($"run table - {runTableName} found, retrieving run history logs...");
 
-            TableClient tableClient = new TableClient(connectionString, runTableName);
+            TableClient tableClient = new TableClient(ConnectionString, runTableName);
             List<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowRunSequenceId eq '{runID}'").ToList();
 
             if (tableEntities.Count == 0)
@@ -63,9 +63,9 @@ namespace LogicAppAdvancedTool
             Console.WriteLine($"Workflow run id found in run history table. Retrieving failure actions.");
 
             string runTime = tableEntities.First().GetDateTimeOffset("CreatedTime")?.ToString("yyyyMMdd");
-            string actionTableName = $"flow{Prefix}{runTime}t000000zactions";
+            string actionTableName = $"flow{prefix}{runTime}t000000zactions";
 
-            tableClient = new TableClient(connectionString, actionTableName);
+            tableClient = new TableClient(ConnectionString, actionTableName);
             tableEntities = tableClient.Query<TableEntity>(filter: $"Status eq 'Failed' and FlowRunSequenceId eq '{runID}'").ToList();
 
             string fileName = $"{logicAppName}_{workflowName}_{runID}_FailureLogs.json";
@@ -145,20 +145,20 @@ namespace LogicAppAdvancedTool
             [JsonIgnore]
             public CommonPayloadStructure OutputsLink { get; private set; }
 
-            public FailureRecords(TableEntity te)
+            public FailureRecords(TableEntity tableEntity)
             {
-                this.Timestamp = te.GetDateTimeOffset("Timestamp") ?? DateTimeOffset.MinValue;
-                this.ActionName = te.GetString("ActionName");
-                this.Code = te.GetString("Code");
-                this.RepeatItemName = te.GetString("RepeatItemScopeName");
-                this.RepeatItemIdenx = te.GetInt32("RepeatItemIndex");
-                this.ActionRepetitionName = te.GetString("ActionRepetitionName");
+                this.Timestamp = tableEntity.GetDateTimeOffset("Timestamp") ?? DateTimeOffset.MinValue;
+                this.ActionName = tableEntity.GetString("ActionName");
+                this.Code = tableEntity.GetString("Code");
+                this.RepeatItemName = tableEntity.GetString("RepeatItemScopeName");
+                this.RepeatItemIdenx = tableEntity.GetInt32("RepeatItemIndex");
+                this.ActionRepetitionName = tableEntity.GetString("ActionRepetitionName");
 
-                this.InputContent = DecodeActionPayload(te.GetBinary("InputsLinkCompressed"));
-                this.OutputContent = DecodeActionPayload(te.GetBinary("OutputsLinkCompressed"));
+                this.InputContent = DecodeActionPayload(tableEntity.GetBinary("InputsLinkCompressed"));
+                this.OutputContent = DecodeActionPayload(tableEntity.GetBinary("OutputsLinkCompressed"));
 
-                string RawError = DecompressContent(te.GetBinary("Error"));
-                this.Error = String.IsNullOrEmpty(RawError) ? null : JsonConvert.DeserializeObject<ActionError>(RawError);
+                string rawError = DecompressContent(tableEntity.GetBinary("Error"));
+                this.Error = String.IsNullOrEmpty(rawError) ? null : JsonConvert.DeserializeObject<ActionError>(rawError);
             }
         }
     }

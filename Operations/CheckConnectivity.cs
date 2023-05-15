@@ -11,24 +11,22 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        private static void CheckConnectivity(string LogicAppName)
+        private static void CheckConnectivity(string logicAppName)
         {
-            string FileShareName = Environment.GetEnvironmentVariable("WEBSITE_CONTENTSHARE");
+            ConnectionInfo connectionInfo = new ConnectionInfo(ConnectionString);
+            ConnectionValidator connectionValidator = new ConnectionValidator(connectionInfo, logicAppName);
 
-            ConnectionInfo connectionInfo = new ConnectionInfo(connectionString);
-            ConnectionValidator connectionValidator = new ConnectionValidator(connectionInfo, LogicAppName);
+            List<ValidationInfo> results = connectionValidator.Validate();
 
-            List<ValidationInfo> Results = connectionValidator.Validate();
-
-            if (Results != null) 
+            if (results != null) 
             {
                 ConsoleTable consoleTable = new ConsoleTable("EndPoint", "Type", "DNS Test", "Endpoint IP", "TCP Port (443)", "Auth Status");
 
-                foreach (ValidationInfo result in Results)
+                foreach (ValidationInfo result in results)
                 { 
-                    string Endpoint = result.Endpoint;
+                    string endpoint = result.Endpoint;
 
-                    consoleTable.AddRow(Endpoint, result.ServiceType.ToString(), result.DNSStatus.ToString(), result.GetIPsAsString(), result.PingStatus.ToString(), result.AuthStatus.ToString());
+                    consoleTable.AddRow(endpoint, result.ServiceType.ToString(), result.DNSStatus.ToString(), result.GetIPsAsString(), result.PingStatus.ToString(), result.AuthStatus.ToString());
                 }
 
                 consoleTable.Print();
@@ -38,12 +36,12 @@ namespace LogicAppAdvancedTool
         public class ConnectionValidator
         {
             private string LogicAppName;
-            private ConnectionInfo connectionInfo;
+            private ConnectionInfo ConnectionInfo;
             private List<ValidationInfo> Results;
             public ConnectionValidator(ConnectionInfo connectionInfo, string logicAppName)
             {
-                this.connectionInfo = connectionInfo;
-                this.LogicAppName = logicAppName;
+                ConnectionInfo = connectionInfo;
+                LogicAppName = logicAppName;
 
                 Results = new List<ValidationInfo>
                 {
@@ -61,9 +59,9 @@ namespace LogicAppAdvancedTool
                 {
                     try
                     {
-                        IPAddress[] IPs = Dns.GetHostAddresses(info.Endpoint);
+                        IPAddress[] ipAddressess = Dns.GetHostAddresses(info.Endpoint);
 
-                        info.IPs = IPs;
+                        info.IPs = ipAddressess;
                         info.DNSStatus = ValidateStatus.Succeeded;
                     }
                     catch
@@ -107,19 +105,19 @@ namespace LogicAppAdvancedTool
                         switch (info.ServiceType)
                         {
                             case StorageType.Blob:
-                                BlobServiceClient blobClient = new BlobServiceClient(connectionString);
+                                BlobServiceClient blobClient = new BlobServiceClient(ConnectionString);
                                 blobClient.GetProperties();
                                 break;
                             case StorageType.File:
-                                ShareServiceClient shareClient = new ShareServiceClient(connectionString);
+                                ShareServiceClient shareClient = new ShareServiceClient(ConnectionString);
                                 shareClient.GetProperties();
                                 break;
                             case StorageType.Queue:
-                                QueueServiceClient queueClient = new QueueServiceClient(connectionString);
+                                QueueServiceClient queueClient = new QueueServiceClient(ConnectionString);
                                 queueClient.GetProperties();
                                 break;
                             case StorageType.Table:
-                                TableServiceClient tableClient = new TableServiceClient(connectionString);
+                                TableServiceClient tableClient = new TableServiceClient(ConnectionString);
                                 tableClient.GetProperties();
                                 break;
                             default: break;
@@ -161,10 +159,10 @@ namespace LogicAppAdvancedTool
             public ValidateStatus PingStatus;
             public ValidateStatus AuthStatus;
 
-            public ValidationInfo(string Endpoint, StorageType ServiceType)
+            public ValidationInfo(string endpoint, StorageType serviceType)
             {
-                this.Endpoint = Endpoint;
-                this.ServiceType = ServiceType;
+                Endpoint = endpoint;
+                ServiceType = serviceType;
                 DNSStatus = ValidateStatus.NotApplicable;
                 PingStatus = ValidateStatus.NotApplicable;
                 AuthStatus = ValidateStatus.NotApplicable;
@@ -190,11 +188,11 @@ namespace LogicAppAdvancedTool
         public class ConnectionInfo
         {
             private Dictionary<string, string> CSInfo;
-            public ConnectionInfo(string ConnectionString) 
+            public ConnectionInfo(string connectionString) 
             {
                 CSInfo = new Dictionary<string, string>();
 
-                string[] Infos = ConnectionString.Split(";");
+                string[] Infos = connectionString.Split(";");
                 foreach (string Info in Infos)
                 {
                     string[] KV = Info.Split("=");
