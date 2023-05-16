@@ -18,17 +18,13 @@ namespace LogicAppAdvancedTool
     {
         private static void GenerateRunHistoryUrl(string logicAppName, string workflowName, string date, string filter)
         {
-            string subscriptionID = Environment.GetEnvironmentVariable("WEBSITE_OWNER_NAME").Split('+')[0];
-            string resourceGroup = Environment.GetEnvironmentVariable("WEBSITE_RESOURCE_GROUP");
-            string location = Environment.GetEnvironmentVariable("REGION_NAME");
-
             string tablePrefix = GenerateWorkflowTablePrefix(logicAppName, workflowName);
             string runTableName = $"flow{tablePrefix}runs";
 
             DateTime minTimeStamp = DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture);
             DateTime maxTimeStamp = minTimeStamp.AddDays(1);
             
-            TableServiceClient serviceClient = new TableServiceClient(ConnectionString);
+            TableServiceClient serviceClient = new TableServiceClient(AppSettings.ConnectionString);
             Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{runTableName}'");
 
             if (results.Count() == 0)
@@ -38,7 +34,7 @@ namespace LogicAppAdvancedTool
 
             Console.WriteLine($"Run history table - {runTableName} found, retrieving action logs...");
 
-            TableClient tableClient = new TableClient(ConnectionString, runTableName);
+            TableClient tableClient = new TableClient(AppSettings.ConnectionString, runTableName);
             Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"Status eq 'Failed' and CreatedTime ge datetime'{minTimeStamp.ToString("yyyy-MM-ddTHH:mm:ssZ")}' and EndTime le datetime'{maxTimeStamp.ToString("yyyy-MM-ddTHH:mm:ssZ")}'");
 
             if (tableEntities.Count() == 0)
@@ -55,13 +51,13 @@ namespace LogicAppAdvancedTool
 
                 if (string.IsNullOrEmpty(filter))
                 {
-                    runs.Add(new WorkflowRunInfo(subscriptionID, resourceGroup, logicAppName, workflowName, runID, location, startTime, endTime));
+                    runs.Add(new WorkflowRunInfo(logicAppName, workflowName, runID, startTime, endTime));
                 }
                 else
                 {
                     string actionTableName = $"flow{tablePrefix}{date}t000000zactions";
 
-                    tableClient = new TableClient(ConnectionString, actionTableName);
+                    tableClient = new TableClient(AppSettings.ConnectionString, actionTableName);
                     tableEntities = tableClient.Query<TableEntity>(filter: $"Status eq 'Failed' and FlowRunSequenceId eq '{runID}'");
 
                     if (tableEntities.Count() == 0)
@@ -77,7 +73,7 @@ namespace LogicAppAdvancedTool
 
                         if (outputContent.Contains(filter) || rawError.Contains(filter))
                         {
-                            runs.Add(new WorkflowRunInfo(subscriptionID, resourceGroup, logicAppName, workflowName, runID, location, startTime, endTime));
+                            runs.Add(new WorkflowRunInfo(logicAppName, workflowName, runID, startTime, endTime));
 
                             break;
                         }
@@ -136,16 +132,16 @@ namespace LogicAppAdvancedTool
             }
         }
 
-        public WorkflowRunInfo(string subscriptionID, string resourceGroup, string logicAppName, string workflowName, string runID, string location, string startTime, string endTime)
+        public WorkflowRunInfo(string logicAppName, string workflowName, string runID, string startTime, string endTime)
         {
-            this.SubscriptionID = subscriptionID;
-            this.ResourceGroup = resourceGroup;
+            this.SubscriptionID = AppSettings.SubscriptionID;
+            this.ResourceGroup = AppSettings.ResourceGroup;
             this.LogicAppName = logicAppName;
             this.WorkflowName = workflowName;
             this.RunID = runID;
             this.StartTime = startTime;
             this.EndTime = endTime;
-            this.Location = UrlEncoder.Default.Encode(location);
+            this.Location = UrlEncoder.Default.Encode(AppSettings.Region);
         }
     }
 }

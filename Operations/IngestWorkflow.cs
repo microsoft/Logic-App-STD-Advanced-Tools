@@ -36,7 +36,7 @@ namespace LogicAppAdvancedTool
             string backupPath = BackupCurrentSite();
             Console.WriteLine($"Backup current workflows, you can find in path: {backupPath}");
 
-            TableClient tableClient = new TableClient(ConnectionString, mainTableName);
+            TableClient tableClient = new TableClient(AppSettings.ConnectionString, mainTableName);
             Pageable<TableEntity> mainTableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{workflowName}'");
             List<TableEntity> mainLatestEntities = mainTableEntities.OrderByDescending(tableEntity => tableEntity.GetDateTimeOffset("ChangedTime")).Take(4).ToList();
 
@@ -55,7 +55,7 @@ namespace LogicAppAdvancedTool
             string workflowPrefix = StoragePrefixGenerator.Generate(workflowID);
             string workflowTableName = $"flow{logicAppPrefix}{workflowPrefix}flows";
 
-            tableClient = new TableClient(ConnectionString, workflowTableName);
+            tableClient = new TableClient(AppSettings.ConnectionString, workflowTableName);
             Pageable<TableEntity> wfTableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{workflowName}'");
             List<TableEntity> wfLatestEntities = wfTableEntities.OrderByDescending(tableEntity => tableEntity.GetDateTimeOffset("ChangedTime")).Take(2).ToList();
 

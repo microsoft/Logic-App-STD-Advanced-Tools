@@ -18,7 +18,7 @@ namespace LogicAppAdvancedTool
             string actionTableName = $"flow{prefix}{date}t000000zactions";
 
             //Double check whether the action table exists
-            TableServiceClient serviceClient = new TableServiceClient(ConnectionString);
+            TableServiceClient serviceClient = new TableServiceClient(AppSettings.ConnectionString);
             Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{actionTableName}'");
 
             if (results.Count() == 0)
@@ -28,7 +28,7 @@ namespace LogicAppAdvancedTool
 
             Console.WriteLine($"action table - {actionTableName} found, retrieving action logs...");
 
-            TableClient tableClient = new TableClient(ConnectionString, actionTableName);
+            TableClient tableClient = new TableClient(AppSettings.ConnectionString, actionTableName);
             List<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: "Status eq 'Failed'").ToList();
 
             string fileName = $"{logicAppName}_{workflowName}_{date}_FailureLogs.json";
@@ -42,7 +42,7 @@ namespace LogicAppAdvancedTool
             string runTableName = $"flow{prefix}runs";
 
             //Double check whether the action table exists
-            TableServiceClient serviceClient = new TableServiceClient(ConnectionString);
+            TableServiceClient serviceClient = new TableServiceClient(AppSettings.ConnectionString);
             Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{runTableName}'");
 
             if (results.Count() == 0)
@@ -52,7 +52,7 @@ namespace LogicAppAdvancedTool
 
             Console.WriteLine($"run table - {runTableName} found, retrieving run history logs...");
 
-            TableClient tableClient = new TableClient(ConnectionString, runTableName);
+            TableClient tableClient = new TableClient(AppSettings.ConnectionString, runTableName);
             List<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowRunSequenceId eq '{runID}'").ToList();
 
             if (tableEntities.Count == 0)
@@ -65,7 +65,7 @@ namespace LogicAppAdvancedTool
             string runTime = tableEntities.First().GetDateTimeOffset("CreatedTime")?.ToString("yyyyMMdd");
             string actionTableName = $"flow{prefix}{runTime}t000000zactions";
 
-            tableClient = new TableClient(ConnectionString, actionTableName);
+            tableClient = new TableClient(AppSettings.ConnectionString, actionTableName);
             tableEntities = tableClient.Query<TableEntity>(filter: $"Status eq 'Failed' and FlowRunSequenceId eq '{runID}'").ToList();
 
             string fileName = $"{logicAppName}_{workflowName}_{runID}_FailureLogs.json";

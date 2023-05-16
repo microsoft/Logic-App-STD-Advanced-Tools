@@ -13,7 +13,7 @@ namespace LogicAppAdvancedTool
         {
             string tableName = GetMainTableName(logicAppName);
 
-            TableClient tableClient = new TableClient(ConnectionString, tableName);
+            TableClient tableClient = new TableClient(AppSettings.ConnectionString, tableName);
             Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{workflowName}'", select: new string[] { "FlowName", "ChangedTime", "DefinitionCompressed", "Kind" });
 
             List<TableEntity> entities = (from n in tableEntities

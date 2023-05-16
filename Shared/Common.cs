@@ -23,7 +23,7 @@ namespace LogicAppAdvancedTool
         {
             string tableName = $"flow{StoragePrefixGenerator.Generate(logicAppName.ToLower())}flows";
 
-            TableServiceClient serviceClient = new TableServiceClient(ConnectionString);
+            TableServiceClient serviceClient = new TableServiceClient(AppSettings.ConnectionString);
 
             //Double check whether the table exists
             Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{tableName}'");
@@ -46,7 +46,7 @@ namespace LogicAppAdvancedTool
             string tablePrefix = StoragePrefixGenerator.Generate(logicAppName.ToLower());
             string tableName = $"flow{tablePrefix}flows";
 
-            TableServiceClient serviceClient = new TableServiceClient(ConnectionString);
+            TableServiceClient serviceClient = new TableServiceClient(AppSettings.ConnectionString);
 
             //Double check whether the table exists
             Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{tableName}'");
@@ -78,7 +78,7 @@ namespace LogicAppAdvancedTool
         {
             string mainTableName = GetMainTableName(logicAppName);
 
-            TableClient tableClient = new TableClient(ConnectionString, mainTableName);
+            TableClient tableClient = new TableClient(AppSettings.ConnectionString, mainTableName);
             Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{workflowName}'");
 
             if (tableEntities.Count() == 0)
@@ -101,14 +101,6 @@ namespace LogicAppAdvancedTool
             ZipFile.CreateFromDirectory("C:/home/site/wwwroot/", filePath, CompressionLevel.Fastest, false);
 
             return filePath;
-        }
-
-        public static string ConnectionString
-        {
-            get
-            {
-                return Environment.GetEnvironmentVariable("AzureWebJobsStorage");
-            }
         }
 
         /// <summary>

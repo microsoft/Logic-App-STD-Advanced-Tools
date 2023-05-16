@@ -13,7 +13,7 @@ namespace LogicAppAdvancedTool
     {
         private static void CheckConnectivity(string logicAppName)
         {
-            ConnectionInfo connectionInfo = new ConnectionInfo(ConnectionString);
+            ConnectionInfo connectionInfo = new ConnectionInfo(AppSettings.ConnectionString);
             ConnectionValidator connectionValidator = new ConnectionValidator(connectionInfo, logicAppName);
 
             List<ValidationInfo> results = connectionValidator.Validate();
@@ -105,19 +105,19 @@ namespace LogicAppAdvancedTool
                         switch (info.ServiceType)
                         {
                             case StorageType.Blob:
-                                BlobServiceClient blobClient = new BlobServiceClient(ConnectionString);
+                                BlobServiceClient blobClient = new BlobServiceClient(AppSettings.ConnectionString);
                                 blobClient.GetProperties();
                                 break;
                             case StorageType.File:
-                                ShareServiceClient shareClient = new ShareServiceClient(ConnectionString);
+                                ShareServiceClient shareClient = new ShareServiceClient(AppSettings.ConnectionString);
                                 shareClient.GetProperties();
                                 break;
                             case StorageType.Queue:
-                                QueueServiceClient queueClient = new QueueServiceClient(ConnectionString);
+                                QueueServiceClient queueClient = new QueueServiceClient(AppSettings.ConnectionString);
                                 queueClient.GetProperties();
                                 break;
                             case StorageType.Table:
-                                TableServiceClient tableClient = new TableServiceClient(ConnectionString);
+                                TableServiceClient tableClient = new TableServiceClient(AppSettings.ConnectionString);
                                 tableClient.GetProperties();
                                 break;
                             default: break;

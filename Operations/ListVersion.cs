@@ -12,7 +12,7 @@ namespace LogicAppAdvancedTool
         {
             string tableName = GetMainTableName(logicAppName);
 
-            TableClient tableClient = new TableClient(ConnectionString, tableName);
+            TableClient tableClient = new TableClient(AppSettings.ConnectionString, tableName);
             List<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{workflowName}'").ToList();
 
             if (tableEntities.Count == 0)

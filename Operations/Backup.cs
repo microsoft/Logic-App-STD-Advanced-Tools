@@ -16,7 +16,7 @@ namespace LogicAppAdvancedTool
             string definitionTableName = GetMainTableName(logicAppName);
             string backupFolder = $"{Directory.GetCurrentDirectory()}/Backup";
 
-            TableClient tableClient = new TableClient(ConnectionString, definitionTableName);
+            TableClient tableClient = new TableClient(AppSettings.ConnectionString, definitionTableName);
             Pageable<TableEntity> tableEntities;
 
             Directory.CreateDirectory(backupFolder);

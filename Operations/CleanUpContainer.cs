@@ -31,7 +31,7 @@ namespace LogicAppAdvancedTool
 
             tablePrefix = $"flow{tablePrefix}";
 
-            BlobServiceClient client = new BlobServiceClient(ConnectionString);
+            BlobServiceClient client = new BlobServiceClient(AppSettings.ConnectionString);
             List<BlobContainerItem> containers = client.GetBlobContainers(BlobContainerTraits.Metadata, BlobContainerStates.None, tablePrefix).ToList();
 
             if (containers.Count == 0)
