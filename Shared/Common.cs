@@ -19,18 +19,18 @@ namespace LogicAppAdvancedTool
         /// </summary>
         /// <param name="ConnectionString"></param>
         /// <returns></returns>
-        private static string GetMainTableName(string LogicAppName)
+        private static string GetMainTableName(string logicAppName)
         {
-            string TableName = $"flow{StoragePrefixGenerator.Generate(LogicAppName.ToLower())}flows";
+            string tableName = $"flow{StoragePrefixGenerator.Generate(logicAppName.ToLower())}flows";
 
             TableServiceClient serviceClient = new TableServiceClient(ConnectionString);
 
             //Double check whether the table exists
-            Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{TableName}'");
+            Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{tableName}'");
 
             if (results.Count() != 0)
             {
-                return TableName;
+                return tableName;
             }
 
             throw new UserInputException("No table found in Azure Storage Account, please check whether the Logic App Name correct or not.");
@@ -41,52 +41,52 @@ namespace LogicAppAdvancedTool
         /// </summary>
         /// <param name="ConnectionString"></param>
         /// <returns></returns>
-        private static string GetMainTablePrefix(string LogicAppName)
+        private static string GetMainTablePrefix(string logicAppName)
         {
-            string TablePrefix = StoragePrefixGenerator.Generate(LogicAppName.ToLower());
-            string TableName = $"flow{TablePrefix}flows";
+            string tablePrefix = StoragePrefixGenerator.Generate(logicAppName.ToLower());
+            string tableName = $"flow{tablePrefix}flows";
 
             TableServiceClient serviceClient = new TableServiceClient(ConnectionString);
 
             //Double check whether the table exists
-            Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{TableName}'");
+            Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{tableName}'");
 
             if (results.Count() != 0)
             {
-                return TablePrefix;
+                return tablePrefix;
             }
 
             Console.WriteLine("No table found in Azure Storage Account, please check whether the Logic App Name correct or not.");
             return string.Empty;
         }
 
-        private static string GenerateLogicAppPrefix(string LogicAppName) 
+        private static string GenerateLogicAppPrefix(string logicAppName) 
         {
-            string TablePrefix = StoragePrefixGenerator.Generate(LogicAppName.ToLower());
+            string tablePrefix = StoragePrefixGenerator.Generate(logicAppName.ToLower());
 
-            return TablePrefix;
+            return tablePrefix;
         }
 
         /// <summary>
         /// Generate workflow table prefix in Storage Table
         /// </summary>
-        /// <param name="LogicAppName"></param>
-        /// <param name="WorkflowName"></param>
+        /// <param name="logicAppName"></param>
+        /// <param name="workflowName"></param>
         /// <returns></returns>
         /// <exception cref="UserInputException"></exception>
-        private static string GenerateWorkflowTablePrefix(string LogicAppName, string WorkflowName)
+        private static string GenerateWorkflowTablePrefix(string logicAppName, string workflowName)
         {
-            string mainTableName = GetMainTableName(LogicAppName);
+            string mainTableName = GetMainTableName(logicAppName);
 
             TableClient tableClient = new TableClient(ConnectionString, mainTableName);
-            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{WorkflowName}'");
+            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{workflowName}'");
 
             if (tableEntities.Count() == 0)
             {
-                throw new UserInputException($"{WorkflowName} cannot be found in storage table, please check whether workflow name is correct.");
+                throw new UserInputException($"{workflowName} cannot be found in storage table, please check whether workflow name is correct.");
             }
 
-            string logicAppPrefix = StoragePrefixGenerator.Generate(LogicAppName.ToLower());
+            string logicAppPrefix = StoragePrefixGenerator.Generate(logicAppName.ToLower());
 
             string workflowID = tableEntities.First<TableEntity>().GetString("FlowId");
             string workflowPrefix = StoragePrefixGenerator.Generate(workflowID.ToLower());
@@ -96,11 +96,11 @@ namespace LogicAppAdvancedTool
 
         private static string BackupCurrentSite()
         {
-            string FilePath = $"{Directory.GetCurrentDirectory()}/Backup_{DateTime.Now.ToString("yyyyMMddHHmmss")}.zip";
+            string filePath = $"{Directory.GetCurrentDirectory()}/Backup_{DateTime.Now.ToString("yyyyMMddHHmmss")}.zip";
 
-            ZipFile.CreateFromDirectory("C:/home/site/wwwroot/", FilePath, CompressionLevel.Fastest, false);
+            ZipFile.CreateFromDirectory("C:/home/site/wwwroot/", filePath, CompressionLevel.Fastest, false);
 
-            return FilePath;
+            return filePath;
         }
 
         public static string ConnectionString
@@ -114,68 +114,68 @@ namespace LogicAppAdvancedTool
         /// <summary>
         /// Decode run history actions input/output content
         /// </summary>
-        /// <param name="BinaryContent"></param>
+        /// <param name="binaryContent"></param>
         /// <returns></returns>
-        public static dynamic DecodeActionPayload(byte[] BinaryContent)
+        public static dynamic DecodeActionPayload(byte[] binaryContent)
         {
-            string RawContent = DecompressContent(BinaryContent);
+            string rawContent = DecompressContent(binaryContent);
 
-            if (RawContent == null)
+            if (rawContent == null)
             {
                 return null;
             }
 
             //Recently there are 2 different JSON schema for output payload, try connector schema first
-            ConnectorPayloadStructure ConnectorPayload = JsonConvert.DeserializeObject<ConnectorPayloadStructure>(RawContent);
+            ConnectorPayloadStructure connectorPayload = JsonConvert.DeserializeObject<ConnectorPayloadStructure>(rawContent);
 
-            dynamic Output = null;
+            dynamic output = null;
 
-            if (ConnectorPayload.nestedContentLinks != null)
+            if (connectorPayload.ContentLinks != null)
             {
-                string inlineContent = ConnectorPayload.nestedContentLinks.body.inlinedContent;
-                Output = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(Convert.FromBase64String(inlineContent)));
-                return Output;
+                string inlineContent = connectorPayload.ContentLinks.Body.InlinedContent;
+                output = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(Convert.FromBase64String(inlineContent)));
+                return output;
             }
 
-            CommonPayloadStructure Payload = JsonConvert.DeserializeObject<CommonPayloadStructure>(RawContent);
-            Output = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(Convert.FromBase64String(Payload.inlinedContent)));
+            CommonPayloadStructure payload = JsonConvert.DeserializeObject<CommonPayloadStructure>(rawContent);
+            output = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(Convert.FromBase64String(payload.InlinedContent)));
 
-            return Output;
+            return output;
         }
 
         /// <summary>
         /// Decompress the content which compressed by Inflate
         /// </summary>
-        /// <param name="Content"></param>
+        /// <param name="content"></param>
         /// <returns></returns>
-        public static string DecompressContent(byte[] Content)
+        public static string DecompressContent(byte[] content)
         {
-            if (Content == null)
+            if (content == null)
             {
                 return null;
             }
 
-            string Result = DeflateCompressionUtility.Instance.InflateString(new MemoryStream(Content));
+            string result = DeflateCompressionUtility.Instance.InflateString(new MemoryStream(content));
 
-            return Result;
+            return result;
         }
 
         /// <summary>
         /// Compress string to Inflate stream
         /// </summary>
-        /// <param name="Content"></param>
+        /// <param name="content"></param>
         /// <returns></returns>
-        public static byte[] CompressContent(string Content)
+        public static byte[] CompressContent(string content)
         {
-            if (string.IsNullOrEmpty(Content))
+            if (string.IsNullOrEmpty(content))
             {
                 return null;
             }
 
-            MemoryStream CompressedStream = DeflateCompressionUtility.Instance.DeflateString(Content);
-            byte[] CompressedBytes = CompressedStream.ToArray();
+            MemoryStream compressedStream = DeflateCompressionUtility.Instance.DeflateString(content);
+            byte[] compressedBytes = compressedStream.ToArray();
 
-            return CompressedBytes;
+            return compressedBytes;
         }
     }
 }

@@ -95,7 +95,7 @@ namespace LogicAppAdvancedTool
 
                 FailureRecords failureRecords = new FailureRecords(entity);
 
-                if (failureRecords.Error != null && failureRecords.Error.message.Contains("An action failed. No dependent actions succeeded."))
+                if (failureRecords.Error != null && failureRecords.Error.Message.Contains("An action failed. No dependent actions succeeded."))
                 {
                     continue;       //exclude actions (eg:foreach, until) which failed due to inner actions.
                 }

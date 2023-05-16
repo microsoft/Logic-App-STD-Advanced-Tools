@@ -28,7 +28,7 @@ namespace LogicAppAdvancedTool
             string content = File.ReadAllText(WorkflowPath);
 
             WorkflowTemplate template = JsonConvert.DeserializeObject<WorkflowTemplate>(content);
-            string definition = JsonConvert.SerializeObject(template.definition);
+            string definition = JsonConvert.SerializeObject(template.Definition);
             byte[] compressedDefinition = CompressContent(definition);
 
             string mainTableName = GetMainTableName(logicAppName);

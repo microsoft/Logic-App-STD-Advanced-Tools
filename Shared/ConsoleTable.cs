@@ -48,16 +48,16 @@ namespace LogicAppAdvancedTool
 
             public void Print()
             {
-                int RowLength = 0;
+                int rowLength = 0;
 
                 foreach (int l in ColumnWidth)
                 { 
-                    RowLength+= l;
+                    rowLength+= l;
                 }
 
-                RowLength += ColumnWidth.Count + 1;
+                rowLength += ColumnWidth.Count + 1;
 
-                Console.WriteLine(new string('-', RowLength));
+                Console.WriteLine(new string('-', rowLength));
 
                 foreach (string[] row in Rows)
                 {
@@ -72,7 +72,7 @@ namespace LogicAppAdvancedTool
                     rowContent.Append("|");
 
                     Console.WriteLine(rowContent.ToString());
-                    Console.WriteLine(new string('-', RowLength));
+                    Console.WriteLine(new string('-', rowLength));
                 }
             }
         }
