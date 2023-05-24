@@ -135,7 +135,7 @@ namespace LogicAppAdvancedTool
             return output;
         }
 
-        public static dynamic DecodeActionPayloadAsString(byte[] binaryContent)
+        public static string DecodeActionPayloadAsString(byte[] binaryContent)
         {
             string rawContent = DecompressContent(binaryContent);
 
@@ -147,7 +147,7 @@ namespace LogicAppAdvancedTool
             //Recently there are 2 different JSON schema for output payload, try connector schema first
             ConnectorPayloadStructure connectorPayload = JsonConvert.DeserializeObject<ConnectorPayloadStructure>(rawContent);
 
-            dynamic output = null;
+            string output = null;
 
             if (connectorPayload.ContentLinks != null)
             {
