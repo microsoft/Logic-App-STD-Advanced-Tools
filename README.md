@@ -31,6 +31,7 @@ If you would like to compile the binary yourself, please always use "Publish" in
 | CheckConnectivity | Check the connection between Logic App and Storage Account via DNS resolution and tcp ping of 443 port. This command need Kudu site is available. |
 | GenerateRunHistoryUrl | Generate run history of failure runs of a specific workflow on a specific day. The url can directly open the run history page |
 | CleanUpContainer | Delete all the Logic App auto-generated blob containers for run history before a specific date. |
+| SearchInHistory | Search a keyword in workflow run history based on date. |
 
 ## How to use (Demo of restore a workflow)
 1. Open Kudu (Advanced Tools) of Logic App Standard and upload this tool into a folder
@@ -55,6 +56,10 @@ If you would like to compile the binary yourself, please always use "Publish" in
 
 
 ## Release Note
+2023-05-24
+1. Added a new command "SearchInHistory" for searching a keyword in workflow run history.
+2. Added a new command "ListWorkflowID" to list historical flow id which has the same name as per provided workflow name.
+
 2023-05-15
 1. Added new optional parameter "-f|--filter" in "GenerateRunHistoryUrl" command for searching failed run of specific exception message.
 2. Change "RetrieveFailures" commmand mechansim, now it need to use sub-command to retrieve by date or run id.
