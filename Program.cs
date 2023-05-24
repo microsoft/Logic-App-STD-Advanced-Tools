@@ -508,6 +508,52 @@ namespace LogicAppAdvancedTool
                 });
                 #endregion
 
+                #region List a workflow with versions
+                app.Command("ListWorkflowID", c =>
+                {
+                    CommandOption logicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive).", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption workflowCO = c.Option("-wf|--workflow", "(Optional) The name of workflow. If not provided, then all the workflows container will be deleted.", CommandOptionType.SingleValue);
+
+                    c.HelpOption("-?");
+                    c.Description = "List all the workflows which created before with same name.";
+
+                    c.OnExecute(() =>
+                    {
+                        string logicAppName = logicAppNameCO.Value();
+                        string workflowName = workflowCO.Value();
+
+                        ListWorkflowID(logicAppName, workflowName);
+
+                        return 0;
+                    });
+                });
+                #endregion
+
+                #region Search in run history
+                app.Command("SearchInHistory", c =>
+                {
+                    CommandOption logicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive).", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption workflowCO = c.Option("-wf|--workflow", "(Mandatory) The name of workflow.", CommandOptionType.SingleValue);
+                    CommandOption dateCO = c.Option("-d|--date", "(Mandatory) Date (format: \"yyyyMMdd\") of the logs need to be searched, UTC time", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption keywordCO = c.Option("-k|--key", "(Mandatory) The keyword you would like to search for.", CommandOptionType.SingleValue).IsRequired();
+
+                    c.HelpOption("-?");
+                    c.Description = "Search a keywords in workflow run history";
+
+                    c.OnExecute(() =>
+                    {
+                        string logicAppName = logicAppNameCO.Value();
+                        string workflowName = workflowCO.Value();
+                        string date = dateCO.Value();
+                        string keyword = keywordCO.Value();
+
+                        SearchInHistory(logicAppName, workflowName, date, keyword);
+
+                        return 0;
+                    });
+                });
+                #endregion
+
                 app.Execute(args);
             }
             catch (Exception ex)

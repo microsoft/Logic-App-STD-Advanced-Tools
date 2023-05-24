@@ -135,6 +135,33 @@ namespace LogicAppAdvancedTool
             return output;
         }
 
+        public static dynamic DecodeActionPayloadAsString(byte[] binaryContent)
+        {
+            string rawContent = DecompressContent(binaryContent);
+
+            if (rawContent == null)
+            {
+                return null;
+            }
+
+            //Recently there are 2 different JSON schema for output payload, try connector schema first
+            ConnectorPayloadStructure connectorPayload = JsonConvert.DeserializeObject<ConnectorPayloadStructure>(rawContent);
+
+            dynamic output = null;
+
+            if (connectorPayload.ContentLinks != null)
+            {
+                string inlineContent = connectorPayload.ContentLinks.Body.InlinedContent;
+                output = Encoding.UTF8.GetString(Convert.FromBase64String(inlineContent));
+                return output;
+            }
+
+            CommonPayloadStructure payload = JsonConvert.DeserializeObject<CommonPayloadStructure>(rawContent);
+            output = Encoding.UTF8.GetString(Convert.FromBase64String(payload.InlinedContent));
+
+            return output;
+        }
+
         /// <summary>
         /// Decompress the content which compressed by Inflate
         /// </summary>

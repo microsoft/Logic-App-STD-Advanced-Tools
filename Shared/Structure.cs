@@ -58,5 +58,39 @@ namespace LogicAppAdvancedTool
         {
             public UserInputException(string Message) : base(Message) { }
         }
+
+        public class HistoryRecords
+        {
+            public DateTimeOffset Timestamp { get; private set; }
+            public string ActionName { get; private set; }
+            public string Code { get; private set; }
+            public dynamic InputContent { get; private set; }
+            public dynamic OutputContent { get; private set; }
+            public ActionError Error { get; private set; }
+            public string RepeatItemName { get; private set; }
+            public int? RepeatItemIdenx { get; private set; }
+            public string ActionRepetitionName { get; private set; }
+
+            [JsonIgnore]
+            public CommonPayloadStructure InputsLink { get; private set; }
+            [JsonIgnore]
+            public CommonPayloadStructure OutputsLink { get; private set; }
+
+            public HistoryRecords(TableEntity tableEntity)
+            {
+                this.Timestamp = tableEntity.GetDateTimeOffset("Timestamp") ?? DateTimeOffset.MinValue;
+                this.ActionName = tableEntity.GetString("ActionName");
+                this.Code = tableEntity.GetString("Code");
+                this.RepeatItemName = tableEntity.GetString("RepeatItemScopeName");
+                this.RepeatItemIdenx = tableEntity.GetInt32("RepeatItemIndex");
+                this.ActionRepetitionName = tableEntity.GetString("ActionRepetitionName");
+
+                this.InputContent = DecodeActionPayload(tableEntity.GetBinary("InputsLinkCompressed"));
+                this.OutputContent = DecodeActionPayload(tableEntity.GetBinary("OutputsLinkCompressed"));
+
+                string rawError = DecompressContent(tableEntity.GetBinary("Error"));
+                this.Error = String.IsNullOrEmpty(rawError) ? null : JsonConvert.DeserializeObject<ActionError>(rawError);
+            }
+        }
     }
 }

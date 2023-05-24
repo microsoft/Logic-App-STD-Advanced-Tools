@@ -80,7 +80,7 @@ namespace LogicAppAdvancedTool
                 throw new UserInputException("No failure actions found in action table.");
             }
 
-            Dictionary<string, List<FailureRecords>> records = new Dictionary<string, List<FailureRecords>>();
+            Dictionary<string, List<HistoryRecords>> records = new Dictionary<string, List<HistoryRecords>>();
 
             //Insert all the failure records as per RunID
             foreach (TableEntity entity in tableEntities)
@@ -93,7 +93,7 @@ namespace LogicAppAdvancedTool
 
                 string runID = entity.GetString("FlowRunSequenceId");
 
-                FailureRecords failureRecords = new FailureRecords(entity);
+                HistoryRecords failureRecords = new HistoryRecords(entity);
 
                 if (failureRecords.Error != null && failureRecords.Error.Message.Contains("An action failed. No dependent actions succeeded."))
                 {
@@ -102,7 +102,7 @@ namespace LogicAppAdvancedTool
 
                 if (!records.ContainsKey(runID))
                 {
-                    records.Add(runID, new List<FailureRecords>());
+                    records.Add(runID, new List<HistoryRecords>());
                 }
 
                 records[runID].Add(failureRecords);
@@ -126,40 +126,6 @@ namespace LogicAppAdvancedTool
 
             File.AppendAllText(filePath, JsonConvert.SerializeObject(records, Formatting.Indented));
             Console.WriteLine($"Failure log generated, please check the file - {filePath}");
-        }
-
-        public class FailureRecords
-        {
-            public DateTimeOffset Timestamp { get; private set; }
-            public string ActionName { get; private set; }
-            public string Code { get; private set; }
-            public dynamic InputContent { get; private set; }
-            public dynamic OutputContent { get; private set; }
-            public ActionError Error { get; private set; }
-            public string RepeatItemName { get; private set; }
-            public int? RepeatItemIdenx { get; private set; }
-            public string ActionRepetitionName { get; private set; }
-
-            [JsonIgnore]
-            public CommonPayloadStructure InputsLink { get; private set; }
-            [JsonIgnore]
-            public CommonPayloadStructure OutputsLink { get; private set; }
-
-            public FailureRecords(TableEntity tableEntity)
-            {
-                this.Timestamp = tableEntity.GetDateTimeOffset("Timestamp") ?? DateTimeOffset.MinValue;
-                this.ActionName = tableEntity.GetString("ActionName");
-                this.Code = tableEntity.GetString("Code");
-                this.RepeatItemName = tableEntity.GetString("RepeatItemScopeName");
-                this.RepeatItemIdenx = tableEntity.GetInt32("RepeatItemIndex");
-                this.ActionRepetitionName = tableEntity.GetString("ActionRepetitionName");
-
-                this.InputContent = DecodeActionPayload(tableEntity.GetBinary("InputsLinkCompressed"));
-                this.OutputContent = DecodeActionPayload(tableEntity.GetBinary("OutputsLinkCompressed"));
-
-                string rawError = DecompressContent(tableEntity.GetBinary("Error"));
-                this.Error = String.IsNullOrEmpty(rawError) ? null : JsonConvert.DeserializeObject<ActionError>(rawError);
-            }
         }
     }
 }
