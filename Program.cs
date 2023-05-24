@@ -512,7 +512,7 @@ namespace LogicAppAdvancedTool
                 app.Command("ListWorkflowID", c =>
                 {
                     CommandOption logicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive).", CommandOptionType.SingleValue).IsRequired();
-                    CommandOption workflowCO = c.Option("-wf|--workflow", "(Optional) The name of workflow.", CommandOptionType.SingleValue);
+                    CommandOption workflowCO = c.Option("-wf|--workflow", "(Mandatory) The name of workflow.", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
                     c.Description = "List all the workflows which created before with same name.";
