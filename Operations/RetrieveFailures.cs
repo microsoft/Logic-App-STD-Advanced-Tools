@@ -95,7 +95,7 @@ namespace LogicAppAdvancedTool
 
                 HistoryRecords failureRecords = new HistoryRecords(entity);
 
-                if (failureRecords.Error != null && failureRecords.Error.Message.Contains("An action failed. No dependent actions succeeded."))
+                if (failureRecords.Error != null && failureRecords.Error.message.Contains("An action failed. No dependent actions succeeded."))
                 {
                     continue;       //exclude actions (eg:foreach, until) which failed due to inner actions.
                 }
@@ -108,24 +108,15 @@ namespace LogicAppAdvancedTool
                 records[runID].Add(failureRecords);
             }
 
-            string logFolder = $"{Directory.GetCurrentDirectory()}/FailureLogs";
-
-            if (!Directory.Exists(logFolder))
+            if (File.Exists(fileName))
             {
-                Directory.CreateDirectory(logFolder);
-            }
-
-            string filePath = $"{logFolder}/{fileName}";
-
-            if (File.Exists(filePath))
-            {
-                File.Delete(filePath);
+                File.Delete(fileName);
 
                 Console.WriteLine($"File already exists, the previous log file has been deleted");
             }
 
-            File.AppendAllText(filePath, JsonConvert.SerializeObject(records, Formatting.Indented));
-            Console.WriteLine($"Failure log generated, please check the file - {filePath}");
+            File.AppendAllText(fileName, JsonConvert.SerializeObject(records, Formatting.Indented));
+            Console.WriteLine($"Failure log generated, please check the file - {fileName}");
         }
     }
 }

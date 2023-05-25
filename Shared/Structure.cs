@@ -17,40 +17,40 @@ namespace LogicAppAdvancedTool
         #region Run history action content data structure
         public class ConnectorPayloadStructure
         {
-            public NestedContentLinks ContentLinks { get; set; }
+            public NestedContentLinks nestedContentLinks { get; set; }
         }
 
         public class NestedContentLinks
         {
-            public CommonPayloadStructure Body { get; set; }
+            public CommonPayloadStructure body { get; set; }
         }
 
         public class CommonPayloadStructure
         {
-            public string InlinedContent { get; set; }
-            public string ContentVersion { get; set; }
-            public int ContentSize { get; set; }
-            public ContentHash ContentHash { get; set; }
+            public string inlinedContent { get; set; }
+            public string contentVersion { get; set; }
+            public int contentSize { get; set; }
+            public ContentHash contentHash { get; set; }
         }
 
         public class ContentHash
         {
-            public string Algorithm { get; set; }
-            public string Value { get; set; }
+            public string algorithm { get; set; }
+            public string value { get; set; }
         }
 
         public class ActionError
         {
-            public string Code { get; set; }
-            public string Message { get; set; }
+            public string code { get; set; }
+            public string message { get; set; }
         }
         #endregion
 
         #region Workflow definition 
         public class WorkflowTemplate
         {
-            public object Definition { get; set; }
-            public string Kind { get; set; }
+            public object definition { get; set; }
+            public string kind { get; set; }
         }
         #endregion
 

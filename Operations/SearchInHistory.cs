@@ -81,24 +81,15 @@ namespace LogicAppAdvancedTool
                 records[runID].Add(filteredRecords);
             }
 
-            string logFolder = $"{Directory.GetCurrentDirectory()}/FilteredLogs";
-
-            if (!Directory.Exists(logFolder))
+            if (File.Exists(fileName))
             {
-                Directory.CreateDirectory(logFolder);
-            }
-
-            string filePath = $"{logFolder}/{fileName}";
-
-            if (File.Exists(filePath))
-            {
-                File.Delete(filePath);
+                File.Delete(fileName);
 
                 Console.WriteLine($"File already exists, the previous log file has been deleted");
             }
 
-            File.AppendAllText(filePath, JsonConvert.SerializeObject(records, Formatting.Indented));
-            Console.WriteLine($"Log generated, please check the file - {filePath}");
+            File.AppendAllText(fileName, JsonConvert.SerializeObject(records, Formatting.Indented));
+            Console.WriteLine($"Log generated, please check the file - {fileName}");
         }
     }
 }

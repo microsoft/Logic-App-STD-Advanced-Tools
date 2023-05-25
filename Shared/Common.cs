@@ -67,13 +67,6 @@ namespace LogicAppAdvancedTool
             return tablePrefix;
         }
 
-        /// <summary>
-        /// Generate workflow table prefix in Storage Table
-        /// </summary>
-        /// <param name="logicAppName"></param>
-        /// <param name="workflowName"></param>
-        /// <returns></returns>
-        /// <exception cref="UserInputException"></exception>
         private static string GenerateWorkflowTablePrefix(string logicAppName, string workflowName)
         {
             string mainTableName = GetMainTableName(logicAppName);
@@ -103,34 +96,17 @@ namespace LogicAppAdvancedTool
             return filePath;
         }
 
-        /// <summary>
-        /// Decode run history actions input/output content
-        /// </summary>
-        /// <param name="binaryContent"></param>
-        /// <returns></returns>
+        #region Decode action run history input/output
         public static dynamic DecodeActionPayload(byte[] binaryContent)
         {
-            string rawContent = DecompressContent(binaryContent);
+            string content = DecodeActionPayloadAsString(binaryContent);
 
-            if (rawContent == null)
+            if (String.IsNullOrEmpty(content))
             {
                 return null;
             }
 
-            //Recently there are 2 different JSON schema for output payload, try connector schema first
-            ConnectorPayloadStructure connectorPayload = JsonConvert.DeserializeObject<ConnectorPayloadStructure>(rawContent);
-
-            dynamic output = null;
-
-            if (connectorPayload.ContentLinks != null)
-            {
-                string inlineContent = connectorPayload.ContentLinks.Body.InlinedContent;
-                output = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(Convert.FromBase64String(inlineContent)));
-                return output;
-            }
-
-            CommonPayloadStructure payload = JsonConvert.DeserializeObject<CommonPayloadStructure>(rawContent);
-            output = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(Convert.FromBase64String(payload.InlinedContent)));
+            dynamic output = JsonConvert.DeserializeObject(content);
 
             return output;
         }
@@ -141,26 +117,38 @@ namespace LogicAppAdvancedTool
 
             if (rawContent == null)
             {
-                return null;
+                return String.Empty;
             }
 
-            //Recently there are 2 different JSON schema for output payload, try connector schema first
+            string inlinedContent = GetInlineContent(rawContent);
+
+            if (String.IsNullOrEmpty(inlinedContent))
+            {
+                return string.Empty;
+            }
+
+            return Encoding.UTF8.GetString(Convert.FromBase64String(inlinedContent));
+        }
+
+        private static string GetInlineContent(string rawContent)
+        {
             ConnectorPayloadStructure connectorPayload = JsonConvert.DeserializeObject<ConnectorPayloadStructure>(rawContent);
 
-            string output = null;
+            string inlineContent = null;
 
-            if (connectorPayload.ContentLinks != null)
+            if (connectorPayload.nestedContentLinks != null)
             {
-                string inlineContent = connectorPayload.ContentLinks.Body.InlinedContent;
-                output = Encoding.UTF8.GetString(Convert.FromBase64String(inlineContent));
-                return output;
+                inlineContent = connectorPayload.nestedContentLinks.body.inlinedContent;
+            }
+            else
+            {
+                CommonPayloadStructure payload = JsonConvert.DeserializeObject<CommonPayloadStructure>(rawContent);
+                inlineContent = payload.inlinedContent;
             }
 
-            CommonPayloadStructure payload = JsonConvert.DeserializeObject<CommonPayloadStructure>(rawContent);
-            output = Encoding.UTF8.GetString(Convert.FromBase64String(payload.InlinedContent));
-
-            return output;
+            return inlineContent;
         }
+        #endregion
 
         /// <summary>
         /// Decompress the content which compressed by Inflate

@@ -68,8 +68,8 @@ namespace LogicAppAdvancedTool
                     foreach (TableEntity te in tableEntities)
                     {
                         //TODO: improve DecodeActionPayload method for directly return string
-                        string outputContent = JsonConvert.SerializeObject(DecodeActionPayload(te.GetBinary("OutputsLinkCompressed")));
-                        string rawError = JsonConvert.SerializeObject(DecompressContent(te.GetBinary("Error")));
+                        string outputContent = DecodeActionPayloadAsString(te.GetBinary("OutputsLinkCompressed"));
+                        string rawError = DecompressContent(te.GetBinary("Error"));
 
                         if (outputContent.Contains(filter) || rawError.Contains(filter))
                         {
@@ -88,7 +88,15 @@ namespace LogicAppAdvancedTool
 
             string jsonContent = JsonConvert.SerializeObject(runs, Formatting.Indented);
 
-            string fileName = $"RunHistoryUrl_{logicAppName}_{workflowName}_{date}.json";
+            string fileName = $"{logicAppName}_{workflowName}_{date}_RunHistoryUrl.json";
+
+            if (File.Exists(fileName))
+            {
+                File.Delete(fileName);
+
+                Console.WriteLine($"File already exists, the previous log file has been deleted");
+            }
+
             File.AppendAllText(fileName, jsonContent);
 
             Console.WriteLine($"Failed run history url generated success, please check file {fileName}");
