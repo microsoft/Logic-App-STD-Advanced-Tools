@@ -56,6 +56,9 @@ If you would like to compile the binary yourself, please always use "Publish" in
 
 
 ## Release Note
+2023-05-25
+1. Fixed a bug which causing action run history input/output cannot be retrieved for API connection actions.
+
 2023-05-24
 1. Added a new command "SearchInHistory" for searching a keyword in workflow run history.
 2. Added a new command "ListWorkflowID" to list historical flow id which has the same name as per provided workflow name.
