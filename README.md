@@ -57,6 +57,10 @@ If you would like to compile the binary yourself, please always use "Publish" in
 
 
 ## Release Note
+2023-06-01
+1. "SearchInHistory" now support search keyword in run hhistory which saved as a blob file. Due to memory saving issue, the blob large than 1MB will not be scanned.
+2. Added a new class for run history content decode.
+
 2023-05-25
 1. Fixed a bug which causing action run history input/output cannot be retrieved for API connection actions.
 
