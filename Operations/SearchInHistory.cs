@@ -11,7 +11,7 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        private static void SearchInHistory(string logicAppName, string workflowName, string date, string keyword)
+        private static void SearchInHistory(string logicAppName, string workflowName, string date, string keyword, bool includeBlob = false)
         {
             string prefix = GenerateWorkflowTablePrefix(logicAppName, workflowName);
 
@@ -32,12 +32,12 @@ namespace LogicAppAdvancedTool
             List<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: "InputsLinkCompressed ne '' or OutputsLinkCompressed ne ''").ToList();
 
             List<TableEntity> filteredEntities = new List<TableEntity>();
-            foreach (TableEntity tableEntity in tableEntities) 
+            foreach (TableEntity tableEntity in tableEntities)
             {
-                string inputContent = DecodeActionPayloadAsString(tableEntity.GetBinary("InputsLinkCompressed"));
-                string outputContent = DecodeActionPayloadAsString(tableEntity.GetBinary("OutputsLinkCompressed"));
+                ContentDecoder inputDecoder = new ContentDecoder(tableEntity.GetBinary("InputsLinkCompressed"));
+                ContentDecoder outputDecoder = new ContentDecoder(tableEntity.GetBinary("OutputsLinkCompressed"));
 
-                if (SearchForKeyword(inputContent, keyword) || SearchForKeyword(outputContent, keyword))
+                if (inputDecoder.SearchKeyword(keyword, includeBlob) || outputDecoder.SearchKeyword(keyword, includeBlob))
                 {
                     filteredEntities.Add(tableEntity);
                 }
@@ -62,7 +62,6 @@ namespace LogicAppAdvancedTool
 
             return false;
         }
-
         private static void SaveLogs(List<TableEntity> tableEntities, string fileName)
         {
             Dictionary<string, List<HistoryRecords>> records = new Dictionary<string, List<HistoryRecords>>();

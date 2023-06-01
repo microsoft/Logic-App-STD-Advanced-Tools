@@ -31,6 +31,7 @@ namespace LogicAppAdvancedTool
             public string contentVersion { get; set; }
             public int contentSize { get; set; }
             public ContentHash contentHash { get; set; }
+            public string uri { get; set; }
         }
 
         public class ContentHash
@@ -85,12 +86,21 @@ namespace LogicAppAdvancedTool
                 this.RepeatItemIdenx = tableEntity.GetInt32("RepeatItemIndex");
                 this.ActionRepetitionName = tableEntity.GetString("ActionRepetitionName");
 
-                this.InputContent = DecodeActionPayload(tableEntity.GetBinary("InputsLinkCompressed"));
-                this.OutputContent = DecodeActionPayload(tableEntity.GetBinary("OutputsLinkCompressed"));
+                this.InputContent = new ContentDecoder(tableEntity.GetBinary("InputsLinkCompressed")).RawPayload;
+                this.OutputContent = new ContentDecoder(tableEntity.GetBinary("OutputsLinkCompressed")).RawPayload;
 
                 string rawError = DecompressContent(tableEntity.GetBinary("Error"));
                 this.Error = String.IsNullOrEmpty(rawError) ? null : JsonConvert.DeserializeObject<ActionError>(rawError);
             }
+        }
+
+        public class StreamHistoryBlob
+        {
+            [JsonProperty(PropertyName = "$content-type")]
+            public string ContentType { get; set; }
+
+            [JsonProperty(PropertyName="$content")]
+            public string Content { get; set; }
         }
     }
 }

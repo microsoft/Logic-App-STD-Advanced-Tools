@@ -67,11 +67,10 @@ namespace LogicAppAdvancedTool
 
                     foreach (TableEntity te in tableEntities)
                     {
-                        //TODO: improve DecodeActionPayload method for directly return string
-                        string outputContent = DecodeActionPayloadAsString(te.GetBinary("OutputsLinkCompressed"));
+                        ContentDecoder outputContent = new ContentDecoder(te.GetBinary("OutputsLinkCompressed"));
                         string rawError = DecompressContent(te.GetBinary("Error"));
 
-                        if (outputContent.Contains(filter) || rawError.Contains(filter))
+                        if (outputContent.SearchKeyword(filter) || rawError.Contains(filter))
                         {
                             runs.Add(new WorkflowRunInfo(logicAppName, workflowName, runID, startTime, endTime));
 

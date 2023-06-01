@@ -1,10 +1,14 @@
 ﻿using Azure;
 using Azure.Data.Tables;
 using Azure.Data.Tables.Models;
+using Azure.Storage;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using Microsoft.VisualBasic;
 using Microsoft.WindowsAzure.ResourceStack.Common.Utilities;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -96,65 +100,7 @@ namespace LogicAppAdvancedTool
             return filePath;
         }
 
-        #region Decode action run history input/output
-        public static dynamic DecodeActionPayload(byte[] binaryContent)
-        {
-            string content = DecodeActionPayloadAsString(binaryContent);
-
-            if (String.IsNullOrEmpty(content))
-            {
-                return null;
-            }
-
-            dynamic output = JsonConvert.DeserializeObject(content);
-
-            return output;
-        }
-
-        public static string DecodeActionPayloadAsString(byte[] binaryContent)
-        {
-            string rawContent = DecompressContent(binaryContent);
-
-            if (rawContent == null)
-            {
-                return String.Empty;
-            }
-
-            string inlinedContent = GetInlineContent(rawContent);
-
-            if (String.IsNullOrEmpty(inlinedContent))
-            {
-                return string.Empty;
-            }
-
-            return Encoding.UTF8.GetString(Convert.FromBase64String(inlinedContent));
-        }
-
-        private static string GetInlineContent(string rawContent)
-        {
-            ConnectorPayloadStructure connectorPayload = JsonConvert.DeserializeObject<ConnectorPayloadStructure>(rawContent);
-
-            string inlineContent = null;
-
-            if (connectorPayload.nestedContentLinks != null)
-            {
-                inlineContent = connectorPayload.nestedContentLinks.body.inlinedContent;
-            }
-            else
-            {
-                CommonPayloadStructure payload = JsonConvert.DeserializeObject<CommonPayloadStructure>(rawContent);
-                inlineContent = payload.inlinedContent;
-            }
-
-            return inlineContent;
-        }
-        #endregion
-
-        /// <summary>
-        /// Decompress the content which compressed by Inflate
-        /// </summary>
-        /// <param name="content"></param>
-        /// <returns></returns>
+        #region Deflate/infalte related
         public static string DecompressContent(byte[] content)
         {
             if (content == null)
@@ -184,5 +130,103 @@ namespace LogicAppAdvancedTool
 
             return compressedBytes;
         }
+        #endregion
+
+        #region Storage operation
+        public static string GetBlobContent(string blobUri, int contentSize = 1024*1024)
+        {
+            Uri uri = new Uri(blobUri);
+            ConnectionInfo info = new ConnectionInfo(AppSettings.ConnectionString);
+            StorageSharedKeyCredential cred = new StorageSharedKeyCredential(info.AccountName, info.AccountKey);
+
+            BlobClient client = new BlobClient(uri, cred);
+
+            BlobDownloadResult result = client.DownloadContent().Value;
+
+            long blobSize = client.GetProperties().Value.ContentLength;
+
+            if (blobSize > contentSize)
+            {
+                string blobName = blobUri.Split("/").Last();
+
+                Console.WriteLine($"{blobName} content size is larger than 1MB, skip content check for this blob due to memory saving.");
+
+                return String.Empty;
+            }
+
+            Stream contentStream = result.Content.ToStream();
+            string content;
+
+            using (BinaryReader br = new BinaryReader(contentStream))
+            {
+                byte[] b = br.ReadBytes((int)contentStream.Length);
+
+                content = DecompressContent(b);
+            }
+
+            return content;
+        }
+
+        public class ConnectionInfo
+        {
+            private Dictionary<string, string> CSInfo;
+            public ConnectionInfo(string connectionString)
+            {
+                CSInfo = new Dictionary<string, string>();
+
+                string[] infos = connectionString.Split(";");
+                foreach (string info in infos)
+                {
+                    int index = info.IndexOf('=');
+                    string key = info.Substring(0, index);
+                    string value = info.Substring(index + 1, info.Length - index - 1);
+
+                    CSInfo.Add(key, value);
+                }
+
+                BlobEndpoint = $"{AccountName}.blob.{EndpointSuffix}";
+                FileEndpoint = $"{AccountName}.file.{EndpointSuffix}";
+                QueueEndpoint = $"{AccountName}.queue.{EndpointSuffix}";
+                TableEndpoint = $"{AccountName}.table.{EndpointSuffix}";
+            }
+
+            public string BlobEndpoint { get; private set; }
+            public string FileEndpoint { get; private set; }
+            public string QueueEndpoint { get; private set; }
+            public string TableEndpoint { get; private set; }
+
+            public string DefaultEndpointsProtocol
+            {
+                get
+                {
+                    return CSInfo["DefaultEndpointsProtocol"];
+                }
+            }
+
+            public string AccountName
+            {
+                get
+                {
+                    return CSInfo["AccountName"];
+                }
+            }
+
+            public string AccountKey
+            {
+                get
+                {
+                    return CSInfo["AccountKey"];
+                }
+            }
+
+            public string EndpointSuffix
+            {
+                get
+                {
+                    return CSInfo["EndpointSuffix"];
+                }
+            }
+        }
+        #endregion
     }
 }

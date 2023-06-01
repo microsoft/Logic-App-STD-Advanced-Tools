@@ -536,6 +536,7 @@ namespace LogicAppAdvancedTool
                     CommandOption workflowCO = c.Option("-wf|--workflow", "(Mandatory) The name of workflow.", CommandOptionType.SingleValue).IsRequired();
                     CommandOption dateCO = c.Option("-d|--date", "(Mandatory) Date (format: \"yyyyMMdd\") of the logs need to be searched, UTC time", CommandOptionType.SingleValue).IsRequired();
                     CommandOption keywordCO = c.Option("-k|--keyword", "(Mandatory) The keyword you would like to search for.", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption includeBlobCO = c.Option("-b|--includeBlob", "(Optional) true/false, whether need to include the run history which saved as blob. Only the blob size less than 1MB will be checked due to memory saving.", CommandOptionType.SingleValue);
 
                     c.HelpOption("-?");
                     c.Description = "Search a keywords in workflow run history";
@@ -546,13 +547,19 @@ namespace LogicAppAdvancedTool
                         string workflowName = workflowCO.Value();
                         string date = dateCO.Value();
                         string keyword = keywordCO.Value().Trim();
+                        bool includeBlob = false;
+
+                        if (!String.IsNullOrEmpty(includeBlobCO.Value()))
+                        { 
+                            includeBlob = bool.Parse(includeBlobCO.Value());
+                        }
 
                         if (String.IsNullOrEmpty(keyword))
                         {
                             throw new UserInputException("Keyword cannot be empty");
                         }
 
-                        SearchInHistory(logicAppName, workflowName, date, keyword);
+                        SearchInHistory(logicAppName, workflowName, date, keyword, includeBlob);
 
                         return 0;
                     });
