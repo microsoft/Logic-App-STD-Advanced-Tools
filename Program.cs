@@ -11,6 +11,7 @@ using System.Drawing.Text;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography.X509Certificates;
 
 namespace LogicAppAdvancedTool
@@ -54,8 +55,6 @@ namespace LogicAppAdvancedTool
                         }
 
                         BackupDefinitions(logicAppName, ago);
-
-                        Console.WriteLine("Backup Succeeded. You can download the definition.");
 
                         return 0;
                     });
@@ -564,6 +563,10 @@ namespace LogicAppAdvancedTool
                         return 0;
                     });
                 });
+                #endregion
+
+                #region
+
                 #endregion
 
                 app.Execute(args);

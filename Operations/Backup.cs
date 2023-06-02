@@ -70,6 +70,8 @@ namespace LogicAppAdvancedTool
                 string formattedContent = JsonConvert.SerializeObject(jsonObject, Formatting.Indented);
 
                 File.WriteAllText(backupFilePath, formattedContent);
+
+                Console.WriteLine("Backup Succeeded. You can download the definition.");
             }
         }
     }

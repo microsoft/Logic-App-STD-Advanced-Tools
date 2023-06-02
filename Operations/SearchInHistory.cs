@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
+using System.Web;
 
 namespace LogicAppAdvancedTool
 {
@@ -32,6 +33,8 @@ namespace LogicAppAdvancedTool
             List<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: "InputsLinkCompressed ne '' or OutputsLinkCompressed ne ''").ToList();
 
             List<TableEntity> filteredEntities = new List<TableEntity>();
+            List<string> runIDs = new List<string>();
+
             foreach (TableEntity tableEntity in tableEntities)
             {
                 ContentDecoder inputDecoder = new ContentDecoder(tableEntity.GetBinary("InputsLinkCompressed"));
@@ -40,6 +43,12 @@ namespace LogicAppAdvancedTool
                 if (inputDecoder.SearchKeyword(keyword, includeBlob) || outputDecoder.SearchKeyword(keyword, includeBlob))
                 {
                     filteredEntities.Add(tableEntity);
+
+                    string runID = tableEntity.GetString("FlowRunSequenceId");
+                    if (!runIDs.Contains(runID))
+                    {
+                        runIDs.Add(runID);
+                    }
                 }
             }
 
@@ -49,6 +58,14 @@ namespace LogicAppAdvancedTool
             }
 
             string fileName = $"{logicAppName}_{workflowName}_{date}_SearchResults.json";
+
+            ConsoleTable runIdTable = new ConsoleTable("Run ID");
+            foreach (string id in runIDs)
+            { 
+                runIdTable.AddRow(id);
+            }
+
+            runIdTable.Print();
 
             SaveLogs(filteredEntities, fileName);
         }

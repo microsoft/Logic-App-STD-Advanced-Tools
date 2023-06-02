@@ -2,7 +2,7 @@
   "profiles": {
     "LogicAppAdvancedTool": {
       "commandName": "Project",
-      "commandLineArgs": "GenerateRunHistoryUrl -la DracLogicApp -wf LATool -d 20230601 -f \"Method Not Allowed\""
+      "commandLineArgs": "SearchInHistory -la DracLogicApp -wf LATool -d 20230526 -k a"
     }
   }
 }
