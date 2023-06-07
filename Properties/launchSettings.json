@@ -2,7 +2,7 @@
   "profiles": {
     "LogicAppAdvancedTool": {
       "commandName": "Project",
-      "commandLineArgs": "CleanUpTables -la DracLogicApp -d 20230601"
+      "commandLineArgs": "CleanUpContainers -la DracLogicApp -d 20230601"
     }
   }
 }

@@ -484,8 +484,8 @@ namespace LogicAppAdvancedTool
                 });
                 #endregion
 
-                #region CleanUpContainer
-                app.Command("CleanUpContainer", c =>
+                #region CleanUpContainers
+                app.Command("CleanUpContainers", c =>
                 {
                     CommandOption logicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive).", CommandOptionType.SingleValue).IsRequired();
                     CommandOption workflowCO = c.Option("-wf|--workflow", "(Optional) The name of workflow. If not provided, then all the workflows container will be deleted.", CommandOptionType.SingleValue);
@@ -500,7 +500,7 @@ namespace LogicAppAdvancedTool
                         string workflowName = workflowCO.Value();
                         string date = dateCO.Value();
 
-                        CleanUpContainer(logicAppName, workflowName, date);
+                        CleanUpContainers(logicAppName, workflowName, date);
 
                         return 0;
                     });

@@ -14,7 +14,7 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        public static void CleanUpContainer(string logicAppName, string workflowName, string date)
+        public static void CleanUpContainers(string logicAppName, string workflowName, string date)
         {
             int targetDate = Int32.Parse(date);
             string formattedDate = DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture).ToString("yyyy-MM-dd");
@@ -39,17 +39,7 @@ namespace LogicAppAdvancedTool
                 Console.WriteLine($"No blob containers found.");
             }
 
-            List<string> containerList = new List<string>();
-
-            foreach (BlobContainerItem item in containers)
-            { 
-                int createdDate = Int32.Parse(item.Name.Substring(34, 8));
-
-                if (createdDate < targetDate)
-                {
-                    containerList.Add(item.Name);   
-                }
-            }
+            List<string> containerList = containers.Where(x => Int32.Parse(x.Name.Substring(34, 8)) < targetDate).Select(s => s.Name).ToList();
 
             Console.WriteLine($"There are {containerList.Count} containers found, please enter \"P\" to print the list or press any other key to continue without print list");
             if (Console.ReadLine().ToLower() == "p")
