@@ -19,24 +19,24 @@ namespace LogicAppAdvancedTool
             int targetDate = Int32.Parse(date);
             string formattedDate = DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture).ToString("yyyy-MM-dd");
 
-            string tablePrefix;
+            string containerPrefix;
             if (string.IsNullOrEmpty(workflowName))
             {
-                tablePrefix = GenerateLogicAppPrefix(logicAppName);
+                containerPrefix = GenerateLogicAppPrefix(logicAppName);
             }
             else
             {
-                tablePrefix = GenerateWorkflowTablePrefix(logicAppName, workflowName);
+                containerPrefix = GenerateWorkflowTablePrefix(logicAppName, workflowName);
             }
 
-            tablePrefix = $"flow{tablePrefix}";
+            containerPrefix = $"flow{containerPrefix}";
 
             BlobServiceClient client = new BlobServiceClient(AppSettings.ConnectionString);
-            List<BlobContainerItem> containers = client.GetBlobContainers(BlobContainerTraits.Metadata, BlobContainerStates.None, tablePrefix).ToList();
+            List<BlobContainerItem> containers = client.GetBlobContainers(BlobContainerTraits.Metadata, BlobContainerStates.None, containerPrefix).ToList();
 
             if (containers.Count == 0)
             {
-                Console.WriteLine($"No blob containers found for Logic App: {logicAppName}");
+                Console.WriteLine($"No blob containers found.");
             }
 
             List<string> containerList = new List<string>();
@@ -52,7 +52,7 @@ namespace LogicAppAdvancedTool
             }
 
             Console.WriteLine($"There are {containerList.Count} containers found, please enter \"P\" to print the list or press any other key to continue without print list");
-            if (Console.ReadKey().Key.ToString().ToLower() == "p")
+            if (Console.ReadLine().ToLower() == "p")
             {
                 ConsoleTable table = new ConsoleTable("Contianer Name");
 
