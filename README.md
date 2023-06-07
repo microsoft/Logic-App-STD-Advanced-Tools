@@ -51,11 +51,19 @@ If you would like to compile the binary yourself, please always use "Publish" in
 
 ## Limitation
 1. This tool only modify workflow.json, if the API connection metadata get lost in connections.json, the reverted workflow will not work.
-2. If the definition not be used in 90 days, the backend service will remove it from storage table, so this tool will not be able to retrieve the definitions older than 90 days.
+2. By default, if the definition not be used in 90 days, the backend service will remove it from storage table which means the tool will not be able to find the definition.
 3. Before execute Revert command, we need to backup first since the Revert command is reading workflow definitions from backup folder.
+4. Recently "SearchInHistory" command will not include the input/output content/payload which saved in Blob Storage.
 
 
 ## Release Note
+2023-06-01
+1. "SearchInHistory" now support search keyword in run hhistory which saved as a blob file. Due to memory saving issue, the blob large than 1MB will not be scanned.
+2. Added a new class for run history content decode.
+
+2023-05-25
+1. Fixed a bug which causing action run history input/output cannot be retrieved for API connection actions.
+
 2023-05-24
 1. Added a new command "SearchInHistory" for searching a keyword in workflow run history.
 2. Added a new command "ListWorkflowID" to list historical flow id which has the same name as per provided workflow name.
