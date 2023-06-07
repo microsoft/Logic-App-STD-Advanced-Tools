@@ -39,7 +39,10 @@ namespace LogicAppAdvancedTool
                 Console.WriteLine($"No blob containers found.");
             }
 
-            List<string> containerList = containers.Where(x => Int32.Parse(x.Name.Substring(34, 8)) < targetDate).Select(s => s.Name).ToList();
+            List<string> containerList = containers
+                                            .Where(x => Int32.Parse(x.Name.Substring(34, 8)) < targetDate)
+                                            .Select(s => s.Name)
+                                            .ToList();
 
             Console.WriteLine($"There are {containerList.Count} containers found, please enter \"P\" to print the list or press any other key to continue without print list");
             if (Console.ReadLine().ToLower() == "p")
