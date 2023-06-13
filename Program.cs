@@ -484,7 +484,7 @@ namespace LogicAppAdvancedTool
                 });
                 #endregion
 
-                #region CleanUpContainers
+                #region Clean up containers
                 app.Command("CleanUpContainers", c =>
                 {
                     CommandOption logicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive).", CommandOptionType.SingleValue).IsRequired();
@@ -573,7 +573,7 @@ namespace LogicAppAdvancedTool
                     CommandOption dateCO = c.Option("-d|--date", "(Mandatory) Delete run history related tables before this date (format: \"yyyyMMdd\") , UTC time.", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
-                    c.Description = "Clean up the blob container of Logic App run history to reduce the Storage Account cost.";
+                    c.Description = "Clean up the storage table of Logic App run history to reduce the Storage Account cost.";
 
                     c.OnExecute(() =>
                     {
@@ -582,6 +582,30 @@ namespace LogicAppAdvancedTool
                         string date = dateCO.Value();
 
                         CleanUpTables(logicAppName, workflowName, date);
+
+                        return 0;
+                    });
+                });
+                #endregion
+
+                #region Clean up Run history tables and containers
+                app.Command("CleanUpRunHistory", c =>
+                {
+                    CommandOption logicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive).", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption workflowCO = c.Option("-wf|--workflow", "(Optional) The name of workflow. If not provided, then all the workflows container will be deleted.", CommandOptionType.SingleValue);
+                    CommandOption dateCO = c.Option("-d|--date", "(Mandatory) Delete run history related resources before this date (format: \"yyyyMMdd\") , UTC time.", CommandOptionType.SingleValue).IsRequired();
+
+                    c.HelpOption("-?");
+                    c.Description = "Clean up both storage tables and  blob container of Logic App run history to reduce the Storage Account cost.";
+
+                    c.OnExecute(() =>
+                    {
+                        string logicAppName = logicAppNameCO.Value();
+                        string workflowName = workflowCO.Value();
+                        string date = dateCO.Value();
+
+                        CleanUpTables(logicAppName, workflowName, date);
+                        CleanUpContainers(logicAppName, workflowName, date);
 
                         return 0;
                     });

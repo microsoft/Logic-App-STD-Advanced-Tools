@@ -40,7 +40,7 @@ namespace LogicAppAdvancedTool
             }
 
             List<string> containerList = containers
-                                            .Where(x => Int32.Parse(x.Name.Substring(34, 8)) < targetDate)
+                                            .Where(x => int.Parse(x.Name.Substring(34, 8)) < targetDate)
                                             .Select(s => s.Name)
                                             .ToList();
 
