@@ -86,8 +86,8 @@ namespace LogicAppAdvancedTool
                 this.RepeatItemIdenx = tableEntity.GetInt32("RepeatItemIndex");
                 this.ActionRepetitionName = tableEntity.GetString("ActionRepetitionName");
 
-                this.InputContent = new ContentDecoder(tableEntity.GetBinary("InputsLinkCompressed")).RawPayload;
-                this.OutputContent = new ContentDecoder(tableEntity.GetBinary("OutputsLinkCompressed")).RawPayload;
+                this.InputContent = new ContentDecoder(tableEntity.GetBinary("InputsLinkCompressed")).ActualContent;
+                this.OutputContent = new ContentDecoder(tableEntity.GetBinary("OutputsLinkCompressed")).ActualContent;
 
                 string rawError = DecompressContent(tableEntity.GetBinary("Error"));
                 this.Error = String.IsNullOrEmpty(rawError) ? null : JsonConvert.DeserializeObject<ActionError>(rawError);

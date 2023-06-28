@@ -2,7 +2,7 @@
   "profiles": {
     "LogicAppAdvancedTool": {
       "commandName": "Project",
-      "commandLineArgs": "CleanUpContainers -la DracLogicApp -d 20230601"
+      "commandLineArgs": "SearchInHistory -la DracLogicApp -wf SearchTest -d 20230628 -k EFACT -of -b true"
     }
   }
 }

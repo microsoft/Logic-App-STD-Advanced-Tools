@@ -12,7 +12,7 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        private static void SearchInHistory(string logicAppName, string workflowName, string date, string keyword, bool includeBlob = false)
+        private static void SearchInHistory(string logicAppName, string workflowName, string date, string keyword, bool includeBlob = false, bool onlyFailures = false)
         {
             string prefix = GenerateWorkflowTablePrefix(logicAppName, workflowName);
 
@@ -20,17 +20,67 @@ namespace LogicAppAdvancedTool
 
             //Double check whether the action table exists
             TableServiceClient serviceClient = new TableServiceClient(AppSettings.ConnectionString);
-            Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{actionTableName}'");
 
-            if (results.Count() == 0)
+            List<TableEntity> tableEntities = new List<TableEntity>();
+
+            if (onlyFailures)
             {
-                throw new UserInputException($"action table - {actionTableName} not exist, please check whether Date is correct.");
+                string runTableName = $"flow{prefix}runs";
+
+                Pageable<TableItem> runTableItem = serviceClient.Query(filter: $"TableName eq '{runTableName}'");
+
+                if (runTableItem.Count() == 0)
+                {
+                    throw new UserInputException($"run table - {runTableName} not exist, please check whether workflow name is correct or not.");
+                }
+
+                Console.WriteLine($"run table - {runTableName} found, filtering for all failed runs on {date}");
+
+                TableClient runTableClient = new TableClient(AppSettings.ConnectionString, runTableName);
+                List<TableEntity> failedRuns = runTableClient.Query<TableEntity>(filter: $"Status eq 'Failed'", select: new string[] { "FlowRunSequenceId"}).ToList();
+
+                if (failedRuns.Count == 0)
+                {
+                    throw new UserInputException($"There's no failed run found of {workflowName} on {date}");
+                }
+
+                Console.WriteLine($"Found {failedRuns.Count} failed run(s) in run table.");
+
+                Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{actionTableName}'");
+
+                if (results.Count() == 0)
+                {
+                    throw new UserInputException($"action table - {actionTableName} not exist, please check whether Date is correct or not.");
+                }
+
+                Console.WriteLine($"action table - {actionTableName} found, retrieving action logs...");
+
+                TableClient tableClient = new TableClient(AppSettings.ConnectionString, actionTableName);
+
+                foreach (TableEntity te in failedRuns)
+                {
+                    string runID = te.GetString("FlowRunSequenceId");
+
+                    List<TableEntity> entities = tableClient.Query<TableEntity>(filter: $"(InputsLinkCompressed ne '' or OutputsLinkCompressed ne '') and FlowRunSequenceId eq '{runID}'").ToList();
+
+                    tableEntities.AddRange(entities);
+                }
             }
+            else
+            {
+                Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{actionTableName}'");
 
-            Console.WriteLine($"action table - {actionTableName} found, retrieving action logs...");
+                if (results.Count() == 0)
+                {
+                    throw new UserInputException($"action table - {actionTableName} not exist, please check whether Date is correct or not.");
+                }
 
-            TableClient tableClient = new TableClient(AppSettings.ConnectionString, actionTableName);
-            List<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: "InputsLinkCompressed ne '' or OutputsLinkCompressed ne ''").ToList();
+                Console.WriteLine($"action table - {actionTableName} found, retrieving action logs...");
+
+                TableClient tableClient = new TableClient(AppSettings.ConnectionString, actionTableName);
+
+                tableEntities = tableClient.Query<TableEntity>(filter: "InputsLinkCompressed ne '' or OutputsLinkCompressed ne ''").ToList();
+            }
 
             List<TableEntity> filteredEntities = new List<TableEntity>();
             List<string> runIDs = new List<string>();
@@ -57,7 +107,7 @@ namespace LogicAppAdvancedTool
                 throw new UserInputException($"No run hisotry input/output found with keyword {keyword}");
             }
 
-            string fileName = $"{logicAppName}_{workflowName}_{date}_SearchResults.json";
+            string fileName = $"{logicAppName}_{workflowName}_{date}_SearchResults_{keyword}.json";
 
             ConsoleTable runIdTable = new ConsoleTable("Run ID");
             foreach (string id in runIDs)
@@ -87,6 +137,7 @@ namespace LogicAppAdvancedTool
             {
                 string runID = entity.GetString("FlowRunSequenceId");
 
+                //need to test with blob content
                 HistoryRecords filteredRecords = new HistoryRecords(entity);
 
                 if (!records.ContainsKey(runID))

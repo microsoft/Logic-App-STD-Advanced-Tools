@@ -27,6 +27,14 @@ namespace LogicAppAdvancedTool
         public string BlobUri { get; private set; }
         public string InlinedContent { get; private set; }
         public bool IsEmpty { get; private set; }
+
+        public string ActualContent 
+        {
+            get
+            { 
+                return String.IsNullOrEmpty(InlinedContent) ? BlobUri : InlinedContent;
+            }
+        }
         public ContentDecoder(byte[] binaryContent) 
         {
             string rawContent = DecompressContent(binaryContent) ?? string.Empty;
