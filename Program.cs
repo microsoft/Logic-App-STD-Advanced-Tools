@@ -1,18 +1,7 @@
-﻿using Azure;
-using Azure.Core;
-using Azure.Data.Tables;
-using Azure.Data.Tables.Models;
-using McMaster.Extensions.CommandLineUtils;
-using Newtonsoft.Json;
+﻿using McMaster.Extensions.CommandLineUtils;
 using System;
-using System.Buffers.Text;
 using System.Collections.Generic;
-using System.Drawing.Text;
-using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using System.Net;
-using System.Security.Cryptography.X509Certificates;
 
 namespace LogicAppAdvancedTool
 {
@@ -30,7 +19,6 @@ namespace LogicAppAdvancedTool
                 #region Backup
                 app.Command("Backup", c =>
                 {
-                    CommandOption logicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
                     CommandOption agoCO = c.Option("-ago|--ago", "(Optional) Only retrieve the past X(unsigned integer) days workflow definitions, if not provided then retrieve all existing definitions", CommandOptionType.SingleValue);
                     
                     c.HelpOption("-?");
@@ -38,7 +26,6 @@ namespace LogicAppAdvancedTool
 
                     c.OnExecute(() =>
                     {
-                        string logicAppName = logicAppNameCO.Value();
                         string agoStr = agoCO.Value();
 
                         uint ago = 0;
@@ -54,7 +41,7 @@ namespace LogicAppAdvancedTool
                             }
                         }
 
-                        BackupDefinitions(logicAppName, ago);
+                        BackupDefinitions(AppSettings.LogicAppName, ago);
 
                         return 0;
                     });
@@ -64,7 +51,6 @@ namespace LogicAppAdvancedTool
                 #region Revert
                 app.Command("Revert", c =>
                 {
-                    CommandOption logicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
                     CommandOption workflowNameCO = c.Option("-wf|--workflow", "(Mandatory) Workflow Name", CommandOptionType.SingleValue).IsRequired();
                     CommandOption versionCO = c.Option("-v|--version", "(Mandatory) Version, the first part of the backup file name", CommandOptionType.SingleValue).IsRequired();
 
@@ -73,11 +59,10 @@ namespace LogicAppAdvancedTool
 
                     c.OnExecute(() =>
                     {
-                        string logicAppName = logicAppNameCO.Value();
                         string workflowName = workflowNameCO.Value();
                         string version = versionCO.Value();
 
-                        BackupDefinitions(logicAppName, 0);
+                        BackupDefinitions(AppSettings.LogicAppName, 0);
                         
                         RevertVersion(workflowName, version);
 
@@ -89,7 +74,6 @@ namespace LogicAppAdvancedTool
                 #region Decode
                 app.Command("Decode", c =>
                 {
-                    CommandOption logicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
                     CommandOption workflowNameCO = c.Option("-wf|--workflow", "(Mandatory) Workflow Name", CommandOptionType.SingleValue).IsRequired();
                     CommandOption versionCO = c.Option("-v|--version", "(Mandatory) Version, the first part of the backup file name", CommandOptionType.SingleValue).IsRequired();
 
@@ -98,11 +82,10 @@ namespace LogicAppAdvancedTool
 
                     c.OnExecute(() =>
                     {
-                        string logicAppName = logicAppNameCO.Value();
                         string workflowName = workflowNameCO.Value();
                         string version = versionCO.Value();
 
-                        Decode(logicAppName, workflowName, version);
+                        Decode(AppSettings.LogicAppName, workflowName, version);
 
                         return 0;
                     });
@@ -112,7 +95,6 @@ namespace LogicAppAdvancedTool
                 #region Clone
                 app.Command("Clone", c =>
                 {
-                    CommandOption logicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
                     CommandOption sourceNameCO = c.Option("-sn|--sourcename", "(Mandatory) Source Workflow Name", CommandOptionType.SingleValue).IsRequired();
                     CommandOption targetNameCO = c.Option("-tn|--targetname", "(Mandatory) Target Workflow Name", CommandOptionType.SingleValue).IsRequired();
                     CommandOption versionCO = c.Option("-v|--version", "(Optional) Version of the workflow the latest version will be cloned, if not provided the latest version will be selected.)", CommandOptionType.SingleValue);
@@ -122,12 +104,11 @@ namespace LogicAppAdvancedTool
 
                     c.OnExecute(() =>
                     {
-                        string logicAppName = logicAppNameCO.Value();
                         string sourceName = sourceNameCO.Value();
                         string targetName = targetNameCO.Value();
                         string version = versionCO.Value();
 
-                        Clone(logicAppName, sourceName, targetName, version);
+                        Clone(AppSettings.LogicAppName, sourceName, targetName, version);
 
                         return 0;
                     });
@@ -136,8 +117,7 @@ namespace LogicAppAdvancedTool
 
                 #region List versions
                 app.Command("ListVersions", c =>
-                {
-                    CommandOption logicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
+                {    
                     CommandOption workflowNameCO = c.Option("-wf|--workflow", "(Mandatory) Workflow Name", CommandOptionType.SingleValue).IsRequired();
                     
                     c.HelpOption("-?");
@@ -145,10 +125,9 @@ namespace LogicAppAdvancedTool
 
                     c.OnExecute(() => 
                     {
-                        string logicAppName = logicAppNameCO.Value();
                         string workflowName = workflowNameCO.Value();
 
-                        ListVersions(logicAppName, workflowName);
+                        ListVersions(AppSettings.LogicAppName, workflowName);
 
                         return 0;
                     });
@@ -158,16 +137,12 @@ namespace LogicAppAdvancedTool
                 #region Restore All workflows
                 app.Command("RestoreAll", c =>
                 {
-                    CommandOption logicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
-
                     c.HelpOption("-?");
                     c.Description = "Restore all the workflows which be deleted accidentally.";
 
                     c.OnExecute(() =>
                     {
-                        string logicAppName = logicAppNameCO.Value();
-
-                        RestoreAll(logicAppName);
+                        RestoreAll(AppSettings.LogicAppName);
 
                         return 0;
                     });
@@ -177,7 +152,6 @@ namespace LogicAppAdvancedTool
                 #region Convert Logic App Name and Workflow Name to it's Storage Table prefix
                 app.Command("GenerateTablePrefix", c =>
                 {
-                    CommandOption logicAppnameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
                     CommandOption workflowCO = c.Option("-wf|--workflow", "(Optional) Workflow name, if not provided, only Logic App prefix will be generated)", CommandOptionType.SingleValue);
 
                     c.HelpOption("-?");
@@ -185,10 +159,9 @@ namespace LogicAppAdvancedTool
 
                     c.OnExecute(() => 
                     {
-                        string logicAppName = logicAppnameCO.Value();
                         string workflowName = workflowCO.Value();
 
-                        GenerateTablePrefix(logicAppName, workflowName);
+                        GenerateTablePrefix(AppSettings.LogicAppName, workflowName);
 
                         return 0;
                     });
@@ -203,7 +176,6 @@ namespace LogicAppAdvancedTool
 
                     #region Retrieve by date
                     c.Command("Date", sub => {
-                        CommandOption logicAppnameCO = sub.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
                         CommandOption workflowCO = sub.Option("-wf|--workflow", "(Mandatory) Workflow name", CommandOptionType.SingleValue).IsRequired();
                         CommandOption dateCO = sub.Option("-d|--date", "(Mandatory) Date (format: \"yyyyMMdd\") of the logs need to be retrieved, UTC time", CommandOptionType.SingleValue).IsRequired();
 
@@ -212,11 +184,10 @@ namespace LogicAppAdvancedTool
 
                         sub.OnExecute(() =>
                         {
-                            string logicAppName = logicAppnameCO.Value();
                             string workflowName = workflowCO.Value();
                             string date = dateCO.Value();
 
-                            RetrieveFailuresByDate(logicAppName, workflowName, date);
+                            RetrieveFailuresByDate(AppSettings.LogicAppName, workflowName, date);
 
                             return 0;
                         });
@@ -255,7 +226,6 @@ namespace LogicAppAdvancedTool
                 #region Stateless to Stateful
                 app.Command("ConvertToStateful", c =>
                 {
-                    CommandOption logicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
                     CommandOption sourceNameCO = c.Option("-sn|--sourcename", "(Mandatory) Source Workflow Name (Stateless)", CommandOptionType.SingleValue).IsRequired();
                     CommandOption targetNameCO = c.Option("-tn|--targetname", "(Mandatory) Target Workflow Name (Stateful)", CommandOptionType.SingleValue).IsRequired();
 
@@ -264,11 +234,10 @@ namespace LogicAppAdvancedTool
 
                     c.OnExecute(() =>
                     {
-                        string logicAppName = logicAppNameCO.Value();
                         string sourceName = sourceNameCO.Value();
                         string targetName = targetNameCO.Value();
 
-                        ConvertToStateful(logicAppName, sourceName, targetName);
+                        ConvertToStateful(AppSettings.LogicAppName, sourceName, targetName);
 
                         return 0;
                     });
@@ -277,16 +246,12 @@ namespace LogicAppAdvancedTool
 
                 #region Clear Queue
                 app.Command("ClearJobQueue", c => {
-                    CommandOption logicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
-
                     c.HelpOption("-?");
                     c.Description = "Clear Logic App storage queue for stopping any running instances, this action could casue data lossing.";
 
                     c.OnExecute(() =>
                     {
-                        string logicAppName = logicAppNameCO.Value();
-
-                        ClearJobQueue(logicAppName);
+                        ClearJobQueue(AppSettings.LogicAppName);
 
                         return 0;
                     });
@@ -296,7 +261,6 @@ namespace LogicAppAdvancedTool
                 #region Restore single workflow
                 app.Command("RestoreSingleWorkflow", c =>
                 {
-                    CommandOption logicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
                     CommandOption workflowNameCO = c.Option("-wf|--workflow", "(Mandatory) The name of the workflow", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
@@ -304,10 +268,9 @@ namespace LogicAppAdvancedTool
 
                     c.OnExecute(() =>
                     {
-                        string logicAppName = logicAppNameCO.Value();
                         string workflowName = workflowNameCO.Value();
 
-                        RestoreSingleWorkflow(logicAppName, workflowName);
+                        RestoreSingleWorkflow(AppSettings.LogicAppName, workflowName);
 
                         return 0;
                     });
@@ -317,16 +280,12 @@ namespace LogicAppAdvancedTool
                 #region List Workflows
                 app.Command("ListWorkflows", c =>
                 {
-                    CommandOption logicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
-
                     c.HelpOption("-?");
                     c.Description = "List all the exisiting workflows which can be found in storage table.";
 
                     c.OnExecute(() =>
                     {
-                        string logicAppName = logicAppNameCO.Value();
-
-                        ListWorkflows(logicAppName);
+                        ListWorkflows(AppSettings.LogicAppName);
 
                         return 0;
                     });
@@ -422,16 +381,12 @@ namespace LogicAppAdvancedTool
                 #region Check Connectivity
                 app.Command("CheckConnectivity", c =>
                 {
-                    CommandOption logicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
-
                     c.HelpOption("-?");
                     c.Description = "Check the connectivity between Logic App STD and it's Storage Account";
 
                     c.OnExecute(() =>
                     {
-                        string logicAppName = logicAppNameCO.Value();
-
-                        CheckConnectivity(logicAppName);
+                        CheckConnectivity(AppSettings.LogicAppName);
 
                         return 0;
                     });
@@ -440,7 +395,6 @@ namespace LogicAppAdvancedTool
 
                 #region Ingest workflow
                 app.Command("IngestWorkflow", c => {
-                    CommandOption logicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive)", CommandOptionType.SingleValue).IsRequired();
                     CommandOption workflowCO = c.Option("-wf|--workflow", "(Mandatory) The name of workflow", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
@@ -448,10 +402,9 @@ namespace LogicAppAdvancedTool
 
                     c.OnExecute(() =>
                     {
-                        string logicAppName = logicAppNameCO.Value();
                         string workflowName = workflowCO.Value();
 
-                        IngestWorkflow(logicAppName, workflowName);
+                        IngestWorkflow(AppSettings.LogicAppName, workflowName);
 
                         return 0;
                     });
@@ -461,7 +414,6 @@ namespace LogicAppAdvancedTool
                 #region GenerateRunHistoryUrl
                 app.Command("GenerateRunHistoryUrl", c =>
                 {
-                    CommandOption logicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive).", CommandOptionType.SingleValue).IsRequired();
                     CommandOption workflowCO = c.Option("-wf|--workflow", "(Mandatory) The name of workflow.", CommandOptionType.SingleValue).IsRequired();
                     CommandOption dateCO = c.Option("-d|--date", "(Mandatory) The date (format: \"yyyyMMdd\") you would like to retrieve logs, UTC time.", CommandOptionType.SingleValue).IsRequired();
                     CommandOption filterCO = c.Option("-f|--filter", "(Optional) Filter for specific exception messages", CommandOptionType.SingleValue);
@@ -471,12 +423,11 @@ namespace LogicAppAdvancedTool
 
                     c.OnExecute(() =>
                     {
-                        string logicAppName = logicAppNameCO.Value();
                         string workflowName = workflowCO.Value();
                         string date = dateCO.Value();
                         string filter = filterCO.Value();
 
-                        GenerateRunHistoryUrl(logicAppName, workflowName, date, filter);
+                        GenerateRunHistoryUrl(AppSettings.LogicAppName, workflowName, date, filter);
 
                         return 0;
                     });
@@ -487,7 +438,6 @@ namespace LogicAppAdvancedTool
                 #region Clean up containers
                 app.Command("CleanUpContainers", c =>
                 {
-                    CommandOption logicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive).", CommandOptionType.SingleValue).IsRequired();
                     CommandOption workflowCO = c.Option("-wf|--workflow", "(Optional) The name of workflow. If not provided, then all the workflows container will be deleted.", CommandOptionType.SingleValue);
                     CommandOption dateCO = c.Option("-d|--date", "(Mandatory) Delete containers before this date (format: \"yyyyMMdd\") , UTC time.", CommandOptionType.SingleValue).IsRequired();
 
@@ -496,11 +446,10 @@ namespace LogicAppAdvancedTool
 
                     c.OnExecute(() =>
                     {
-                        string logicAppName = logicAppNameCO.Value();
                         string workflowName = workflowCO.Value();
                         string date = dateCO.Value();
 
-                        CleanUpContainers(logicAppName, workflowName, date);
+                        CleanUpContainers(AppSettings.LogicAppName, workflowName, date);
 
                         return 0;
                     });
@@ -510,7 +459,6 @@ namespace LogicAppAdvancedTool
                 #region List a workflow with versions
                 app.Command("ListWorkflowID", c =>
                 {
-                    CommandOption logicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive).", CommandOptionType.SingleValue).IsRequired();
                     CommandOption workflowCO = c.Option("-wf|--workflow", "(Mandatory) The name of workflow.", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
@@ -518,10 +466,9 @@ namespace LogicAppAdvancedTool
 
                     c.OnExecute(() =>
                     {
-                        string logicAppName = logicAppNameCO.Value();
                         string workflowName = workflowCO.Value();
 
-                        ListWorkflowID(logicAppName, workflowName);
+                        ListWorkflowID(AppSettings.LogicAppName, workflowName);
 
                         return 0;
                     });
@@ -531,7 +478,6 @@ namespace LogicAppAdvancedTool
                 #region Search in run history
                 app.Command("SearchInHistory", c =>
                 {
-                    CommandOption logicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive).", CommandOptionType.SingleValue).IsRequired();
                     CommandOption workflowCO = c.Option("-wf|--workflow", "(Mandatory) The name of workflow.", CommandOptionType.SingleValue).IsRequired();
                     CommandOption dateCO = c.Option("-d|--date", "(Mandatory) Date (format: \"yyyyMMdd\") of the logs need to be searched, UTC time", CommandOptionType.SingleValue).IsRequired();
                     CommandOption keywordCO = c.Option("-k|--keyword", "(Mandatory) The keyword you would like to search for.", CommandOptionType.SingleValue).IsRequired();
@@ -543,7 +489,6 @@ namespace LogicAppAdvancedTool
 
                     c.OnExecute(() =>
                     {
-                        string logicAppName = logicAppNameCO.Value();
                         string workflowName = workflowCO.Value();
                         string date = dateCO.Value();
                         string keyword = keywordCO.Value().Trim();
@@ -560,7 +505,7 @@ namespace LogicAppAdvancedTool
                             throw new UserInputException("Keyword cannot be empty");
                         }
 
-                        SearchInHistory(logicAppName, workflowName, date, keyword, includeBlob, onlyFailures);
+                        SearchInHistory(AppSettings.LogicAppName, workflowName, date, keyword, includeBlob, onlyFailures);
 
                         return 0;
                     });
@@ -570,7 +515,6 @@ namespace LogicAppAdvancedTool
                 #region Clean up Table
                 app.Command("CleanUpTables", c =>
                 {
-                    CommandOption logicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive).", CommandOptionType.SingleValue).IsRequired();
                     CommandOption workflowCO = c.Option("-wf|--workflow", "(Optional) The name of workflow. If not provided, then all the workflows container will be deleted.", CommandOptionType.SingleValue);
                     CommandOption dateCO = c.Option("-d|--date", "(Mandatory) Delete run history related tables before this date (format: \"yyyyMMdd\") , UTC time.", CommandOptionType.SingleValue).IsRequired();
 
@@ -579,11 +523,10 @@ namespace LogicAppAdvancedTool
 
                     c.OnExecute(() =>
                     {
-                        string logicAppName = logicAppNameCO.Value();
                         string workflowName = workflowCO.Value();
                         string date = dateCO.Value();
 
-                        CleanUpTables(logicAppName, workflowName, date);
+                        CleanUpTables(AppSettings.LogicAppName, workflowName, date);
 
                         return 0;
                     });
@@ -593,7 +536,6 @@ namespace LogicAppAdvancedTool
                 #region Clean up Run history tables and containers
                 app.Command("CleanUpRunHistory", c =>
                 {
-                    CommandOption logicAppNameCO = c.Option("-la|--logicApp", "(Mandatory) The name of Logic App Standard (none case sentsitive).", CommandOptionType.SingleValue).IsRequired();
                     CommandOption workflowCO = c.Option("-wf|--workflow", "(Optional) The name of workflow. If not provided, then all the workflows container will be deleted.", CommandOptionType.SingleValue);
                     CommandOption dateCO = c.Option("-d|--date", "(Mandatory) Delete run history related resources before this date (format: \"yyyyMMdd\") , UTC time.", CommandOptionType.SingleValue).IsRequired();
 
@@ -602,12 +544,11 @@ namespace LogicAppAdvancedTool
 
                     c.OnExecute(() =>
                     {
-                        string logicAppName = logicAppNameCO.Value();
                         string workflowName = workflowCO.Value();
                         string date = dateCO.Value();
 
-                        CleanUpTables(logicAppName, workflowName, date);
-                        CleanUpContainers(logicAppName, workflowName, date);
+                        CleanUpTables(AppSettings.LogicAppName, workflowName, date);
+                        CleanUpContainers(AppSettings.LogicAppName, workflowName, date);
 
                         return 0;
                     });

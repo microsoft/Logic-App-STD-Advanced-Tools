@@ -1,15 +1,4 @@
-﻿using Azure;
-using Azure.Data.Tables;
-using Azure.Data.Tables.Models;
-using Microsoft.VisualBasic;
-using Microsoft.WindowsAzure.ResourceStack.Common.Utilities;
-using Newtonsoft.Json;
-using System;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
+﻿using System;
 
 namespace LogicAppAdvancedTool
 {
@@ -44,6 +33,14 @@ namespace LogicAppAdvancedTool
             get
             {
                 return Environment.GetEnvironmentVariable("REGION_NAME");
+            }
+        }
+
+        public static string LogicAppName
+        {
+            get
+            {
+                return Environment.GetEnvironmentVariable("WEBSITE_SITE_NAME");
             }
         }
     }
