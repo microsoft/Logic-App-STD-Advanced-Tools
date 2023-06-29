@@ -39,7 +39,7 @@ If you would like to compile the binary yourself, please always use "Publish" in
 
 
 2. Use command "**LogicAppAdvancedTool ListWorkflows**" to list all the workflows which can be found in storage table, if you don't remember which one need to be restored.
-<img alt="image" src="https://github.com/Drac-Zhang/Logic-App-STD-Advanced-Tools/assets/72241569/f2e54c20-87f2-4cbc-b329-c9e77d664da3">
+<img width="738" alt="image" src="https://github.com/Drac-Zhang/Logic-App-STD-Advanced-Tools/assets/72241569/c44b4a5b-fc1e-4795-a342-c5311de5b41e">
 
 
 
