@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using System.Web;
+using System.Globalization;
 
 namespace LogicAppAdvancedTool
 {
@@ -36,8 +37,11 @@ namespace LogicAppAdvancedTool
 
                 Console.WriteLine($"run table - {runTableName} found, filtering for all failed runs on {date}");
 
+                DateTime minTimeStamp = DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture);
+                DateTime maxTimeStamp = minTimeStamp.AddDays(1);
+
                 TableClient runTableClient = new TableClient(AppSettings.ConnectionString, runTableName);
-                List<TableEntity> failedRuns = runTableClient.Query<TableEntity>(filter: $"Status eq 'Failed'", select: new string[] { "FlowRunSequenceId"}).ToList();
+                List<TableEntity> failedRuns = runTableClient.Query<TableEntity>(filter: $"Status eq 'Failed'and CreatedTime ge datetime'{minTimeStamp.ToString("yyyy-MM-ddTHH:mm:ssZ")}' and EndTime le datetime'{maxTimeStamp.ToString("yyyy-MM-ddTHH:mm:ssZ")}'", select: new string[] { "FlowRunSequenceId"}).ToList();
 
                 if (failedRuns.Count == 0)
                 {

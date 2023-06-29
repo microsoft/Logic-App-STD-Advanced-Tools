@@ -2,7 +2,7 @@
   "profiles": {
     "LogicAppAdvancedTool": {
       "commandName": "Project",
-      "commandLineArgs": "SearchInHistory -la DracLogicApp -wf SearchTest -d 20230628 -k EFACT -of -b true"
+      "commandLineArgs": "SearchInHistory -la DracLogicApp -wf SearchTest -d 20230629 -k DracTestForSearch -of -b true"
     }
   }
 }
