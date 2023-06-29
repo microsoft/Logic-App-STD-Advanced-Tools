@@ -1,3 +1,7 @@
+2023-06-29
+1. "SearchInHistory" command now can search for only failed runs with command option "-of|--onlyFailures"
+2. New command "CleanUpTables" and "CleanUpRunHistory" for cleaning historical run history related files.
+
 2023-06-01
 1. "SearchInHistory" now support search keyword in run hhistory which saved as a blob file. Due to memory saving issue, the blob large than 1MB will not be scanned.
 2. Added a new class for run history content decode.
