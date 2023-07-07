@@ -1,3 +1,9 @@
+2023-07-07
+1. Added new command "CancelRuns" to cancel all running/waiting instances of a workflow.
+2. New shared class "TableOperations" for common storage table query.
+3. Fixed a bug which causing action input/output is not decoded as expected.
+4. Fixed a bug which "date" options ignored in query filter when only "SearchInHistory" set to "OnlyFailure" mode.
+
 2023-06-29
 1. Logic App name will be read from Appsettings directly, command option "-la" is not required anymore.
 
