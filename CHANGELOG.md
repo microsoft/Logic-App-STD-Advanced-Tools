@@ -1,4 +1,7 @@
 2023-06-29
+1. Logic App name will be read from Appsettings directly, command option "-la" is not required anymore.
+
+2023-06-28
 1. "SearchInHistory" command now can search for only failed runs with command option "-of|--onlyFailures"
 2. New command "CleanUpTables" and "CleanUpRunHistory" for cleaning historical run history related files.
 

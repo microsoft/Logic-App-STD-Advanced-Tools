@@ -37,14 +37,11 @@ If you would like to compile the binary yourself, please always use "Publish" in
 1. Open Kudu (Advanced Tools) of Logic App Standard and upload this tool into a folder
 ![image](https://user-images.githubusercontent.com/72241569/230000172-99d7ad05-fd51-4917-9bc7-47d61cc7ccb6.png)
 
+2. Use command "**LogicAppAdvancedTool ListWorkflows**" to list all the workflows which can be found in storage table, if you don't remember which one need to be restored.
+![image](https://user-images.githubusercontent.com/72241569/249731630-c44b4a5b-fc1e-4795-a342-c5311de5b41e.png)
 
-2. Use command "**LogicAppAdvancedTool ListWorkflows -la [LogicAppName]**" to list all the workflows which can be found in storage table, if you don't remember which one need to be restored.
-![image](https://user-images.githubusercontent.com/72241569/230001038-b91892f3-bcc8-4eb1-b3e7-cea6010d79e4.png)
-
-
-3. Use command "**LogicAppAdvancedTool RestoreSingleWorkflow -la [LogicAppName] -wf [WorkflowName]**" to restore the specific workflow
-![image](https://user-images.githubusercontent.com/72241569/230001799-e0d04308-d024-4ea4-bc14-3d74f3dbc37e.png)
-
+3. Use command "**LogicAppAdvancedTool RestoreSingleWorkflow -wf [WorkflowName]**" to restore the specific workflow
+![image](https://user-images.githubusercontent.com/72241569/249732594-fc041353-74cd-4f64-9bd7-cb3f72b162b1.png)
 
 4. Refresh Logic App - Workflow page, we can find the deleted workflow has been recovered.
 
