@@ -555,6 +555,25 @@ namespace LogicAppAdvancedTool
                 });
                 #endregion
 
+                #region Cancel running workflow
+                app.Command("CancelRuns", c => {
+                    
+                    CommandOption workflowNameCO = c.Option("-wf|--workflow", "(Mandatory) Workflow Name", CommandOptionType.SingleValue).IsRequired();
+
+                    c.HelpOption("-?");
+                    c.Description = "Cancel all running/waiting instances of a workflow.";
+
+                    c.OnExecute(() =>
+                    {
+                        string workflowName = workflowNameCO.Value();
+
+                        CancelRuns(AppSettings.LogicAppName, workflowName);
+
+                        return 0;
+                    });
+                });
+                #endregion
+
                 app.Execute(args);
             }
             catch (Exception ex)

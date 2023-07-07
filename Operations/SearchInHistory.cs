@@ -19,29 +19,17 @@ namespace LogicAppAdvancedTool
 
             string actionTableName = $"flow{prefix}{date}t000000zactions";
 
-            //Double check whether the action table exists
-            TableServiceClient serviceClient = new TableServiceClient(AppSettings.ConnectionString);
-
             List<TableEntity> tableEntities = new List<TableEntity>();
 
             if (onlyFailures)
             {
                 string runTableName = $"flow{prefix}runs";
 
-                Pageable<TableItem> runTableItem = serviceClient.Query(filter: $"TableName eq '{runTableName}'");
-
-                if (runTableItem.Count() == 0)
-                {
-                    throw new UserInputException($"run table - {runTableName} not exist, please check whether workflow name is correct or not.");
-                }
-
-                Console.WriteLine($"run table - {runTableName} found, filtering for all failed runs on {date}");
-
                 DateTime minTimeStamp = DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture);
                 DateTime maxTimeStamp = minTimeStamp.AddDays(1);
 
-                TableClient runTableClient = new TableClient(AppSettings.ConnectionString, runTableName);
-                List<TableEntity> failedRuns = runTableClient.Query<TableEntity>(filter: $"Status eq 'Failed'and CreatedTime ge datetime'{minTimeStamp.ToString("yyyy-MM-ddTHH:mm:ssZ")}' and EndTime le datetime'{maxTimeStamp.ToString("yyyy-MM-ddTHH:mm:ssZ")}'", select: new string[] { "FlowRunSequenceId"}).ToList();
+                string query = $"Status eq 'Failed' and CreatedTime ge datetime'{minTimeStamp.ToString("yyyy-MM-ddTHH:mm:ssZ")}' and EndTime le datetime'{maxTimeStamp.ToString("yyyy-MM-ddTHH:mm:ssZ")}'";
+                List<TableEntity> failedRuns = QueryRunTable(runTableName, query, new string[] { "FlowRunSequenceId" });
 
                 if (failedRuns.Count == 0)
                 {
@@ -50,40 +38,16 @@ namespace LogicAppAdvancedTool
 
                 Console.WriteLine($"Found {failedRuns.Count} failed run(s) in run table.");
 
-                Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{actionTableName}'");
-
-                if (results.Count() == 0)
-                {
-                    throw new UserInputException($"action table - {actionTableName} not exist, please check whether Date is correct or not.");
-                }
-
-                Console.WriteLine($"action table - {actionTableName} found, retrieving action logs...");
-
-                TableClient tableClient = new TableClient(AppSettings.ConnectionString, actionTableName);
-
                 foreach (TableEntity te in failedRuns)
                 {
                     string runID = te.GetString("FlowRunSequenceId");
 
-                    List<TableEntity> entities = tableClient.Query<TableEntity>(filter: $"(InputsLinkCompressed ne '' or OutputsLinkCompressed ne '') and FlowRunSequenceId eq '{runID}'").ToList();
-
-                    tableEntities.AddRange(entities);
+                    tableEntities.AddRange(QueryActionTable(actionTableName, $"(InputsLinkCompressed ne '' or OutputsLinkCompressed ne '') and FlowRunSequenceId eq '{runID}'"));
                 }
             }
             else
             {
-                Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{actionTableName}'");
-
-                if (results.Count() == 0)
-                {
-                    throw new UserInputException($"action table - {actionTableName} not exist, please check whether Date is correct or not.");
-                }
-
-                Console.WriteLine($"action table - {actionTableName} found, retrieving action logs...");
-
-                TableClient tableClient = new TableClient(AppSettings.ConnectionString, actionTableName);
-
-                tableEntities = tableClient.Query<TableEntity>(filter: "InputsLinkCompressed ne '' or OutputsLinkCompressed ne ''").ToList();
+                tableEntities = QueryActionTable(actionTableName, "InputsLinkCompressed ne '' or OutputsLinkCompressed ne ''");
             }
 
             List<TableEntity> filteredEntities = new List<TableEntity>();
