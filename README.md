@@ -15,7 +15,8 @@ If you would like to compile the binary yourself, please always use "Publish" in
 | Commands | Description |
 | --- | --- |
 | Backup | Retrieve all the definitions which can be found in Storage Table and save as Json files. The storage table saves the definition for past 90 days by default even they have been deleted.|
-|ClearJobQueue | Clear Logic App storage queue for stopping any running instances, this action could casue data lossing.|
+| CancelRuns | Cancel all the running/waiting instances of a workflow, **be aware of this command will cause data lossing**.|
+| ClearJobQueue | (Deprecated) Clear Logic App storage queue, this action could casue data lossing.|
 | Clone | Clone a workflow to a new workflow, only support for same Logic App and same kind (stateful or stateless).|
 | ConvertToStateful | Clone a stateless workflow and create a new stateful workflow.|
 | Decode | Decode a workflow based on provided version to human readable content.|
@@ -30,7 +31,9 @@ If you would like to compile the binary yourself, please always use "Publish" in
 | SyncToLocal | Sync remote wwwroot folder of Logic App Standard to local project. This command must run in local computer. There are 3 subcommands for different usage, please use -? for more information.|
 | CheckConnectivity | Check the connection between Logic App and Storage Account via DNS resolution and tcp ping of 443 port. This command need Kudu site is available. |
 | GenerateRunHistoryUrl | Generate run history of failure runs of a specific workflow on a specific day. The url can directly open the run history page |
-| CleanUpContainer | Delete all the Logic App auto-generated blob containers for run history before a specific date. |
+| CleanUpContainers | Delete all the Logic App auto-generated blob containers for run history before a specific date. |
+| CleanUpTables | Delete all the Logic App auto-generated storage tables for run history before a specific date. |
+| CleanUpRunHistory | Combined command of **CleanUpContainers** and **CleanUpTables** |
 | SearchInHistory | Search a keyword in workflow run history based on date. |
 
 ## How to use (Demo of restore a workflow)
