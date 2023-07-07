@@ -1,23 +1,13 @@
 ﻿using Azure;
 using Azure.Data.Tables;
 using Azure.Data.Tables.Models;
-using Azure.Storage;
-using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Models;
-using Microsoft.VisualBasic;
-using Microsoft.WindowsAzure.ResourceStack.Common.Utilities;
-using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using static LogicAppAdvancedTool.Program;
 
 namespace LogicAppAdvancedTool
 {
-    public partial class Program
+    public class TableOperations
     {
         public static List<TableEntity> QueryRunTable(string tableName, string query, string[] select = null)
         {
@@ -37,7 +27,7 @@ namespace LogicAppAdvancedTool
             return tableEntities;
         }
 
-        private static List<TableEntity> QueryActionTable(string tableName, string query)
+        public static List<TableEntity> QueryActionTable(string tableName, string query)
         {
             List<TableEntity> tableEntities = new List<TableEntity>();
 
