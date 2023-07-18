@@ -21,7 +21,7 @@ If you would like to compile the binary yourself, please always use "Publish" in
 | ConvertToStateful | Clone a stateless workflow and create a new stateful workflow.|
 | Decode | Decode a workflow based on provided version to human readable content.|
 | GenerateTablePrefix | Generate Logic App/Workflow's storage table prefix.|
-| IngestWorkflow | **This is an experimental feature.  NOT fully tested, DON'T use in PROD environment!!!** Ingest a workflow directly into Storage Table directly to bypass workflow definition validation.|
+| IngestWorkflow | **This is an experimental feature.  NOT fully tested, DON'T use in PROD environment!!!** Ingest a workflow into Storage Table directly to bypass workflow definition validation.|
 | ListVersions | List all the exisiting versions of a workflow.|
 | ListWorkflows | List all the exisiting workflows which can be found in storage table.|
 | RestoreAll | Restore all the workflows which be deleted accidentally. **This operation may cause unexpected behavior on Logic App runtime if you have any invalid workflows in storage table**.|
