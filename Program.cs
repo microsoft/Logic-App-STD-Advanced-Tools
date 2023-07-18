@@ -19,29 +19,16 @@ namespace LogicAppAdvancedTool
                 #region Backup
                 app.Command("Backup", c =>
                 {
-                    CommandOption agoCO = c.Option("-ago|--ago", "(Optional) Only retrieve the past X(unsigned integer) days workflow definitions, if not provided then retrieve all existing definitions", CommandOptionType.SingleValue);
+                    CommandOption dateCO = c.Option("-d|--date", "(Optional) Retrieve workflow definitions which be modified/created later than this date (format: \"yyyyMMdd\").", CommandOptionType.SingleValue);
                     
                     c.HelpOption("-?");
                     c.Description = "Retrieve all the existing defitnions from Storage Table and save as Json files. The storage table saves the definition for past 90 days by default even they have been deleted.";
 
                     c.OnExecute(() =>
                     {
-                        string agoStr = agoCO.Value();
+                        string date = dateCO.Value()??"19700101";
 
-                        uint ago = 0;
-                        if (!String.IsNullOrEmpty(agoStr))
-                        {
-                            bool parseSuccess = uint.TryParse(agoStr, out ago);
-
-                            if (!parseSuccess)
-                            {
-                                Console.WriteLine("Please provide a valide value for ago option");
-
-                                return 0;
-                            }
-                        }
-
-                        BackupDefinitions(AppSettings.LogicAppName, ago);
+                        BackupDefinitions(AppSettings.LogicAppName, date);
 
                         return 0;
                     });
@@ -62,7 +49,7 @@ namespace LogicAppAdvancedTool
                         string workflowName = workflowNameCO.Value();
                         string version = versionCO.Value();
 
-                        BackupDefinitions(AppSettings.LogicAppName, 0);
+                        BackupDefinitions(AppSettings.LogicAppName);
                         
                         RevertVersion(workflowName, version);
 

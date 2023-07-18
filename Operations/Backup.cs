@@ -5,34 +5,26 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.IO;
 
 namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        private static void BackupDefinitions(string logicAppName, uint ago)
+        private static void BackupDefinitions(string logicAppName, string date = "19700101")
         {
-            string definitionTableName = GetMainTableName(logicAppName);
+            
             string backupFolder = $"{Directory.GetCurrentDirectory()}/Backup";
-
-            TableClient tableClient = new TableClient(AppSettings.ConnectionString, definitionTableName);
-            Pageable<TableEntity> tableEntities;
-
             Directory.CreateDirectory(backupFolder);
 
             Hashtable Appsettings = (Hashtable)Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Process);
             File.WriteAllText($"{backupFolder}/appsettings.json", JsonConvert.SerializeObject(Appsettings, Formatting.Indented));
 
-            if (ago != 0)
-            {
-                string timeStamp = DateTime.Now.AddDays(-ago).ToString("yyyy-MM-ddT00:00:00Z");
-                tableEntities = tableClient.Query<TableEntity>(filter: $"ChangedTime ge datetime'{timeStamp}'");
-            }
-            else
-            { 
-                tableEntities = tableClient.Query<TableEntity>();
-            }
+            string definitionTableName = GetMainTableName(logicAppName);
+            string formattedDate = DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture).ToString("yyyy-MM-ddT00:00:00Z");
+
+            List<TableEntity> tableEntities = TableOperations.QueryTable(definitionTableName, $"ChangedTime ge datetime'{formattedDate}'");
 
             foreach (TableEntity entity in tableEntities)
             {
@@ -44,7 +36,7 @@ namespace LogicAppAdvancedTool
                 string backupFlowPath = $"{backupFolder}/{flowName}";
                 string backupFilePath = $"{backupFlowPath}/{modifiedDate}_{flowSequenceId}.json";
 
-                //Filter for duplicate definition which in used
+                //Filter for duplicate definition of latest version
                 if (!rowKey.Contains("FLOWVERSION"))
                 {
                     continue;
@@ -70,9 +62,9 @@ namespace LogicAppAdvancedTool
                 string formattedContent = JsonConvert.SerializeObject(jsonObject, Formatting.Indented);
 
                 File.WriteAllText(backupFilePath, formattedContent);
-
-                Console.WriteLine("Backup Succeeded. You can download the definition.");
             }
+
+            Console.WriteLine("Backup Succeeded.");
         }
     }
 }
