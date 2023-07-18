@@ -26,7 +26,7 @@ namespace LogicAppAdvancedTool
 
                     c.OnExecute(() =>
                     {
-                        string date = dateCO.Value()??"19700101";
+                        string date = dateCO.Value() ?? "19700101";
 
                         BackupDefinitions(AppSettings.LogicAppName, date);
 
