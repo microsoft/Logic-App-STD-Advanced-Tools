@@ -21,7 +21,7 @@ namespace LogicAppAdvancedTool
             string runTableName = $"flow{prefix}runs";
 
             string query = $"Status eq 'Running' or Status eq 'Waiting'";
-            List<TableEntity> inprocessRuns = TableOperations.QueryRunTable(runTableName, query, new string[] { "Status", "PartitionKey", "RowKey" });
+            List<TableEntity> inprocessRuns = TableOperations.QueryTable(runTableName, query, new string[] { "Status", "PartitionKey", "RowKey" });
 
             if (inprocessRuns.Count == 0)
             {

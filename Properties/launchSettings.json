@@ -2,7 +2,7 @@
   "profiles": {
     "LogicAppAdvancedTool": {
       "commandName": "Project",
-      "commandLineArgs": "CancelRuns -wf CanncelRun"
+      "commandLineArgs": "SearchInHistory -wf SMTPTest -d 20230706 -k Test"
     }
   }
 }

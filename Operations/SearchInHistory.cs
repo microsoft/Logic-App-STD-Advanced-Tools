@@ -29,7 +29,7 @@ namespace LogicAppAdvancedTool
                 DateTime maxTimeStamp = minTimeStamp.AddDays(1);
 
                 string query = $"Status eq 'Failed' and CreatedTime ge datetime'{minTimeStamp.ToString("yyyy-MM-ddTHH:mm:ssZ")}' and EndTime le datetime'{maxTimeStamp.ToString("yyyy-MM-ddTHH:mm:ssZ")}'";
-                List<TableEntity> failedRuns = TableOperations.QueryRunTable(runTableName, query, new string[] { "FlowRunSequenceId" });
+                List<TableEntity> failedRuns = TableOperations.QueryTable(runTableName, query, new string[] { "FlowRunSequenceId" });
 
                 if (failedRuns.Count == 0)
                 {
@@ -42,12 +42,12 @@ namespace LogicAppAdvancedTool
                 {
                     string runID = te.GetString("FlowRunSequenceId");
 
-                    tableEntities.AddRange(TableOperations.QueryActionTable(actionTableName, $"(InputsLinkCompressed ne '' or OutputsLinkCompressed ne '') and FlowRunSequenceId eq '{runID}'"));
+                    tableEntities.AddRange(TableOperations.QueryTable(actionTableName, $"(InputsLinkCompressed ne '' or OutputsLinkCompressed ne '') and FlowRunSequenceId eq '{runID}'"));
                 }
             }
             else
             {
-                tableEntities = TableOperations.QueryActionTable(actionTableName, "InputsLinkCompressed ne '' or OutputsLinkCompressed ne ''");
+                tableEntities = TableOperations.QueryTable(actionTableName, "InputsLinkCompressed ne '' or OutputsLinkCompressed ne ''");
             }
 
             List<TableEntity> filteredEntities = new List<TableEntity>();
