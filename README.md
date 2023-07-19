@@ -27,7 +27,7 @@ If you would like to compile the binary yourself, please always use "Publish" in
 | RestoreAll | Restore all the workflows which be deleted accidentally. **This operation may cause unexpected behavior on Logic App runtime if you have any invalid workflows in storage table**.|
 | RestoreSingleWorkflow | Restore a workflows which has been deleted accidentally.|
 | RetrieveFailures | Retrieve all the detail failure information of a workflow for a specific day/run.|
-| Revert | Revert a workflow to a previous version, this command will backup all the workflows in advance to prevent any unexpected incidents.|
+| Revert | Revert a workflow to a speicfic version.|
 | SyncToLocal | Sync remote wwwroot folder of Logic App Standard to local project. This command must run in local computer. There are 3 subcommands for different usage, please use -? for more information.|
 | CheckConnectivity | Check the connection between Logic App and Storage Account via DNS resolution and tcp ping of 443 port. This command need Kudu site is available. |
 | GenerateRunHistoryUrl | Generate run history of failure runs of a specific workflow on a specific day. The url can directly open the run history page |
