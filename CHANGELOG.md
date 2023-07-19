@@ -1,3 +1,6 @@
+2023-07-19
+1. Modified "Revert" command mechanism, it will retrieve the definition directly from Storage Table instead from local backup file.
+
 2023-07-18
 1. Remove -ago option in "Backup" command, instead added -date option for retrieve definitions after a certain date.
 
