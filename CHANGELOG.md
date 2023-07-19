@@ -1,3 +1,6 @@
+2023-07-18
+1. Remove -ago option in "Backup" command, instead added -date option for retrieve definitions after a certain date.
+
 2023-07-07
 1. Added new command "CancelRuns" to cancel all running/waiting instances of a workflow.
 2. New shared class "TableOperations" for common storage table query.
