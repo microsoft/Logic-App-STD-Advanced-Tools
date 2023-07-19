@@ -1,5 +1,7 @@
-﻿using McMaster.Extensions.CommandLineUtils;
+﻿using Azure.Data.Tables;
+using McMaster.Extensions.CommandLineUtils;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace LogicAppAdvancedTool
@@ -15,14 +17,15 @@ namespace LogicAppAdvancedTool
                 throw new UserInputException($"{workflowName} folder cannot be found in wwwroot folder, please check the workflow name.");
             }
 
-            string[] files = Directory.GetFiles(backupFilePath, $"*{version}.json");
+            string tableName = GetMainTableName(AppSettings.LogicAppName);
+            List<TableEntity> tableEntities = TableOperations.QueryTable(tableName, $"FlowSequenceId eq '{version}'");
 
-            if (files == null || files.Length == 0)
+            if (tableEntities.Count == 0)
             {
-                throw new UserInputException("No backup file found, please check whether Version is correct.");
+                throw new UserInputException($"No workflow definition found with version: {version}");
             }
 
-            string confirmationMessage = $"WARNING!!!\r\nThe current workflow: {workflowName} will be overwrite\r\n\r\nPlease input for confirmation:";
+            string confirmationMessage = $"WARNING!!!\r\nThe current workflow: {workflowName} will be overwrite!\r\nPlease input for confirmation:";
             if (!Prompt.GetYesNo(confirmationMessage, false, ConsoleColor.Red))
             {
                 Console.WriteLine("Operation Cancelled");
@@ -30,10 +33,15 @@ namespace LogicAppAdvancedTool
                 return;
             }
 
-            string backupDefinitionContent = File.ReadAllText(files[0]);
+            TableEntity entity = tableEntities[0];
+            byte[] definitionCompressed = entity.GetBinary("DefinitionCompressed");
+            string kind = entity.GetString("Kind");
+            string decompressedDefinition = DecompressContent(definitionCompressed);
+            string definition = $"{{\"definition\": {decompressedDefinition},\"kind\": \"{kind}\"}}";
+
             string definitionTemplatePath = $"C:/home/site/wwwroot/{workflowName}/workflow.json";
 
-            File.WriteAllText(definitionTemplatePath, backupDefinitionContent);
+            File.WriteAllText(definitionTemplatePath, definition);
 
             Console.WriteLine("Revert finished, please refresh the workflow page");
         }

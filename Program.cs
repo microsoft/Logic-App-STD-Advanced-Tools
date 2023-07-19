@@ -49,8 +49,6 @@ namespace LogicAppAdvancedTool
                         string workflowName = workflowNameCO.Value();
                         string version = versionCO.Value();
 
-                        BackupDefinitions(AppSettings.LogicAppName);
-                        
                         RevertVersion(workflowName, version);
 
                         return 0;
