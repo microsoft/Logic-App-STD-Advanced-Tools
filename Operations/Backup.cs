@@ -1,18 +1,17 @@
-﻿using Azure;
-using Azure.Data.Tables;
+﻿using Azure.Data.Tables;
 using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 
 namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        private static void BackupDefinitions(string logicAppName, string date = "19700101")
+        private static void BackupDefinitions(string date = "19700101")
         {
             
             string backupFolder = $"{Directory.GetCurrentDirectory()}/Backup";
@@ -21,10 +20,11 @@ namespace LogicAppAdvancedTool
             Hashtable Appsettings = (Hashtable)Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Process);
             File.WriteAllText($"{backupFolder}/appsettings.json", JsonConvert.SerializeObject(Appsettings, Formatting.Indented));
 
-            string definitionTableName = GetMainTableName(logicAppName);
             string formattedDate = DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture).ToString("yyyy-MM-ddT00:00:00Z");
 
-            List<TableEntity> tableEntities = TableOperations.QueryTable(definitionTableName, $"ChangedTime ge datetime'{formattedDate}'");
+            List<TableEntity> tableEntities = TableOperations.QueryMainTable($"ChangedTime ge datetime'{formattedDate}'")
+                                                            .Where(t=> t.GetString("RowKey").StartsWith("MYEDGEENVIRONMENT_FLOWVERSION"))
+                                                            .ToList();
 
             foreach (TableEntity entity in tableEntities)
             {
@@ -35,12 +35,6 @@ namespace LogicAppAdvancedTool
 
                 string backupFlowPath = $"{backupFolder}/{flowName}";
                 string backupFilePath = $"{backupFlowPath}/{modifiedDate}_{flowSequenceId}.json";
-
-                //Filter for duplicate definition of latest version
-                if (!rowKey.Contains("FLOWVERSION"))
-                {
-                    continue;
-                }
 
                 //The definition has already been backup
                 if (File.Exists(backupFilePath))

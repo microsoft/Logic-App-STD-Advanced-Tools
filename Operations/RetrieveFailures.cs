@@ -11,64 +11,30 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        private static void RetrieveFailuresByDate(string logicAppName, string workflowName, string date)
+        private static void RetrieveFailuresByDate(string workflowName, string date)
         {
-            string prefix = GenerateWorkflowTablePrefix(logicAppName, workflowName);
+            List<TableEntity> tableEntities = TableOperations.QueryActionTable(workflowName, date, "Status eq 'Failed'");
 
-            string actionTableName = $"flow{prefix}{date}t000000zactions";
-
-            //Double check whether the action table exists
-            TableServiceClient serviceClient = new TableServiceClient(AppSettings.ConnectionString);
-            Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{actionTableName}'");
-
-            if (results.Count() == 0)
-            {
-                throw new UserInputException($"action table - {actionTableName} not exist, please check whether Date is correct.");
-            }
-
-            Console.WriteLine($"action table - {actionTableName} found, retrieving action logs...");
-
-            TableClient tableClient = new TableClient(AppSettings.ConnectionString, actionTableName);
-            List<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: "Status eq 'Failed'").ToList();
-
-            string fileName = $"{logicAppName}_{workflowName}_{date}_FailureLogs.json";
+            string fileName = $"{AppSettings.LogicAppName}_{workflowName}_{date}_FailureLogs.json";
 
             SaveFailureLogs(tableEntities, fileName);
         }
 
-        private static void RetrieveFailuresByRun(string logicAppName, string workflowName, string runID)
+        private static void RetrieveFailuresByRun(string workflowName, string runID)
         {
-            string prefix = GenerateWorkflowTablePrefix(logicAppName, workflowName);
-            string runTableName = $"flow{prefix}runs";
+            TableEntity runEntity = TableOperations.QueryRunTable(workflowName, $"FlowRunSequenceId eq '{runID}'").First();
 
-            //Double check whether the action table exists
-            TableServiceClient serviceClient = new TableServiceClient(AppSettings.ConnectionString);
-            Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{runTableName}'");
-
-            if (results.Count() == 0)
-            {
-                throw new UserInputException($"run table - {runTableName} not exist, please check whether Date is correct.");
-            }
-
-            Console.WriteLine($"run table - {runTableName} found, retrieving run history logs...");
-
-            TableClient tableClient = new TableClient(AppSettings.ConnectionString, runTableName);
-            List<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowRunSequenceId eq '{runID}'").ToList();
-
-            if (tableEntities.Count == 0)
+            if (runEntity == null)
             {
                 throw new UserInputException($"Cannot find workflow run with run id: {runID} of workflow: {workflowName}, please check your input.");
             }
 
             Console.WriteLine($"Workflow run id found in run history table. Retrieving failure actions.");
 
-            string runTime = tableEntities.First().GetDateTimeOffset("CreatedTime")?.ToString("yyyyMMdd");
-            string actionTableName = $"flow{prefix}{runTime}t000000zactions";
+            string date = runEntity.GetDateTimeOffset("CreatedTime")?.ToString("yyyyMMdd");
+            List<TableEntity> tableEntities = TableOperations.QueryActionTable(workflowName, date, $"Status eq 'Failed' and FlowRunSequenceId eq '{runID}'");
 
-            tableClient = new TableClient(AppSettings.ConnectionString, actionTableName);
-            tableEntities = tableClient.Query<TableEntity>(filter: $"Status eq 'Failed' and FlowRunSequenceId eq '{runID}'").ToList();
-
-            string fileName = $"{logicAppName}_{workflowName}_{runID}_FailureLogs.json";
+            string fileName = $"{AppSettings.LogicAppName}_{workflowName}_{runID}_FailureLogs.json";
 
             SaveFailureLogs(tableEntities, fileName);
         }

@@ -14,7 +14,7 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        public static void CleanUpContainers(string logicAppName, string workflowName, string date)
+        public static void CleanUpContainers(string workflowName, string date)
         {
             int targetDate = Int32.Parse(date);
             string formattedDate = DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture).ToString("yyyy-MM-dd");
@@ -22,11 +22,11 @@ namespace LogicAppAdvancedTool
             string containerPrefix;
             if (string.IsNullOrEmpty(workflowName))
             {
-                containerPrefix = GenerateLogicAppPrefix(logicAppName);
+                containerPrefix = GenerateLogicAppPrefix();
             }
             else
             {
-                containerPrefix = GenerateWorkflowTablePrefix(logicAppName, workflowName);
+                containerPrefix = GenerateWorkflowTablePrefix(workflowName);
             }
 
             containerPrefix = $"flow{containerPrefix}";

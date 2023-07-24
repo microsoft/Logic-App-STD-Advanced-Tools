@@ -9,30 +9,26 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        private static void Decode(string logicAppName, string workflowName, string version)
+        private static void Decode(string workflowName, string version)
         {
-            string tableName = GetMainTableName(logicAppName);
+            List<TableEntity> tableEntities = TableOperations.QueryMainTable($"FlowName eq '{workflowName}' and FlowSequenceId eq '{version}'", new string[] { "DefinitionCompressed", "Kind" });
 
-            TableClient tableClient = new TableClient(AppSettings.ConnectionString, tableName);
-            List<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{workflowName}' and FlowSequenceId eq '{version}'").ToList();
-
-            if (tableEntities.Count<TableEntity>() == 0)
+            if (tableEntities.Count() == 0)
             {
-                throw new UserInputException($"{workflowName} with version {version} cannot be found in storage table, pleaase check your input.");
+                throw new UserInputException($"{workflowName} with version {version} cannot be found in storage table, please check your input.");
             }
 
-            foreach (TableEntity entity in tableEntities)
-            {
-                byte[] definitionCompressed = entity.GetBinary("DefinitionCompressed");
-                string decompressedDefinition = DecompressContent(definitionCompressed);
+            TableEntity entity = tableEntities.FirstOrDefault();
 
-                dynamic jsonObject = JsonConvert.DeserializeObject(decompressedDefinition);
-                string formattedContent = JsonConvert.SerializeObject(jsonObject, Formatting.Indented);
+            byte[] definitionCompressed = entity.GetBinary("DefinitionCompressed");
+            string kind = entity.GetString("Kind");
+            string decompressedDefinition = DecompressContent(definitionCompressed);
+            string definition = $"{{\"definition\": {decompressedDefinition},\"kind\": \"{kind}\"}}";
 
-                Console.Write(formattedContent);
+            dynamic jsonObject = JsonConvert.DeserializeObject(definition);
+            string formattedContent = JsonConvert.SerializeObject(jsonObject, Formatting.Indented);
 
-                break;
-            }
+            Console.Write(formattedContent);
         }
     }
 }

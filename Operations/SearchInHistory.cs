@@ -15,21 +15,15 @@ namespace LogicAppAdvancedTool
     {
         private static void SearchInHistory(string logicAppName, string workflowName, string date, string keyword, bool includeBlob = false, bool onlyFailures = false)
         {
-            string prefix = GenerateWorkflowTablePrefix(logicAppName, workflowName);
-
-            string actionTableName = $"flow{prefix}{date}t000000zactions";
-
             List<TableEntity> tableEntities = new List<TableEntity>();
 
             if (onlyFailures)
             {
-                string runTableName = $"flow{prefix}runs";
-
                 DateTime minTimeStamp = DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture);
                 DateTime maxTimeStamp = minTimeStamp.AddDays(1);
 
                 string query = $"Status eq 'Failed' and CreatedTime ge datetime'{minTimeStamp.ToString("yyyy-MM-ddTHH:mm:ssZ")}' and EndTime le datetime'{maxTimeStamp.ToString("yyyy-MM-ddTHH:mm:ssZ")}'";
-                List<TableEntity> failedRuns = TableOperations.QueryTable(runTableName, query, new string[] { "FlowRunSequenceId" });
+                List<TableEntity> failedRuns = TableOperations.QueryRunTable(workflowName, query, new string[] { "FlowRunSequenceId" });
 
                 if (failedRuns.Count == 0)
                 {
@@ -42,12 +36,12 @@ namespace LogicAppAdvancedTool
                 {
                     string runID = te.GetString("FlowRunSequenceId");
 
-                    tableEntities.AddRange(TableOperations.QueryTable(actionTableName, $"(InputsLinkCompressed ne '' or OutputsLinkCompressed ne '') and FlowRunSequenceId eq '{runID}'"));
+                    tableEntities.AddRange(TableOperations.QueryActionTable(workflowName, date, $"(InputsLinkCompressed ne '' or OutputsLinkCompressed ne '') and FlowRunSequenceId eq '{runID}'"));
                 }
             }
             else
             {
-                tableEntities = TableOperations.QueryTable(actionTableName, "InputsLinkCompressed ne '' or OutputsLinkCompressed ne ''");
+                tableEntities = TableOperations.QueryActionTable(workflowName, date, "InputsLinkCompressed ne '' or OutputsLinkCompressed ne ''");
             }
 
             List<TableEntity> filteredEntities = new List<TableEntity>();

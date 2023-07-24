@@ -17,8 +17,7 @@ namespace LogicAppAdvancedTool
                 throw new UserInputException($"{workflowName} folder cannot be found in wwwroot folder, please check the workflow name.");
             }
 
-            string tableName = GetMainTableName(AppSettings.LogicAppName);
-            List<TableEntity> tableEntities = TableOperations.QueryTable(tableName, $"FlowSequenceId eq '{version}'");
+            List<TableEntity> tableEntities = TableOperations.QueryMainTable($"FlowSequenceId eq '{version}'");
 
             if (tableEntities.Count == 0)
             {

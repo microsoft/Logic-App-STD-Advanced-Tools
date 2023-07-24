@@ -2,6 +2,7 @@
 using Azure.Data.Tables;
 using Azure.Data.Tables.Models;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -9,9 +10,9 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        private static void GenerateTablePrefix(string logicAppName, string workflowName)
+        private static void GenerateTablePrefix(string workflowName)
         {
-            string logicAppPrefix = StoragePrefixGenerator.Generate(logicAppName.ToLower());
+            string logicAppPrefix = StoragePrefixGenerator.Generate(AppSettings.LogicAppName.ToLower());
 
             //if we don't need to generate workflow prefix, just output Logic App prefix
             if (String.IsNullOrEmpty(workflowName))
@@ -21,10 +22,7 @@ namespace LogicAppAdvancedTool
                 return;
             }
 
-            string mainTableName = GetMainTableName(logicAppName);
-
-            TableClient tableClient = new TableClient(AppSettings.ConnectionString, mainTableName);
-            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{workflowName}'");
+            List<TableEntity> tableEntities = TableOperations.QueryMainTable($"FlowName eq '{workflowName}'");
 
             if (tableEntities.Count() == 0)
             {

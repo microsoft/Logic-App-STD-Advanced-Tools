@@ -11,10 +11,10 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        private static void CheckConnectivity(string logicAppName)
+        private static void CheckConnectivity()
         {
             ConnectionInfo connectionInfo = new ConnectionInfo(AppSettings.ConnectionString);
-            ConnectionValidator connectionValidator = new ConnectionValidator(connectionInfo, logicAppName);
+            ConnectionValidator connectionValidator = new ConnectionValidator(connectionInfo);
 
             List<ValidationInfo> results = connectionValidator.Validate();
 
@@ -38,10 +38,10 @@ namespace LogicAppAdvancedTool
             private string LogicAppName;
             private ConnectionInfo ConnectionInfo;
             private List<ValidationInfo> Results;
-            public ConnectionValidator(ConnectionInfo connectionInfo, string logicAppName)
+            public ConnectionValidator(ConnectionInfo connectionInfo)
             {
                 ConnectionInfo = connectionInfo;
-                LogicAppName = logicAppName;
+                LogicAppName = AppSettings.LogicAppName;
 
                 Results = new List<ValidationInfo>
                 {

@@ -18,14 +18,9 @@ namespace LogicAppAdvancedTool
 {
     public partial class Program
     {
-        /// <summary>
-        /// Retrieve the table name which contains all the workflow definitions
-        /// </summary>
-        /// <param name="ConnectionString"></param>
-        /// <returns></returns>
-        private static string GetMainTableName(string logicAppName)
+        private static string GetMainTableName()
         {
-            string tableName = $"flow{StoragePrefixGenerator.Generate(logicAppName.ToLower())}flows";
+            string tableName = $"flow{StoragePrefixGenerator.Generate(AppSettings.LogicAppName.ToLower())}flows";
 
             TableServiceClient serviceClient = new TableServiceClient(AppSettings.ConnectionString);
 
@@ -40,40 +35,14 @@ namespace LogicAppAdvancedTool
             throw new UserInputException("No table found in Azure Storage Account, please check whether the Logic App Name correct or not.");
         }
 
-        /// <summary>
-        /// Retrieve the table name which contains all the workflow definitions
-        /// </summary>
-        /// <param name="ConnectionString"></param>
-        /// <returns></returns>
-        private static string GetMainTablePrefix(string logicAppName)
+        private static string GenerateLogicAppPrefix() 
         {
-            string tablePrefix = StoragePrefixGenerator.Generate(logicAppName.ToLower());
-            string tableName = $"flow{tablePrefix}flows";
-
-            TableServiceClient serviceClient = new TableServiceClient(AppSettings.ConnectionString);
-
-            //Double check whether the table exists
-            Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{tableName}'");
-
-            if (results.Count() != 0)
-            {
-                return tablePrefix;
-            }
-
-            Console.WriteLine("No table found in Azure Storage Account, please check whether the Logic App Name correct or not.");
-            return string.Empty;
+            return StoragePrefixGenerator.Generate(AppSettings.LogicAppName.ToLower());
         }
 
-        private static string GenerateLogicAppPrefix(string logicAppName) 
+        public static string GenerateWorkflowTablePrefix(string workflowName)
         {
-            string tablePrefix = StoragePrefixGenerator.Generate(logicAppName.ToLower());
-
-            return tablePrefix;
-        }
-
-        private static string GenerateWorkflowTablePrefix(string logicAppName, string workflowName)
-        {
-            string mainTableName = GetMainTableName(logicAppName);
+            string mainTableName = GetMainTableName();
 
             TableClient tableClient = new TableClient(AppSettings.ConnectionString, mainTableName);
             Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{workflowName}'");
@@ -83,7 +52,7 @@ namespace LogicAppAdvancedTool
                 throw new UserInputException($"{workflowName} cannot be found in storage table, please check whether workflow name is correct.");
             }
 
-            string logicAppPrefix = StoragePrefixGenerator.Generate(logicAppName.ToLower());
+            string logicAppPrefix = StoragePrefixGenerator.Generate(AppSettings.LogicAppName.ToLower());
 
             string workflowID = tableEntities.First<TableEntity>().GetString("FlowId");
             string workflowPrefix = StoragePrefixGenerator.Generate(workflowID.ToLower());

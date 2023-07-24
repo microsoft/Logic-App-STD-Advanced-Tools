@@ -8,12 +8,11 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        private static void ListVersions(string logicAppName, string workflowName)
+        private static void ListVersions(string workflowName)
         {
-            string tableName = GetMainTableName(logicAppName);
-
-            TableClient tableClient = new TableClient(AppSettings.ConnectionString, tableName);
-            List<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{workflowName}'").ToList();
+            List<TableEntity> tableEntities = TableOperations.QueryMainTable($"FlowName eq '{workflowName}'")
+                                                .Where(t => t.GetString("RowKey").Contains("FLOWVERSION"))
+                                                .ToList();
 
             if (tableEntities.Count == 0)
             {
@@ -24,15 +23,10 @@ namespace LogicAppAdvancedTool
 
             foreach (TableEntity entity in tableEntities)
             {
-                string rowKey = entity.GetString("RowKey");
+                string version = entity.GetString("FlowSequenceId");
+                string updateTime = entity.GetDateTimeOffset("FlowUpdatedTime")?.ToString("yyyy-MM-ddTHH:mm:ssZ");
 
-                if (rowKey.Contains("FLOWVERSION"))
-                {
-                    string version = entity.GetString("FlowSequenceId");
-                    string updateTime = entity.GetDateTimeOffset("FlowUpdatedTime")?.ToString("yyyy-MM-ddTHH:mm:ssZ");
-
-                    consoleTable.AddRow(version, updateTime);
-                }
+                consoleTable.AddRow(version, updateTime);
             }
 
             consoleTable.Print();

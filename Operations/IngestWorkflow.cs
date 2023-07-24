@@ -14,7 +14,7 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        public static void IngestWorkflow(string logicAppName, string workflowName)
+        public static void IngestWorkflow(string workflowName)
         {
             string WorkflowPath = $"C:/home/site/wwwroot/{workflowName}/workflow.json";
 
@@ -31,16 +31,17 @@ namespace LogicAppAdvancedTool
             string definition = JsonConvert.SerializeObject(template.definition);
             byte[] compressedDefinition = CompressContent(definition);
 
-            string mainTableName = GetMainTableName(logicAppName);
-
             string backupPath = BackupCurrentSite();
             Console.WriteLine($"Backup current workflows, you can find in path: {backupPath}");
 
-            TableClient tableClient = new TableClient(AppSettings.ConnectionString, mainTableName);
-            Pageable<TableEntity> mainTableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{workflowName}'");
-            List<TableEntity> mainLatestEntities = mainTableEntities.OrderByDescending(tableEntity => tableEntity.GetDateTimeOffset("ChangedTime")).Take(4).ToList();
+            List<TableEntity> mainLatestEntities = TableOperations.QueryMainTable($"FlowName eq '{workflowName}'")
+                                                    .OrderByDescending(tableEntity => tableEntity.GetDateTimeOffset("ChangedTime"))
+                                                    .Take(4)
+                                                    .ToList();
 
             DateTimeOffset currentTime = DateTimeOffset.Now;
+
+            TableClient tableClient = new TableClient(AppSettings.ConnectionString, TableOperations.DefinitionTableName);
 
             foreach (TableEntity entity in mainLatestEntities)
             { 
@@ -50,14 +51,10 @@ namespace LogicAppAdvancedTool
                 tableClient.UpdateEntity(newEntity, entity.ETag, TableUpdateMode.Merge);
             }
 
-            string logicAppPrefix = GetMainTablePrefix(logicAppName);
-            string workflowID = mainTableEntities.First<TableEntity>().GetString("FlowId");
-            string workflowPrefix = StoragePrefixGenerator.Generate(workflowID);
-            string workflowTableName = $"flow{logicAppPrefix}{workflowPrefix}flows";
-
-            tableClient = new TableClient(AppSettings.ConnectionString, workflowTableName);
-            Pageable<TableEntity> wfTableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{workflowName}'");
-            List<TableEntity> wfLatestEntities = wfTableEntities.OrderByDescending(tableEntity => tableEntity.GetDateTimeOffset("ChangedTime")).Take(2).ToList();
+            List<TableEntity> wfLatestEntities = TableOperations.QueryWorkflowTable(workflowName, $"FlowName eq '{workflowName}'")
+                                                    .OrderByDescending(tableEntity => tableEntity.GetDateTimeOffset("ChangedTime"))
+                                                    .Take(2)
+                                                    .ToList();
 
             foreach (TableEntity entity in wfLatestEntities)
             {

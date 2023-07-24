@@ -14,14 +14,10 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        private static void CancelRuns(string logicAppName, string workflowName)
+        private static void CancelRuns(string workflowName)
         {
-            string prefix = GenerateWorkflowTablePrefix(logicAppName, workflowName);
-
-            string runTableName = $"flow{prefix}runs";
-
             string query = $"Status eq 'Running' or Status eq 'Waiting'";
-            List<TableEntity> inprocessRuns = TableOperations.QueryTable(runTableName, query, new string[] { "Status", "PartitionKey", "RowKey" });
+            List<TableEntity> inprocessRuns = TableOperations.QueryRunTable(workflowName, query, new string[] { "Status", "PartitionKey", "RowKey" });
 
             if (inprocessRuns.Count == 0)
             {
@@ -37,6 +33,9 @@ namespace LogicAppAdvancedTool
 
                 return;
             }
+
+            string prefix = GenerateWorkflowTablePrefix(workflowName);
+            string runTableName = $"flow{prefix}runs";
 
             TableClient runTableClient = new TableClient(AppSettings.ConnectionString, runTableName);
             

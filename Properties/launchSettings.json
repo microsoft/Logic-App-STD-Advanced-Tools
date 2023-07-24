@@ -2,7 +2,7 @@
   "profiles": {
     "LogicAppAdvancedTool": {
       "commandName": "Project",
-      "commandLineArgs": "Revert -wf SMTPTest -v 08585119441510064392"
+      "commandLineArgs": "RetrieveFailures Run -wf Test -id 08585117011637842534077922676CU00"
     }
   }
 }

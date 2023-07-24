@@ -10,10 +10,8 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        private static void RestoreAll(string logicAppName)
+        private static void RestoreAll()
         {
-            string tableName = GetMainTableName(logicAppName);
-
             string confirmationMessage = "WARNING!!!\r\nThis operation will restore all the deleted workflows, if there's any invalid workflows, it might cause unexpected behavior on Logic App runtime.\r\nBe cautuion if you are running this command in PROD environment\r\nPlease input for confirmation:";
             if (!Prompt.GetYesNo(confirmationMessage, false, ConsoleColor.Red))
             {
@@ -25,12 +23,12 @@ namespace LogicAppAdvancedTool
             string backupPath = BackupCurrentSite();
             Console.WriteLine($"Backup current workflows, you can find in path: {backupPath}");
 
-            TableClient tableClient = new TableClient(AppSettings.ConnectionString, tableName);
-            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(select: new string[] { "FlowName", "ChangedTime", "DefinitionCompressed", "Kind" });
-
-            List<TableEntity> entities = (from n in tableEntities
-                                          group n by n.GetString("FlowName") into g
-                                          select g.OrderByDescending(x => x.GetDateTimeOffset("ChangedTime")).FirstOrDefault()).ToList();
+            List<TableEntity> entities = TableOperations.QueryMainTable(null, select: new string[] { "FlowName", "ChangedTime", "DefinitionCompressed", "Kind" })
+                    .GroupBy(t => t.GetString("FlowName"))
+                    .Select(g => g.OrderByDescending(
+                        x => x.GetDateTimeOffset("ChangedTime"))
+                        .FirstOrDefault())
+                    .ToList();
 
             foreach (TableEntity entity in entities)
             {

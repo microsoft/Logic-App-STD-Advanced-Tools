@@ -9,16 +9,14 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        private static void ListWorkflowID(string logicAppName, string workflowName)
+        private static void ListWorkflowID(string workflowName)
         {
-            string tableName = GetMainTableName(logicAppName);
-
-            TableClient tableClient = new TableClient(AppSettings.ConnectionString, tableName);
-            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{workflowName}'", select: new string[] { "FlowName", "FlowId", "ChangedTime", "Kind" });
-
-            List<TableEntity> entities = (from n in tableEntities
-                                          group n by n.GetString("FlowId") into g
-                                          select g.OrderByDescending(x => x.GetDateTimeOffset("ChangedTime")).FirstOrDefault()).ToList();
+            List<TableEntity> entities = TableOperations.QueryMainTable($"FlowName eq '{workflowName}'", select: new string[] { "FlowName", "FlowId", "ChangedTime", "Kind" })
+                                            .GroupBy(t => t.GetString("FlowId"))
+                                            .Select(g => g.OrderByDescending( 
+                                                x => x.GetDateTimeOffset("ChangedTime"))
+                                                .FirstOrDefault())
+                                            .ToList();
 
             if (entities.Count == 0)
             {
