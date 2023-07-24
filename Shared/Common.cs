@@ -4,15 +4,12 @@ using Azure.Data.Tables.Models;
 using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using Microsoft.VisualBasic;
 using Microsoft.WindowsAzure.ResourceStack.Common.Utilities;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Text;
 
 namespace LogicAppAdvancedTool
 {

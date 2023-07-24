@@ -1,12 +1,8 @@
-﻿using Azure;
-using Azure.Data.Tables;
-using Azure.Data.Tables.Models;
+﻿using Azure.Data.Tables;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Newtonsoft.Json;
-using System.Web;
 using System.Globalization;
 
 namespace LogicAppAdvancedTool

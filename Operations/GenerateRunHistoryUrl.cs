@@ -1,14 +1,9 @@
-﻿using Azure.Storage.Files.Shares.Models;
-using Azure.Storage.Files.Shares;
-using McMaster.Extensions.CommandLineUtils;
-using System;
+﻿using System;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
-using Azure;
 using Azure.Data.Tables;
 using System.Linq;
-using Azure.Data.Tables.Models;
 using System.Globalization;
 using System.Text.Encodings.Web;
 

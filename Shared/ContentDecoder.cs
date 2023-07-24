@@ -1,18 +1,6 @@
-﻿using Azure;
-using Azure.Data.Tables;
-using Azure.Data.Tables.Models;
-using Azure.Storage.Blobs.Models;
-using Microsoft.VisualBasic;
-using Microsoft.WindowsAzure.ResourceStack.Common.Utilities;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Dynamic;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using static LogicAppAdvancedTool.Program;
 

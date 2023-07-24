@@ -1,5 +1,4 @@
-﻿using Azure;
-using Azure.Data.Tables;
+﻿using Azure.Data.Tables;
 using McMaster.Extensions.CommandLineUtils;
 using System;
 using System.Collections.Generic;

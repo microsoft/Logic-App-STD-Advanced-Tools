@@ -1,7 +1,5 @@
-﻿using Azure;
-using Azure.Data.Tables;
+﻿using Azure.Data.Tables;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 

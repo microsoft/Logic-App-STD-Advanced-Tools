@@ -1,17 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Azure.Storage.Queues;
 using McMaster.Extensions.CommandLineUtils;
-using Azure.Storage.Blobs;
-using Azure;
-using Azure.Storage.Blobs.Models;
 using System.Globalization;
 using Azure.Data.Tables;
-using System.Reflection.Metadata.Ecma335;
-using Azure.Data.Tables.Models;
 
 namespace LogicAppAdvancedTool
 {

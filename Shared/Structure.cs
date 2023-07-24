@@ -1,14 +1,6 @@
-﻿using Azure;
-using Azure.Data.Tables;
-using Azure.Data.Tables.Models;
-using Microsoft.VisualBasic;
-using Microsoft.WindowsAzure.ResourceStack.Common.Utilities;
+﻿using Azure.Data.Tables;
 using Newtonsoft.Json;
 using System;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Text;
 
 namespace LogicAppAdvancedTool
 {

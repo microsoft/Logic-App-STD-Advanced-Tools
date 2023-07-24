@@ -3,9 +3,7 @@ using Azure.Data.Tables;
 using Azure.Data.Tables.Models;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 using static LogicAppAdvancedTool.Program;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LogicAppAdvancedTool
 {
