@@ -17,6 +17,11 @@ namespace LogicAppAdvancedTool
             }
         }
 
+        public static void UpdateTable()
+        { 
+            //TODO
+        }
+
         public static List<TableEntity> QueryTable(string tableName, string query, string[] select = null)
         {
             List<TableEntity> tableEntities = new List<TableEntity>();

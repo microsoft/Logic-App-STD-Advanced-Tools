@@ -557,6 +557,25 @@ namespace LogicAppAdvancedTool
                 });
                 #endregion
 
+                #region Restore Run History
+                app.Command("RestoreRunHistory", c => {
+
+                    CommandOption workflowNameCO = c.Option("-wf|--workflow", "(Mandatory) Workflow Name", CommandOptionType.SingleValue).IsRequired();
+
+                    c.HelpOption("-?");
+                    c.Description = "Restore run history of a deleted/overwritten workflow. This command will create a new workflow for showing run history.";
+
+                    c.OnExecute(() =>
+                    {
+                        string workflowName = workflowNameCO.Value();
+
+                        RestoreRunHistory(workflowName);
+
+                        return 0;
+                    });
+                });
+                #endregion
+
                 app.Execute(args);
             }
             catch (Exception ex)

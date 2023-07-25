@@ -2,7 +2,7 @@
   "profiles": {
     "LogicAppAdvancedTool": {
       "commandName": "Project",
-      "commandLineArgs": "RetrieveFailures Run -wf Test -id 08585117011637842534077922676CU00"
+      "commandLineArgs": "RestoreRunHistory -wf HistoryTest"
     }
   }
 }
