@@ -35,6 +35,7 @@ If you would like to compile the binary yourself, please always use "Publish" in
 | CleanUpTables | Delete all the Logic App auto-generated storage tables for run history before a specific date. |
 | CleanUpRunHistory | Combined command of **CleanUpContainers** and **CleanUpTables** |
 | SearchInHistory | Search a keyword in workflow run history based on date. |
+| RestoreRunHistory | Restore run history of a deleted/overwritten workflow. |
 
 ## How to use (Demo of restore a workflow)
 1. Open Kudu (Advanced Tools) of Logic App Standard and upload this tool into a folder
