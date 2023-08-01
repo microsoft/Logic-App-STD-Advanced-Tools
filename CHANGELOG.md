@@ -1,3 +1,6 @@
+2023-07-25
+1. Added a new command "RestoreRunHistory", in Logic App STD, if we overwritten (delete and create a new one with same name) a workflow, we will lost all the run history. This command is using to restore run history of an overwritten workflow.
+
 2023-07-19
 1. Modified "Revert" command mechanism, it will retrieve the definition directly from Storage Table instead from local backup file.
 
