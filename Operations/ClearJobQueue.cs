@@ -8,6 +8,8 @@ namespace LogicAppAdvancedTool
     {
         public static void ClearJobQueue(string logicAppName)
         {
+            AlertExperimentalFeature();
+
             string queueName = $"flow{StoragePrefixGenerator.Generate(logicAppName.ToLower())}jobtriggers00";
 
             QueueClient queueClient = new QueueClient(AppSettings.ConnectionString, queueName);

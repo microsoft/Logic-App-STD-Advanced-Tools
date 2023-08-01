@@ -9,6 +9,8 @@ namespace LogicAppAdvancedTool
     {
         private static void CancelRuns(string workflowName)
         {
+            AlertExperimentalFeature();
+
             string query = $"Status eq 'Running' or Status eq 'Waiting'";
             List<TableEntity> inprocessRuns = TableOperations.QueryRunTable(workflowName, query, new string[] { "Status", "PartitionKey", "RowKey" });
 

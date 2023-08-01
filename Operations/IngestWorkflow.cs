@@ -11,6 +11,8 @@ namespace LogicAppAdvancedTool
     {
         public static void IngestWorkflow(string workflowName)
         {
+            AlertExperimentalFeature();
+
             string WorkflowPath = $"C:/home/site/wwwroot/{workflowName}/workflow.json";
 
             if (!File.Exists(WorkflowPath))

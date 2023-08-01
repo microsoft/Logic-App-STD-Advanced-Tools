@@ -4,6 +4,7 @@ using Azure.Data.Tables.Models;
 using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using McMaster.Extensions.CommandLineUtils;
 using Microsoft.WindowsAzure.ResourceStack.Common.Utilities;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,15 @@ namespace LogicAppAdvancedTool
 {
     public partial class Program
     {
+        public static void AlertExperimentalFeature()
+        {
+            string confirmationMessage = "IMPORTANT!!! This is an experimental feature which mighht cause unexpected behavior (environment crash, data lossing,etc) in your Logic App.\r\nInput for confirmation to execute:";
+            if (!Prompt.GetYesNo(confirmationMessage, false, ConsoleColor.Red))
+            {
+                throw new UserCanceledException("Operation Cancelled");
+            }
+        }
+
         private static string GetMainTableName()
         {
             string tableName = $"flow{StoragePrefixGenerator.Generate(AppSettings.LogicAppName.ToLower())}flows";

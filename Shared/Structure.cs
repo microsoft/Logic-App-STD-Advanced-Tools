@@ -47,11 +47,6 @@ namespace LogicAppAdvancedTool
         }
         #endregion
 
-        public class UserInputException : Exception
-        {
-            public UserInputException(string Message) : base(Message) { }
-        }
-
         public class HistoryRecords
         {
             public DateTimeOffset Timestamp { get; private set; }

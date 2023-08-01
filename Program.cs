@@ -582,7 +582,7 @@ namespace LogicAppAdvancedTool
             {
                 Console.WriteLine(ex.Message);
 
-                if (!(ex is UserInputException))     //Print stack trace if it is not related to user input
+                if (!(ex is ExpectedException))     //Print stack trace if it is not related to user input
                 {
                     Console.WriteLine(ex.StackTrace);
                 }
