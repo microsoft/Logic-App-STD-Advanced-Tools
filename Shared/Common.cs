@@ -18,7 +18,7 @@ namespace LogicAppAdvancedTool
     {
         public static void AlertExperimentalFeature()
         {
-            string confirmationMessage = "IMPORTANT!!! This is an experimental feature which mighht cause unexpected behavior (environment crash, data lossing,etc) in your Logic App.\r\nInput for confirmation to execute:";
+            string confirmationMessage = "IMPORTANT!!! This is an experimental feature which might cause unexpected behavior (environment crash, data lossing,etc) in your Logic App.\r\nInput for confirmation to execute:";
             if (!Prompt.GetYesNo(confirmationMessage, false, ConsoleColor.Red))
             {
                 throw new UserCanceledException("Operation Cancelled");
