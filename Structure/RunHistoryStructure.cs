@@ -39,14 +39,6 @@ namespace LogicAppAdvancedTool
         }
         #endregion
 
-        #region Workflow definition 
-        public class WorkflowTemplate
-        {
-            public object definition { get; set; }
-            public string kind { get; set; }
-        }
-        #endregion
-
         public class HistoryRecords
         {
             public DateTimeOffset Timestamp { get; private set; }

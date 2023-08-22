@@ -15,14 +15,14 @@ namespace LogicAppAdvancedTool
             ConnectionInfo connectionInfo = new ConnectionInfo(AppSettings.ConnectionString);
             ConnectionValidator connectionValidator = new ConnectionValidator(connectionInfo);
 
-            List<ValidationInfo> results = connectionValidator.Validate();
+            List<StorageValidationInfo> results = connectionValidator.Validate();
 
-            if (results != null) 
+            if (results != null)
             {
                 ConsoleTable consoleTable = new ConsoleTable("EndPoint", "Type", "DNS Test", "Endpoint IP", "TCP Port (443)", "Auth Status");
 
-                foreach (ValidationInfo result in results)
-                { 
+                foreach (StorageValidationInfo result in results)
+                {
                     string endpoint = result.Endpoint;
 
                     consoleTable.AddRow(endpoint, result.ServiceType.ToString(), result.DNSStatus.ToString(), result.GetIPsAsString(), result.PingStatus.ToString(), result.AuthStatus.ToString());
@@ -36,25 +36,25 @@ namespace LogicAppAdvancedTool
         {
             private string LogicAppName;
             private ConnectionInfo ConnectionInfo;
-            private List<ValidationInfo> Results;
+            private List<StorageValidationInfo> Results;
             public ConnectionValidator(ConnectionInfo connectionInfo)
             {
                 ConnectionInfo = connectionInfo;
                 LogicAppName = AppSettings.LogicAppName;
 
-                Results = new List<ValidationInfo>
+                Results = new List<StorageValidationInfo>
                 {
-                    new ValidationInfo(connectionInfo.BlobEndpoint, StorageType.Blob),
-                    new ValidationInfo(connectionInfo.FileEndpoint, StorageType.File),
-                    new ValidationInfo(connectionInfo.QueueEndpoint, StorageType.Queue),
-                    new ValidationInfo(connectionInfo.TableEndpoint, StorageType.Table)
+                    new StorageValidationInfo(connectionInfo.BlobEndpoint, StorageType.Blob),
+                    new StorageValidationInfo(connectionInfo.FileEndpoint, StorageType.File),
+                    new StorageValidationInfo(connectionInfo.QueueEndpoint, StorageType.Queue),
+                    new StorageValidationInfo(connectionInfo.TableEndpoint, StorageType.Table)
                 };
             }
 
             //temp resolution, need to improve in the future
-            public List<ValidationInfo> Validate()
+            public List<StorageValidationInfo> Validate()
             {
-                foreach (ValidationInfo info in Results)
+                foreach (StorageValidationInfo info in Results)
                 {
                     try
                     {
@@ -69,7 +69,7 @@ namespace LogicAppAdvancedTool
                     }
                 }
 
-                foreach (ValidationInfo info in Results)
+                foreach (StorageValidationInfo info in Results)
                 {
                     if (info.DNSStatus != ValidateStatus.Succeeded)
                     {
@@ -84,7 +84,7 @@ namespace LogicAppAdvancedTool
                         }
 
                         info.PingStatus = ValidateStatus.Succeeded;
-                        
+
                     }
                     catch
                     {
@@ -92,7 +92,7 @@ namespace LogicAppAdvancedTool
                     }
                 }
 
-                foreach (ValidationInfo info in Results)
+                foreach (StorageValidationInfo info in Results)
                 {
                     try
                     {
@@ -125,7 +125,7 @@ namespace LogicAppAdvancedTool
                         info.AuthStatus = ValidateStatus.Succeeded;
                     }
                     catch
-                    { 
+                    {
                         info.AuthStatus = ValidateStatus.Failed;
                     }
                 }
@@ -135,7 +135,7 @@ namespace LogicAppAdvancedTool
         }
 
         public enum StorageType
-        { 
+        {
             Blob = 1,
             File = 2,
             Queue = 4,
@@ -143,27 +143,21 @@ namespace LogicAppAdvancedTool
         }
 
         public enum ValidateStatus
-        { 
+        {
             Succeeded,
             Failed,
             NotApplicable
         }
 
-        public class ValidationInfo
+        public class StorageValidationInfo : ValidationInfo
         {
-            public string Endpoint;
             public StorageType ServiceType;
             public IPAddress[] IPs;
-            public ValidateStatus DNSStatus;
-            public ValidateStatus PingStatus;
             public ValidateStatus AuthStatus;
 
-            public ValidationInfo(string endpoint, StorageType serviceType)
+            public StorageValidationInfo(string endpoint, StorageType serviceType) : base(endpoint)
             {
-                Endpoint = endpoint;
                 ServiceType = serviceType;
-                DNSStatus = ValidateStatus.NotApplicable;
-                PingStatus = ValidateStatus.NotApplicable;
                 AuthStatus = ValidateStatus.NotApplicable;
             }
 

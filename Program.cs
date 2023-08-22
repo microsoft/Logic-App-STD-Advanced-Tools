@@ -1,6 +1,8 @@
 ﻿using McMaster.Extensions.CommandLineUtils;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace LogicAppAdvancedTool
@@ -19,10 +21,10 @@ namespace LogicAppAdvancedTool
                 #region Backup
                 app.Command("Backup", c =>
                 {
-                    CommandOption dateCO = c.Option("-d|--date", "(Optional) Retrieve workflow definitions which be modified/created later than this date (format: \"yyyyMMdd\").", CommandOptionType.SingleValue);
+                    CommandOption dateCO = c.Option("-d|--date", "(Optional) Retrieve workflow definitions which be modified/created later than this date (format: \"yyyyMMdd\"). Default value: 1970-01-01", CommandOptionType.SingleValue);
                     
                     c.HelpOption("-?");
-                    c.Description = "Retrieve all the existing defitnions from Storage Table and save as Json files. The storage table saves the definition for past 90 days by default even they have been deleted.";
+                    c.Description = "Retrieve all existing definitions from Storage Table and save as Json files. The storage table saves the definition for past 90 days by default even workflows have been deleted.";
 
                     c.OnExecute(() =>
                     {
@@ -39,10 +41,10 @@ namespace LogicAppAdvancedTool
                 app.Command("Revert", c =>
                 {
                     CommandOption workflowNameCO = c.Option("-wf|--workflow", "(Mandatory) Workflow Name", CommandOptionType.SingleValue).IsRequired();
-                    CommandOption versionCO = c.Option("-v|--version", "(Mandatory) Version, the first part of the backup file name", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption versionCO = c.Option("-v|--version", "(Mandatory) Version, you can use \"ListVersions\" command to retrieve all existing versions of a workflow.", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
-                    c.Description = "Revert a workflow to a previous version, this command will backup all the workflows in advance to prevent any unexpected incidents.";
+                    c.Description = "Revert a workflow to a specific previous version.";
 
                     c.OnExecute(() =>
                     {
@@ -60,10 +62,10 @@ namespace LogicAppAdvancedTool
                 app.Command("Decode", c =>
                 {
                     CommandOption workflowNameCO = c.Option("-wf|--workflow", "(Mandatory) Workflow Name", CommandOptionType.SingleValue).IsRequired();
-                    CommandOption versionCO = c.Option("-v|--version", "(Mandatory) Version, the first part of the backup file name", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption versionCO = c.Option("-v|--version", "(Mandatory) Version, you can use \"ListVersions\" command to retrieve all existing versions of a workflow.", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
-                    c.Description = "Decode a workflow based on the version to human readable content.";
+                    c.Description = "Decode a workflow based on provided flow version to human readable content.";
 
                     c.OnExecute(() =>
                     {
@@ -85,7 +87,7 @@ namespace LogicAppAdvancedTool
                     CommandOption versionCO = c.Option("-v|--version", "(Optional) Version of the workflow the latest version will be cloned, if not provided the latest version will be selected.)", CommandOptionType.SingleValue);
 
                     c.HelpOption("-?");
-                    c.Description = "Clone a workflow to a new workflow, only support for same Logic App.";
+                    c.Description = "Clone an existing workflow to a new workflow, only support in same Logic App Standard.";
 
                     c.OnExecute(() =>
                     {
@@ -106,7 +108,7 @@ namespace LogicAppAdvancedTool
                     CommandOption workflowNameCO = c.Option("-wf|--workflow", "(Mandatory) Workflow Name", CommandOptionType.SingleValue).IsRequired();
                     
                     c.HelpOption("-?");
-                    c.Description = "List all the exisiting versions of a workflow.";
+                    c.Description = "List all the exisiting versions of a specific workflow.";
 
                     c.OnExecute(() => 
                     {
@@ -123,7 +125,7 @@ namespace LogicAppAdvancedTool
                 app.Command("RestoreAll", c =>
                 {
                     c.HelpOption("-?");
-                    c.Description = "Restore all the workflows which be deleted accidentally.";
+                    c.Description = "Restore all the workflows which have been deleted, the existing ones will not be impacted.";
 
                     c.OnExecute(() =>
                     {
@@ -165,7 +167,7 @@ namespace LogicAppAdvancedTool
                         CommandOption dateCO = sub.Option("-d|--date", "(Mandatory) Date (format: \"yyyyMMdd\") of the logs need to be retrieved, UTC time", CommandOptionType.SingleValue).IsRequired();
 
                         sub.HelpOption("-?");
-                        sub.Description = "Retrieve all the detail failure information of a workflow for a specific day.";
+                        sub.Description = "Retrieve all the detail failure information of a workflow in a specific day.";
 
                         sub.OnExecute(() =>
                         {
@@ -213,7 +215,7 @@ namespace LogicAppAdvancedTool
                     CommandOption targetNameCO = c.Option("-tn|--targetname", "(Mandatory) Target Workflow Name (Stateful)", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
-                    c.Description = "Clone a stateless workflow and create a new stateful workflow.";
+                    c.Description = "Clone an existing stateless workflow and create a new stateful workflow.";
 
                     c.OnExecute(() =>
                     {
@@ -230,7 +232,7 @@ namespace LogicAppAdvancedTool
                 #region Clear Queue
                 app.Command("ClearJobQueue", c => {
                     c.HelpOption("-?");
-                    c.Description = "Clear Logic App storage queue for stopping any running instances, this action could casue data lossing.";
+                    c.Description = "Clear Logic App storage queue for stopping any running instances, this action may casue data lossing.";
 
                     c.OnExecute(() =>
                     {
@@ -247,7 +249,7 @@ namespace LogicAppAdvancedTool
                     CommandOption workflowNameCO = c.Option("-wf|--workflow", "(Mandatory) The name of the workflow", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
-                    c.Description = "Restore a workflows which has been deleted accidentally.";
+                    c.Description = "Restore a deleted workflow if still can be found in Storage Table.";
 
                     c.OnExecute(() =>
                     {
@@ -264,7 +266,7 @@ namespace LogicAppAdvancedTool
                 app.Command("ListWorkflows", c =>
                 {
                     c.HelpOption("-?");
-                    c.Description = "List all the exisiting workflows which can be found in storage table.";
+                    c.Description = "List all exisiting workflows which can be found in storage table (include existing and deleted workflows).";
 
                     c.OnExecute(() =>
                     {
@@ -279,7 +281,7 @@ namespace LogicAppAdvancedTool
                 app.Command("SyncToLocal", c => {
 
                     c.HelpOption("-?");
-                    c.Description = "Sync remote wwwroot folder of Logic App Standard to local project. This command must run in local computer.";
+                    c.Description = "Sync remote wwwroot folder of Logic App Standard to local folder. This command must run in local computer.";
 
                     #region Normal Mode
                     c.Command("Normal", sub =>
@@ -308,7 +310,7 @@ namespace LogicAppAdvancedTool
                     c.Command("Auto", sub =>
                     {
                         sub.HelpOption("-?");
-                        sub.Description = "Auto mode, there's no prompt dialog and can be set as schedule task for regular execution.";
+                        sub.Description = "Auto mode, no prompt dialog and can be set as schedule task for regular execution.";
 
                         CommandOption shareNameCO = sub.Option("-sn|--shareName", "(Mandatory) File Share name of Loigc App storage account", CommandOptionType.SingleValue).IsRequired();
                         CommandOption connectionStringCO = sub.Option("-cs|--connectionString", "(Mandatory) Connection string of the File Share", CommandOptionType.SingleValue).IsRequired();
@@ -365,7 +367,7 @@ namespace LogicAppAdvancedTool
                 app.Command("CheckConnectivity", c =>
                 {
                     c.HelpOption("-?");
-                    c.Description = "Check the connectivity between Logic App STD and it's Storage Account";
+                    c.Description = "Check the connectivity between Logic App STD and it's backend Storage Account";
 
                     c.OnExecute(() =>
                     {
@@ -381,7 +383,7 @@ namespace LogicAppAdvancedTool
                     CommandOption workflowCO = c.Option("-wf|--workflow", "(Mandatory) The name of workflow", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
-                    c.Description = "Ingest a workflow directly into Storage Table directly to bypass workflow definition validation. NOT fully tested, DON'T use in PROD environment.";
+                    c.Description = "(Experimental command) Ingest a workflow directly into Storage Table directly to bypass workflow definition validation. NOT fully tested, DON'T use in PROD environment.";
 
                     c.OnExecute(() =>
                     {
@@ -402,7 +404,7 @@ namespace LogicAppAdvancedTool
                     CommandOption filterCO = c.Option("-f|--filter", "(Optional) Filter for specific exception messages", CommandOptionType.SingleValue);
 
                     c.HelpOption("-?");
-                    c.Description = "Generate run history of workflow failure runs of a specific day.";
+                    c.Description = "Generate run history of workflow failure runs in a specific day.";
 
                     c.OnExecute(() =>
                     {
@@ -523,7 +525,7 @@ namespace LogicAppAdvancedTool
                     CommandOption dateCO = c.Option("-d|--date", "(Mandatory) Delete run history related resources before this date (format: \"yyyyMMdd\") , UTC time.", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
-                    c.Description = "Clean up both storage tables and  blob container of Logic App run history to reduce the Storage Account cost.";
+                    c.Description = "Clean up both storage tables and  blob container of Logic App run history to reduce data retention cost.";
 
                     c.OnExecute(() =>
                     {
@@ -575,6 +577,74 @@ namespace LogicAppAdvancedTool
                     });
                 });
                 #endregion
+
+                #region Check Service Provider connection
+                app.Command("ValidateSPConnectivity", c => {
+
+                    c.HelpOption("-?");
+                    c.Description = "Validate connectivity of all the Service Providers endpoints.";
+
+                    c.OnExecute(() =>
+                    {
+                        ValidateServiceProviderConnectivity();
+
+                        return 0;
+                    });
+                });
+
+                #endregion Tools for debugging/testing of this application
+
+                #region Internal tools
+                app.Command("Tools", c => {
+
+                    c.HelpOption("-?");
+
+                    c.Description = "Tools for testing/debugging of this application";
+
+                    #region Import Appsettings into local system environment
+                    c.Command("ImportAppsettings", sub =>
+                    {
+                        sub.HelpOption("-?");
+                        sub.Description = "Import appsettings in your local machine environment variables for local debugging/running this tool.\r\nAppsettings can be found on Logic App Standard portal -> Configuration.\r\nThe content must in Json format with key-vault pair.";
+
+                        CommandOption filePathCO = sub.Option("-f|--filePath", "(Mandatory) File path of appsettings.", CommandOptionType.SingleValue).IsRequired();
+
+                        sub.OnExecute(() =>
+                        {
+                            string filePath = filePathCO.Value();
+
+                            Tools.ImportAppsettings(filePath);
+
+                            return 0;
+                        });
+                    });
+                    #endregion
+
+                    #region Clean up system environment variables
+                    c.Command("CleanEnvironmentVariable", sub =>
+                    {
+                        sub.HelpOption("-?");
+                        sub.Description = "Clean up environment variables which imported by ImportAppsettings command. This command will remove all the environment variables which can be found in provided appsettings file.";
+
+                        CommandOption filePathCO = sub.Option("-f|--filePath", "(Mandatory) File path of appsettings.", CommandOptionType.SingleValue).IsRequired();
+
+                        sub.OnExecute(() =>
+                        {
+                            string filePath = filePathCO.Value();
+
+                            Tools.CleanEnvironmentVariable(filePath);
+
+                            return 0;
+                        });
+                    });
+                    #endregion
+                });
+                #endregion
+
+                //TODO:
+                //feature 1: add preset template
+                //feature 2: grab Kudu log and filter for errors
+                //feature 3: resubmit failed runs based on time peroid
 
                 app.Execute(args);
             }

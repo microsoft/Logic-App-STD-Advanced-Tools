@@ -24,9 +24,7 @@ namespace LogicAppAdvancedTool
             string confirmationMessage = "WARNING!!!\r\n1. Cancel all the running instances will cause data lossing for any running/waiting instances.\r\n2. Run history and resubmit feature will be unavailable for all waiting runs.\r\ninput for confirmation:";
             if (!Prompt.GetYesNo(confirmationMessage, false, ConsoleColor.Red))
             {
-                Console.WriteLine("Operation Cancelled");
-
-                return;
+                throw new UserCanceledException("Operation Cancelled");
             }
 
             string prefix = GenerateWorkflowTablePrefix(workflowName);

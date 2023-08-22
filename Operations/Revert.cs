@@ -10,13 +10,6 @@ namespace LogicAppAdvancedTool
     {
         private static void RevertVersion(string workflowName, string version)
         {
-            string backupFilePath = $"{Directory.GetCurrentDirectory()}/Backup/{workflowName}";
-
-            if (!Directory.Exists(backupFilePath))
-            {
-                throw new UserInputException($"{workflowName} folder cannot be found in wwwroot folder, please check the workflow name.");
-            }
-
             List<TableEntity> tableEntities = TableOperations.QueryMainTable($"FlowSequenceId eq '{version}'");
 
             if (tableEntities.Count == 0)

@@ -43,5 +43,21 @@ namespace LogicAppAdvancedTool
                 return Environment.GetEnvironmentVariable("WEBSITE_SITE_NAME");
             }
         }
+
+        public static string MSIEndpoint
+        {
+            get
+            {
+                return Environment.GetEnvironmentVariable("MSI_ENDPOINT");
+            }
+        }
+
+        public static string MSISecret
+        {
+            get
+            {
+                return Environment.GetEnvironmentVariable("MSI_SECRET");
+            }
+        }
     }
 }

@@ -37,6 +37,11 @@ namespace LogicAppAdvancedTool
 
                 for (int i = 0; i < contents.Length; i++)
                 {
+                    if (String.IsNullOrEmpty(contents[i]))
+                    {
+                        continue;
+                    }
+
                     if (ColumnWidth[i] < contents[i].Length + 2) 
                     {
                         ColumnWidth[i] = contents[i].Length + 2;

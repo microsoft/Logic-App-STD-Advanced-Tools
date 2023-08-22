@@ -13,7 +13,7 @@ namespace LogicAppAdvancedTool
     {
         private static void BackupDefinitions(string date = "19700101")
         {
-            
+
             string backupFolder = $"{Directory.GetCurrentDirectory()}/Backup";
             Directory.CreateDirectory(backupFolder);
 
@@ -23,7 +23,7 @@ namespace LogicAppAdvancedTool
             string formattedDate = DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture).ToString("yyyy-MM-ddT00:00:00Z");
 
             List<TableEntity> tableEntities = TableOperations.QueryMainTable($"ChangedTime ge datetime'{formattedDate}'")
-                                                            .Where(t=> t.GetString("RowKey").StartsWith("MYEDGEENVIRONMENT_FLOWVERSION"))
+                                                            .Where(t => t.GetString("RowKey").StartsWith("MYEDGEENVIRONMENT_FLOWVERSION"))
                                                             .ToList();
 
             foreach (TableEntity entity in tableEntities)

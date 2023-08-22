@@ -1,8 +1,4 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Text;
-using static LogicAppAdvancedTool.Program;
+﻿using System;
 
 namespace LogicAppAdvancedTool
 {
