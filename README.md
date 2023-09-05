@@ -37,6 +37,7 @@ If you would like to compile the binary yourself, please always use "Publish" in
 | SearchInHistory | Search a keyword in workflow run history based on date. |
 | RestoreRunHistory | Restore run history of a deleted/overwritten workflow. |
 | ValidateSPConnectivity | Validate all Service Providers which defined in connections.json. |
+| BatchResubmit | Resubmit all failed runs of a specific workflow within provided time peroid. |
 
 ## How to use (Demo of restore a workflow)
 1. Open Kudu (Advanced Tools) of Logic App Standard and upload this tool into a folder
