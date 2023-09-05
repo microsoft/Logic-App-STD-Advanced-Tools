@@ -676,8 +676,8 @@ namespace LogicAppAdvancedTool
                 #endregion
 
                 //TODO:
-                //feature 1: add preset template
-                //feature 2: grab Kudu log and filter for errors
+                //feature: grab Kudu log and filter for errors
+
 
                 app.Execute(args);
             }

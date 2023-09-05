@@ -7,9 +7,9 @@ using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Microsoft.WindowsAzure.ResourceStack.Common.Extensions;
-using static LogicAppAdvancedTool.MSITokenService;
 using System.Threading;
 using System.Linq;
+using static LogicAppAdvancedTool.MSITokenService;
 
 namespace LogicAppAdvancedTool
 {
@@ -157,7 +157,7 @@ namespace LogicAppAdvancedTool
             {
                 Console.WriteLine($"MSI token will be expired in {diff} seconds, refresh token.");
 
-                token = MSITokenService.RetrieveToken("https://management.azure.com");
+                token = RetrieveToken("https://management.azure.com");
             }
         }
 

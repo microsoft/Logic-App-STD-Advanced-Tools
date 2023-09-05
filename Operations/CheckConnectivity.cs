@@ -141,41 +141,5 @@ namespace LogicAppAdvancedTool
             Queue = 4,
             Table = 8
         }
-
-        public enum ValidateStatus
-        {
-            Succeeded,
-            Failed,
-            NotApplicable
-        }
-
-        public class StorageValidationInfo : ValidationInfo
-        {
-            public StorageType ServiceType;
-            public IPAddress[] IPs;
-            public ValidateStatus AuthStatus;
-
-            public StorageValidationInfo(string endpoint, StorageType serviceType) : base(endpoint)
-            {
-                ServiceType = serviceType;
-                AuthStatus = ValidateStatus.NotApplicable;
-            }
-
-            public string GetIPsAsString()
-            {
-                if (IPs != null)
-                {
-                    string IPsAsString = "";
-                    foreach (IPAddress ip in IPs)
-                    {
-                        IPsAsString += ip.ToString() + " ";
-                    }
-
-                    return IPsAsString.TrimEnd();
-                }
-
-                return "N/A";
-            }
-        }
     }
 }
