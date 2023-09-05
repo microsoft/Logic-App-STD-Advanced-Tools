@@ -20,9 +20,7 @@ namespace LogicAppAdvancedTool
             string confirmationMessage = $"WARNING!!!\r\nThe current workflow: {workflowName} will be overwrite!\r\nPlease input for confirmation:";
             if (!Prompt.GetYesNo(confirmationMessage, false, ConsoleColor.Red))
             {
-                Console.WriteLine("Operation Cancelled");
-
-                return;
+                throw new UserCanceledException("Operation Cancelled");
             }
 
             TableEntity entity = tableEntities[0];

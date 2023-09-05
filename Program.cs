@@ -594,6 +594,40 @@ namespace LogicAppAdvancedTool
 
                 #endregion Tools for debugging/testing of this application
 
+                #region Batch resubmit
+                app.Command("BatchResubmit", c => {
+
+                    CommandOption workflowNameCO = c.Option("-wf|--workflow", "(Mandatory) Workflow Name", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption startTimeCO = c.Option("-st|--startTime", "(Manadatory) Start time of time peroid (format in yyyy-MM-ddTHH:mm:ssZ).", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption endTimeCO = c.Option("-et|--endTime", "(Manadatory) End time of time peroid (format in yyyy-MM-ddTHH:mm:ssZ).", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption ignoreProcessedCO = c.Option("-ignore|--ignoreProcessed", "(Optional) Whether need to ignore the runs already be resubmitted in previous executions. True or False (default vaule is true).", CommandOptionType.SingleValue);
+
+                    c.HelpOption("-?");
+                    c.Description = "Resubmit all failed runs of a specific workflow within provided time peroid.";
+
+                    c.OnExecute(() =>
+                    {
+                        string workflowName = workflowNameCO.Value();
+
+                        DateTime st = DateTime.Parse(startTimeCO.Value());
+                        DateTime et = DateTime.Parse(endTimeCO.Value());
+
+                        if (st > et)
+                        {
+                            throw new UserInputException("Provided end time is earlier than start time, please correct.");
+                        }
+
+                        string startTime = st.ToString("yyyy-MM-ddTHH:mm:ssZ");
+                        string endTime = et.ToString("yyyy-MM-ddTHH:mm:ssZ");
+                        bool ignoreProcessed = bool.Parse(ignoreProcessedCO.Value()??"true");
+
+                        BatchResubmit(workflowName, startTime, endTime, ignoreProcessed);
+
+                        return 0;
+                    });
+                });
+                #endregion
+
                 #region Internal tools
                 app.Command("Tools", c => {
 
@@ -644,7 +678,6 @@ namespace LogicAppAdvancedTool
                 //TODO:
                 //feature 1: add preset template
                 //feature 2: grab Kudu log and filter for errors
-                //feature 3: resubmit failed runs based on time peroid
 
                 app.Execute(args);
             }

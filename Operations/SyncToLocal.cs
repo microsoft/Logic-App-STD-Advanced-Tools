@@ -21,9 +21,7 @@ namespace LogicAppAdvancedTool
             string confirmationMessage = "WARNING!!!\r\nThis operation will overwrite your local project files.\r\nPlease input for confirmation:";
             if (!Prompt.GetYesNo(confirmationMessage, false, ConsoleColor.Red))
             {
-                Console.WriteLine("Operation Cancelled");
-
-                return;
+                throw new UserCanceledException("Operation Cancelled");
             }
 
             string syncModeMessage = "Whether clean up workflows in local project which cannot be found on cloud?\r\n\tYes: Clean up all the subfolders which not in clould (except .git, .vscode).\r\n\tNo: Only overwrite the files which modified on cloud, no files will be deleted.\r\nPlease input for confirmation:";

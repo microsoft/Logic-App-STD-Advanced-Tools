@@ -14,9 +14,7 @@ namespace LogicAppAdvancedTool
             string confirmationMessage = "WARNING!!!\r\nThis operation will restore all the deleted workflows, if there's any invalid workflows, it might cause unexpected behavior on Logic App runtime.\r\nBe cautuion if you are running this command in PROD environment\r\nPlease input for confirmation:";
             if (!Prompt.GetYesNo(confirmationMessage, false, ConsoleColor.Red))
             {
-                Console.WriteLine("Operation Cancelled");
-
-                return;
+                throw new UserCanceledException("Operation Cancelled");
             }
 
             string backupPath = BackupCurrentSite();

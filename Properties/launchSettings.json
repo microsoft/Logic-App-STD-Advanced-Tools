@@ -2,7 +2,7 @@
   "profiles": {
     "LogicAppAdvancedTool": {
       "commandName": "Project",
-      "commandLineArgs": "ValidateSPConnectivity"
+      "commandLineArgs": "BatchResubmit -wf Test -st 2023-08-31 -et 2023-09-01"
     }
   }
 }

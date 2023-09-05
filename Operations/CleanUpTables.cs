@@ -53,9 +53,7 @@ namespace LogicAppAdvancedTool
             string confirmationMessage = $"WARNING!!!\r\nDeleted those storage tables will cause run history data lossing which executed before {formattedDate} \r\nPlease input for confirmation:";
             if (!Prompt.GetYesNo(confirmationMessage, false, ConsoleColor.Red))
             {
-                Console.WriteLine("Operation Cancelled");
-
-                return;
+                throw new UserCanceledException("Operation Cancelled");
             }
 
             foreach (string tableName in tables) 
