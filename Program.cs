@@ -619,7 +619,7 @@ namespace LogicAppAdvancedTool
 
                         string startTime = st.ToString("yyyy-MM-ddTHH:mm:ssZ");
                         string endTime = et.ToString("yyyy-MM-ddTHH:mm:ssZ");
-                        bool ignoreProcessed = bool.Parse(ignoreProcessedCO.Value()??"true");
+                        bool ignoreProcessed = bool.Parse(ignoreProcessedCO.Value() ?? "true");
 
                         BatchResubmit(workflowName, startTime, endTime, ignoreProcessed);
 

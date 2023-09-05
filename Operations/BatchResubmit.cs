@@ -89,6 +89,11 @@ namespace LogicAppAdvancedTool
                 }
             }
 
+            if (failedRuns.Count == 0)
+            {
+                throw new ExpectedException("No failed run detected.");
+            }
+
             Console.WriteLine($"Detected {failedRuns.Count} failed runs.");
 
             string confirmationMessage = "WARNING!!!\r\nAre you sure to resubmit all detected failed runs?\r\nPlease input for confirmation:";
@@ -139,6 +144,8 @@ namespace LogicAppAdvancedTool
                     }
                 }
             }
+
+            Console.WriteLine("All failed run resubmitted successfully");
         }
 
         private static void VerifyToken(ref MSIToken token)
