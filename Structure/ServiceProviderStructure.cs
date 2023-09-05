@@ -135,7 +135,8 @@ namespace LogicAppAdvancedTool
             keyVault,
             mq,
             serviceBus,
-            sql
+            sql,
+            NotSupported
         }
     }
 }

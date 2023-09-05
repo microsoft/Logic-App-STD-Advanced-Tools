@@ -34,10 +34,18 @@ namespace LogicAppAdvancedTool
 
             List<ServiceProviderValidator> spInfos = new List<ServiceProviderValidator>();
             List<ServiceProviderValidator> emptyEndpoints = new List<ServiceProviderValidator>();
+            List<ServiceProviderValidator> unsupportedEndpoints = new List<ServiceProviderValidator>();
 
             foreach (string key in connections.Keys)
             {
                 ServiceProviderValidator spv = GenerateServiceProviderInfo(key, connections[key]);
+
+                if (spv.ServiceProvider == ServiceProviderType.NotSupported)
+                {
+                    unsupportedEndpoints.Add(spv);
+
+                    continue;
+                }
 
                 if (spv.IsEndpointEmpty)
                 {
@@ -63,6 +71,20 @@ namespace LogicAppAdvancedTool
                 emptySPs.Print();
             }
 
+            if (unsupportedEndpoints.Count != 0)
+            {
+                Console.WriteLine($"Following service provider(s) not supported yet.");
+
+                ConsoleTable unsupportedSPs = new ConsoleTable("Reference Name", "Display Name");
+
+                foreach (ServiceProviderValidator spv in unsupportedEndpoints)
+                {
+                    unsupportedSPs.AddRow(spv.Name, spv.DisplayName);
+                }
+
+                unsupportedSPs.Print();
+            }
+
             Console.WriteLine($"Found {spInfos.Count} validate Service Provider(s), testing DNS resolution and tcp connection.");
 
             foreach (ServiceProviderValidator spv in spInfos)
@@ -85,13 +107,23 @@ namespace LogicAppAdvancedTool
         private static ServiceProviderValidator GenerateServiceProviderInfo(string name, JToken content)
         {
             string providerType = content.GetProperty("serviceProvider").GetProperty("id").ToString().Split('/')[2];
-            ServiceProviderType serviceProviderType = (ServiceProviderType)Enum.Parse(typeof(ServiceProviderType), providerType);
 
             string authProvider = content.GetProperty("parameterSetName")?.ToString();
             ServiceAuthProvider serviceAuthProvider = String.IsNullOrEmpty(authProvider) ? ServiceAuthProvider.None : (ServiceAuthProvider)Enum.Parse(typeof(ServiceAuthProvider), authProvider);
 
             string displayName = content.GetProperty("displayName").ToString();
             JToken parameterValues = content.GetProperty("parameterValues");
+
+            ServiceProviderType serviceProviderType = ServiceProviderType.NotSupported;
+
+            try
+            {
+                serviceProviderType = (ServiceProviderType)Enum.Parse(typeof(ServiceProviderType), providerType);
+            }
+            catch (Exception ex)
+            {
+                return new ServiceProviderValidator(name, displayName, serviceProviderType, string.Empty, 0);
+            }
 
             string connEndpoint = String.Empty;
             string connPort = String.Empty;
