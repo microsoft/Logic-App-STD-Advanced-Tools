@@ -37,6 +37,7 @@ If you would like to compile the binary yourself, please always use "Publish" in
 | SearchInHistory | Search a keyword in workflow run history based on date. |
 | RestoreRunHistory | Restore run history of a deleted/overwritten workflow. |
 | ValidateSPConnectivity | Validate all Service Providers which defined in connections.json. |
+| BatchResubmit | Resubmit all failed runs of a specific workflow within provided time peroid. |
 
 ## How to use (Demo of restore a workflow)
 1. Open Kudu (Advanced Tools) of Logic App Standard and upload this tool into a folder
@@ -54,5 +55,3 @@ If you would like to compile the binary yourself, please always use "Publish" in
 ## Limitation
 1. This tool only modify workflow.json, if the API connection metadata get lost in connections.json, the reverted workflow will not work.
 2. By default, if the definition not be used in 90 days, the backend service will remove it from storage table which means the tool will not be able to find the definition.
-3. Before execute Revert command, we need to backup first since the Revert command is reading workflow definitions from backup folder.
-4. Recently "SearchInHistory" command will not include the input/output content/payload which saved in Blob Storage.
