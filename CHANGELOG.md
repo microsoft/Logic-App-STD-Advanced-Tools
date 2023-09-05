@@ -1,6 +1,6 @@
 2023-09-05
 1. Add a new command "ValidateSPConnectivity" which can verify all the service provider destination connectivity (except sap, jdc).
-2. Add a new command "BatchResubmit" which can resubmit all failed runs of a specific workflow within provided time peroid. We have a limitation on ARM API side which only can call resubmit API ~50 per 5 minutes, so if we hit the throttling limitation, it will waiting for 2 mintues (it might wait for multiple time if 2 minutes is not enough to refresh execution count) and execute again.
+2. Add a new command "BatchResubmit" which can resubmit all failed runs of a specific workflow within provided time peroid. We have a limitation on ARM API side which only can call resubmit API ~50 per 5 minutes, so if we hit the throttling limitation, it will wait for 2 mintues (might wait multiple times if 2 minutes is not enough to refresh execution count) and execute again.
 
 2023-08-01
 1. Added alert when execute experimental command.
