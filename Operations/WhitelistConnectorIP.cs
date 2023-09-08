@@ -30,6 +30,7 @@ namespace LogicAppAdvancedTool
             Dictionary<string, RegisteredProvider> supportedProviders = JsonConvert.DeserializeObject<Dictionary<string, RegisteredProvider>>(providerContent);
             string resourceProvider = targetResourceInfo["providers"];
 
+            //validate whether the provided resource is supported or not
             if (!supportedProviders.ContainsKey(resourceProvider))
             {
                 throw new UserInputException($"The provided resource provider: \"{resourceProvider}\" is not supported, following services are supported:\r\n{string.Join("\r\n", supportedProviders.Keys)}");
@@ -44,6 +45,7 @@ namespace LogicAppAdvancedTool
 
             JToken resourceProperties = JObject.Parse(validateResponse);
 
+            //If resource firewall is not enabled yet, then need to add networkAcls field first to get ride of null reference exception
             if (resourceProperties["properties"]["networkAcls"] == null)
             {
                 resourceProperties["properties"]["networkAcls"] = JToken.Parse("{\"ipRules\":[]}");
@@ -65,7 +67,7 @@ namespace LogicAppAdvancedTool
 
             List<string> IPs = regionalIPInfo["properties"]["addressPrefixes"].ToObject<List<string>>()
                                 .Where(s => !s.Contains(":"))
-                                .Select(s => s.Replace("/32", ""))
+                                .Select(s => s.Replace("/32", ""))      //storage account has a limitation which doesn't support /32 and /31
                                 .ToList();
 
             string ingestUrl = $"https://management.azure.com{resourceID}?api-version={provider.APIVersion}";
@@ -88,6 +90,7 @@ namespace LogicAppAdvancedTool
 
             resourceIPRules.AddRange(validIPs);
 
+            //switch netowrking seeting to "Enabled from selected virtual networks and IP addresses"
             resourceProperties["properties"]["networkAcls"]["defaultAction"] = "Deny";
             resourceProperties["properties"]["publicNetworkAccess"] = "Enabled";
 
