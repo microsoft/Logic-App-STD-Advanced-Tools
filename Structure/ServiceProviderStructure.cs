@@ -64,9 +64,9 @@ namespace LogicAppAdvancedTool
                 {
                     try
                     {
-                        IPAddress[] ipAddressess = Dns.GetHostAddresses(Result.Endpoint);
+                        IPAddress[] ipAddresses = Dns.GetHostAddresses(Result.Endpoint, AddressFamily.InterNetwork);
 
-                        IP = ipAddressess[0];   //assume only 1 IP will return
+                        IP = ipAddresses[0];   //assume only 1 IP will return
                         Result.DNSStatus = ValidateStatus.Succeeded;
 
                         DNSTestResult = "Passed";

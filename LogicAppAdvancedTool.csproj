@@ -39,6 +39,10 @@
     <SignManifests>false</SignManifests>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Resources\EmptyDefinition.json" />
+    <None Remove="Resources\RegisteredProvider.json" />
+  </ItemGroup>
+  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
@@ -72,6 +76,10 @@
     <Reference Include="System.Configuration.ConfigurationManager">
       <HintPath>DLLs\System.Configuration.ConfigurationManager.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\EmptyDefinition.json" />
+    <EmbeddedResource Include="Resources\RegisteredProvider.json" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">

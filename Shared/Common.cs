@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Reflection;
 
 namespace LogicAppAdvancedTool
 {
@@ -201,6 +202,19 @@ namespace LogicAppAdvancedTool
                 {
                     return CSInfo["EndpointSuffix"];
                 }
+            }
+        }
+        #endregion
+
+        #region Get embdded resource
+        private static string GetEmbeddedResource(string resourceName)
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            string[] s = assembly.GetManifestResourceNames();
+            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+            using (StreamReader sr = new StreamReader(stream))
+            {
+                return sr.ReadToEnd();
             }
         }
         #endregion

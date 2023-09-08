@@ -2,7 +2,7 @@
   "profiles": {
     "LogicAppAdvancedTool": {
       "commandName": "Project",
-      "commandLineArgs": "BatchResubmit -wf Test -st 2023-08-31 -et 2023-09-01"
+      "commandLineArgs": "WhitelistConnectorIP -id /subscriptions/aafb27de-e728-4cb8-9e68-9afde1d1a849/resourceGroups/LogicApp/providers/Microsoft.Storage/storageAccounts/testforftpupload"
     }
   }
 }

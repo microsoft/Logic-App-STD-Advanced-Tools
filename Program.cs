@@ -1,9 +1,12 @@
 ﻿using McMaster.Extensions.CommandLineUtils;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 
 namespace LogicAppAdvancedTool
 {
@@ -628,6 +631,25 @@ namespace LogicAppAdvancedTool
                 });
                 #endregion
 
+                #region Ingest Logic App Connector IPs in Specific firewall
+                app.Command("WhitelistConnectorIP", c => {
+
+                    CommandOption resourceIDCO = c.Option("-id|--resourceId", "(Mandatory) The resource id of target service.\r\nThe format is '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{provider}/{ServiceType}/{ResourceName}'", CommandOptionType.SingleValue).IsRequired();
+
+                    c.HelpOption("-?");
+                    c.Description = "Ingest Logic App Connector IPs in target services.\r\n Limitation:\r\n1. Only support for Storage Account and Key Vault for now.\r\n2. Logic App's Managed Identity must have permission to operate target service's firewall.";
+
+                    c.OnExecute(() =>
+                    {
+                        string resourceID = resourceIDCO.Value();
+
+                        WhitelistConnectorIP(resourceID);
+
+                        return 0;
+                    });
+                });
+                #endregion
+
                 #region Internal tools
                 app.Command("Tools", c => {
 
@@ -672,6 +694,24 @@ namespace LogicAppAdvancedTool
                         });
                     });
                     #endregion
+
+                    c.Command("GetMIToken", sub =>
+                    {
+                        sub.HelpOption("-?");
+                        sub.Description = "Get Logic App MI Token in Kudu.";
+
+                        CommandOption audienceCO = sub.Option("-a|--audience", "(Optional) The audience for token generation, \"https://management.azure.com\" will be used if not provided.", CommandOptionType.SingleValue);
+
+                        sub.OnExecute(() =>
+                        {
+                            string audience = audienceCO.Value() ?? "https://management.azure.com";
+
+                            string token = JsonConvert.SerializeObject(MSITokenService.RetrieveToken(audience), Formatting.Indented);
+                            Console.WriteLine(token);
+
+                            return 0;
+                        });
+                    });
                 });
                 #endregion
 
