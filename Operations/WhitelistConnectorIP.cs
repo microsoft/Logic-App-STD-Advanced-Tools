@@ -36,22 +36,30 @@ namespace LogicAppAdvancedTool
                 throw new UserInputException($"The provided resource provider: \"{resourceProvider}\" is not supported, following services are supported:\r\n{string.Join("\r\n", supportedProviders.Keys)}");
             }
 
-            RegisteredProvider provider = supportedProviders[resourceProvider];
+            RegisteredProvider resourceProviderInfo = supportedProviders[resourceProvider];
 
             MSIToken token = RetrieveToken("https://management.azure.com");
 
-            string resourceUrl = $"https://management.azure.com{resourceID}?api-version={provider.APIVersion}";
+            string resourceUrl = $"https://management.azure.com{resourceID}{resourceProviderInfo.UrlParameter ?? String.Empty}?api-version={resourceProviderInfo.APIVersion}";
             string validateResponse = HttpOperations.HttpGetWithToken(resourceUrl, "GET", token.access_token, "Validate resource failed");
 
             JToken resourceProperties = JObject.Parse(validateResponse);
 
             //If resource firewall is not enabled yet, then need to add networkAcls field first to get ride of null reference exception
-            if (resourceProperties["properties"]["networkAcls"] == null)
+            if (resourceProperties.SelectToken(resourceProviderInfo.RulePath) == null)
             {
-                resourceProperties["properties"]["networkAcls"] = JToken.Parse("{\"ipRules\":[]}");
+                if (resourceProviderInfo.RulePath == "properties")
+                {
+                    resourceProperties["properties"] = JToken.Parse("{\"ipRules\":[]}");
+                }
+                else
+                {
+                    resourceProperties["properties"]["networkAcls"] = JToken.Parse("{\"ipRules\":[]}");
+                }
+                
             }
 
-            List<IPRule> resourceIPRules = JsonConvert.DeserializeObject<List<IPRule>>(resourceProperties["properties"]["networkAcls"]["ipRules"].ToString());
+            List<IPRule> resourceIPRules = JsonConvert.DeserializeObject<List<IPRule>>(resourceProperties.SelectToken(resourceProviderInfo.RulePath)["ipRules"].ToString());
 
             string subscriptionID = AppSettings.SubscriptionID;
             string region = AppSettings.Region.Replace(" ", "");
@@ -69,8 +77,6 @@ namespace LogicAppAdvancedTool
                                 .Where(s => !s.Contains(":"))
                                 .Select(s => s.Replace("/32", ""))      //storage account has a limitation which doesn't support /32 and /31
                                 .ToList();
-
-            string ingestUrl = $"https://management.azure.com{resourceID}?api-version={provider.APIVersion}";
 
             List<IPRule> validIPs = IPs.Where(s => !resourceIPRules
                                     .Select(s => new IPRule(s.value.Replace("/32", "")))
@@ -91,12 +97,21 @@ namespace LogicAppAdvancedTool
             resourceIPRules.AddRange(validIPs);
 
             //switch netowrking seeting to "Enabled from selected virtual networks and IP addresses"
-            resourceProperties["properties"]["networkAcls"]["defaultAction"] = "Deny";
+            resourceProperties.SelectToken(resourceProviderInfo.RulePath)["defaultAction"] = "Deny";
             resourceProperties["properties"]["publicNetworkAccess"] = "Enabled";
 
-            resourceProperties["properties"]["networkAcls"]["ipRules"] = JToken.FromObject(resourceIPRules);
+            string ipRulesStr = JsonConvert.SerializeObject(resourceIPRules, Formatting.Indented);
+
+            //quick and dirty implementation
+            if (!string.IsNullOrEmpty(resourceProviderInfo.MaskName))
+            {
+                ipRulesStr = ipRulesStr.Replace("value", resourceProviderInfo.MaskName);
+            }
+
+            resourceProperties.SelectToken(resourceProviderInfo.RulePath)["ipRules"] = JToken.Parse(ipRulesStr);
             string httpPayload = JsonConvert.SerializeObject(resourceProperties, Formatting.Indented);
 
+            string ingestUrl = $"https://management.azure.com{resourceID}{resourceProviderInfo.UrlParameter ?? String.Empty}?api-version={resourceProviderInfo.APIVersion}";
             HttpOperations.HttpSendWithToken(ingestUrl, "PUT", httpPayload, token.access_token, "Failed to add IP range");
 
             Console.WriteLine("Firewall updated, please refresh (press F5) the whole page.");

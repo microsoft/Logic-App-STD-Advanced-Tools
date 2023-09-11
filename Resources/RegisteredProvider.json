@@ -1,8 +1,16 @@
 {
   "Microsoft.KeyVault": {
-    "APIVersion": "2023-02-01"
+    "APIVersion": "2023-02-01",
+    "RulePath": "properties.networkAcls"
   },
   "Microsoft.Storage": {
-    "APIVersion": "2023-01-01"
+    "APIVersion": "2023-01-01",
+    "RulePath": "properties.networkAcls"
+  },
+  "Microsoft.EventHub": {
+    "APIVersion": "2023-01-01-preview",
+    "UrlParameter": "/networkrulesets/default",
+    "MaskName": "ipMask",
+    "RulePath": "properties"
   }
 }

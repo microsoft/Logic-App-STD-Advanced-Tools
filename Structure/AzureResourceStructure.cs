@@ -41,11 +41,17 @@ namespace LogicAppAdvancedTool.AzureService
         }
 
         public string value { get; set; }
+
+        [JsonProperty("ipMask")]
+        private string ipMask { set { this.value = value; } }
     }
 
     public class RegisteredProvider
     {
         public string APIVersion { get; set; }
+        public string UrlParameter { get; set; }
+        public string MaskName { get; set; }
+        public string RulePath { get; set; }
 
         public RegisteredProvider() { }
     }
