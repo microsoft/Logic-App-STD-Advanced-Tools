@@ -1,3 +1,6 @@
+2023-09-13
+1. Add a new command "RetrieveActionPayload" which will grab all the inputs/outputs of provided action within a specific day (large content saved in storage blob not supported yet).
+
 2023-09-12
 1. Add a new command "WhitelistConnectorIP" which can whitelist Logic App managed connector IP range in target service. Only Storage Account, Key Vault and Event Hub supported.
 
