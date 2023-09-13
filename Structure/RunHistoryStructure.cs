@@ -73,6 +73,26 @@ namespace LogicAppAdvancedTool
             }
         }
 
+        public class ActionPayload
+        {
+            public DateTimeOffset Timestamp { get; private set; }
+            public string ActionName { get; private set; }
+            public dynamic InputContent { get; private set; }
+            public dynamic OutputContent { get; private set; }
+            public int? RepeatItemIdenx { get; private set; }
+            public string FlowRunSequenceId { get; private set; }
+
+            public ActionPayload(TableEntity tableEntity)
+            {
+                this.Timestamp = tableEntity.GetDateTimeOffset("Timestamp") ?? DateTimeOffset.MinValue;
+                this.ActionName = tableEntity.GetString("ActionName") ?? tableEntity.GetString("TriggerName");
+                this.RepeatItemIdenx = tableEntity.GetInt32("RepeatItemIndex");
+                this.InputContent = new ContentDecoder(tableEntity.GetBinary("InputsLinkCompressed")).ActualContent;
+                this.OutputContent = new ContentDecoder(tableEntity.GetBinary("OutputsLinkCompressed")).ActualContent;
+                this.FlowRunSequenceId = tableEntity.GetString("FlowRunSequenceId");
+            }
+        }
+
         public class StreamHistoryBlob
         {
             [JsonProperty(PropertyName = "$content-type")]

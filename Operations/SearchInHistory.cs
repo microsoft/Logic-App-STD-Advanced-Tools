@@ -9,7 +9,7 @@ namespace LogicAppAdvancedTool
 {
     partial class Program
     {
-        private static void SearchInHistory(string logicAppName, string workflowName, string date, string keyword, bool includeBlob = false, bool onlyFailures = false)
+        private static void SearchInHistory(string workflowName, string date, string keyword, bool includeBlob = false, bool onlyFailures = false)
         {
             List<TableEntity> tableEntities = new List<TableEntity>();
 
@@ -65,7 +65,7 @@ namespace LogicAppAdvancedTool
                 throw new UserInputException($"No run hisotry input/output found with keyword {keyword}");
             }
 
-            string fileName = $"{logicAppName}_{workflowName}_{date}_SearchResults_{keyword}.json";
+            string fileName = $"{AppSettings.LogicAppName}_{workflowName}_{date}_SearchResults_{keyword}.json";
 
             ConsoleTable runIdTable = new ConsoleTable("Run ID");
             foreach (string id in runIDs)

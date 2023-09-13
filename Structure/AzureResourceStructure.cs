@@ -5,16 +5,6 @@ using System.Collections.Generic;
 
 namespace LogicAppAdvancedTool.AzureService
 {
-    public class NetworkAcls
-    {
-        public NetworkAcls() { }
-
-        public List<IPRule> ipRules { get; set; }
-        public string defaultAction { get; set; }
-        public string bypass { get; set; }
-        public object virtualNetworkRules { get; set; }
-    }
-
     public class IPRule
     {
         public IPRule() { }

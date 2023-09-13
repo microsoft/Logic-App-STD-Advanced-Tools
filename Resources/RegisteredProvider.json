@@ -12,5 +12,9 @@
     "UrlParameter": "/networkrulesets/default",
     "MaskName": "ipMask",
     "RulePath": "properties"
+  },
+  "(TODO)Microsoft.Kusto": {
+    "APIVersion": "2022-11-11",
+    "RulePath": "properties"
   }
 }

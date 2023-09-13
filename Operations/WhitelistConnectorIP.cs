@@ -56,7 +56,6 @@ namespace LogicAppAdvancedTool
                 {
                     resourceProperties["properties"]["networkAcls"] = JToken.Parse("{\"ipRules\":[]}");
                 }
-                
             }
 
             List<IPRule> resourceIPRules = JsonConvert.DeserializeObject<List<IPRule>>(resourceProperties.SelectToken(resourceProviderInfo.RulePath)["ipRules"].ToString());
@@ -73,17 +72,19 @@ namespace LogicAppAdvancedTool
                                     .Where(s => s["name"].ToString() == $"AzureConnectors.{region}")
                                     .FirstOrDefault();
 
+            //storage account has a limitation which doesn't support /32 and /31.
+            //In Azure IP Range json, connector service doesn't have any prefix with /31, just ignore
             List<string> IPs = regionalIPInfo["properties"]["addressPrefixes"].ToObject<List<string>>()
                                 .Where(s => !s.Contains(":"))
-                                .Select(s => s.Replace("/32", ""))      //storage account has a limitation which doesn't support /32 and /31
+                                .Select(s => s.Replace("/32", ""))      
                                 .ToList();
 
             List<IPRule> validIPs = IPs.Where(s => !resourceIPRules
-                                    .Select(s => new IPRule(s.value.Replace("/32", "")))
-                                    .ToList()
-                                .Contains(new IPRule(s)))
-                                .Select(s => new IPRule(s))
-                                .ToList();
+                                            .Select(p => new IPRule(p.value.Replace("/32", "")))
+                                            .ToList()
+                                            .Contains(new IPRule(s)))
+                                        .Select(s => new IPRule(s))
+                                        .ToList();
 
             if (validIPs.Count == 0)
             {

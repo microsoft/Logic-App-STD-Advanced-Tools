@@ -41,6 +41,13 @@ namespace LogicAppAdvancedTool
             return tableEntities;
         }
 
+        public static List<TableEntity> QueryHistoryTable(string workflowName, string filter, string[] select = null)
+        {
+            string historyTableName = $"flow{GenerateWorkflowTablePrefix(workflowName)}histories";
+
+            return QueryTable(historyTableName, filter, select);
+        }
+
         public static List<TableEntity> QueryRunTable(string workflowName, string filter, string[] select = null)
         {
             string runTableName = $"flow{GenerateWorkflowTablePrefix(workflowName)}runs";

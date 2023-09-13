@@ -493,7 +493,7 @@ namespace LogicAppAdvancedTool
                             throw new UserInputException("Keyword cannot be empty");
                         }
 
-                        SearchInHistory(AppSettings.LogicAppName, workflowName, date, keyword, includeBlob, onlyFailures);
+                        SearchInHistory(workflowName, date, keyword, includeBlob, onlyFailures);
 
                         return 0;
                     });
@@ -650,6 +650,29 @@ namespace LogicAppAdvancedTool
                 });
                 #endregion
 
+                #region Retrieve action input/output
+                app.Command("RetrieveActionPayload", c => {
+
+                    CommandOption workflowCO = c.Option("-wf|--workflow", "(Mandatory) workflow name.", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption dateCO = c.Option("-d|--date", "Date (format: \"yyyyMMdd\") of the logs need to be searched, UTC time.", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption actionNameCO = c.Option("-a|--action", "(Manadatory) The action name which you would like to retrieve the payload(input/output)", CommandOptionType.SingleValue).IsRequired();
+
+                    c.HelpOption("-?");
+                    c.Description = "Retrieve all inputs/outputs of a provided action within specific time peroid.";
+
+                    c.OnExecute(() =>
+                    {
+                        string workflowName = workflowCO.Value();
+                        string date = dateCO.Value();
+                        string actionName = actionNameCO.Value().Replace(" ", "_");
+
+                        RetrieveActionPayload(workflowName, date, actionName);
+
+                        return 0;
+                    });
+                });
+                #endregion
+
                 #region Internal tools
                 app.Command("Tools", c => {
 
@@ -695,6 +718,7 @@ namespace LogicAppAdvancedTool
                     });
                     #endregion
 
+                    #region Generate Logic App Managed Identity token
                     c.Command("GetMIToken", sub =>
                     {
                         sub.HelpOption("-?");
@@ -712,12 +736,13 @@ namespace LogicAppAdvancedTool
                             return 0;
                         });
                     });
+                    #endregion
                 });
                 #endregion
 
                 //TODO:
                 //feature: grab Kudu log and filter for errors
-
+                //feature: print action input/output for 
 
                 app.Execute(args);
             }
