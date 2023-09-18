@@ -444,25 +444,6 @@ namespace LogicAppAdvancedTool
                 });
                 #endregion
 
-                #region List a workflow with versions
-                app.Command("ListWorkflowID", c =>
-                {
-                    CommandOption workflowCO = c.Option("-wf|--workflow", "(Mandatory) The name of workflow.", CommandOptionType.SingleValue).IsRequired();
-
-                    c.HelpOption("-?");
-                    c.Description = "List all the workflows which created before with same name.";
-
-                    c.OnExecute(() =>
-                    {
-                        string workflowName = workflowCO.Value();
-
-                        ListWorkflowID(workflowName);
-
-                        return 0;
-                    });
-                });
-                #endregion
-
                 #region Search in run history
                 app.Command("SearchInHistory", c =>
                 {
@@ -742,7 +723,6 @@ namespace LogicAppAdvancedTool
 
                 //TODO:
                 //feature: grab Kudu log and filter for errors
-                //feature: print action input/output for 
 
                 app.Execute(args);
             }
