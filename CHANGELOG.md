@@ -1,3 +1,6 @@
+2023-09-18
+1. Remove "ListWorkflowID" command, migrate the same feature in "ListVersions" command.
+
 2023-09-13
 1. Add a new command "RetrieveActionPayload" which will grab all the inputs/outputs of provided action within a specific day (large content saved in storage blob not supported yet).
 
