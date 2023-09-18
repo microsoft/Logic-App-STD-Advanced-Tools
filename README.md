@@ -39,6 +39,7 @@ If you would like to compile the binary yourself, please always use "Publish" in
 | ValidateSPConnectivity | Validate all Service Providers which defined in connections.json. |
 | BatchResubmit | Resubmit all failed runs of a specific workflow within provided time peroid. |
 | WhitelistConnectorIP | Whitelist Logic App connector ip range in other Azure services ( recently only support for Storage Account, Key Vault and Event Hub) |
+| RetrieveActionPayload | Retrieve all the payload(input/output) of an action within a specific day. |
 
 ## How to use (Demo of restore a workflow)
 1. Open Kudu (Advanced Tools) of Logic App Standard and upload this tool into a folder
