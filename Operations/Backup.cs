@@ -17,8 +17,8 @@ namespace LogicAppAdvancedTool
             string backupFolder = $"{Directory.GetCurrentDirectory()}/Backup";
             Directory.CreateDirectory(backupFolder);
 
-            Hashtable Appsettings = (Hashtable)Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Process);
-            File.WriteAllText($"{backupFolder}/appsettings.json", JsonConvert.SerializeObject(Appsettings, Formatting.Indented));
+            string appSettings = AppSettings.GetRemoteAppsettings();
+            File.WriteAllText($"{backupFolder}/appsettings.json", appSettings);
 
             string formattedDate = DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture).ToString("yyyy-MM-ddT00:00:00Z");
 

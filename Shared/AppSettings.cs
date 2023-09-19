@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using static LogicAppAdvancedTool.MSITokenService;
 
 namespace LogicAppAdvancedTool
 {
@@ -58,6 +61,18 @@ namespace LogicAppAdvancedTool
             {
                 return Environment.GetEnvironmentVariable("MSI_SECRET");
             }
+        }
+
+        public static string GetRemoteAppsettings()
+        {
+            string Url = $"https://management.azure.com/subscriptions/{SubscriptionID}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{LogicAppName}/config/appsettings/list?api-version=2022-03-01";
+
+            MSIToken token = MSITokenService.RetrieveToken("https://management.azure.com");
+            string response = HttpOperations.HttpGetWithToken(Url, "POST", token.access_token, $"Cannot retrieve appsettings for {LogicAppName}");
+
+            string appSettings = JsonConvert.SerializeObject(JObject.Parse(response)["properties"], Formatting.Indented);
+
+            return appSettings;
         }
     }
 }

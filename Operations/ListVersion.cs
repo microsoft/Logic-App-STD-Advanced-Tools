@@ -10,6 +10,7 @@ namespace LogicAppAdvancedTool
         {
             List<TableEntity> tableEntities = TableOperations.QueryMainTable($"FlowName eq '{workflowName}'", new string[] { "RowKey", "FlowId", "FlowSequenceId", "FlowUpdatedTime" })
                                                 .Where(t => t.GetString("RowKey").Contains("FLOWVERSION"))
+                                                .OrderByDescending(t => t.GetDateTimeOffset("FlowUpdatedTime"))
                                                 .ToList();
 
             if (tableEntities.Count == 0)

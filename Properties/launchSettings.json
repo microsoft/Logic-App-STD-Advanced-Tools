@@ -2,7 +2,7 @@
   "profiles": {
     "LogicAppAdvancedTool": {
       "commandName": "Project",
-      "commandLineArgs": "RetrieveActionPayload -wf HistoryTest -d 20230913 -a Compose"
+      "commandLineArgs": "Snapshot restore -p Snapshot_20230919161006"
     }
   }
 }

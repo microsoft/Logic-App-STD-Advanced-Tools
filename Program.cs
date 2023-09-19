@@ -654,6 +654,53 @@ namespace LogicAppAdvancedTool
                 });
                 #endregion
 
+                #region Snapshot, create or restore snapshot for Logic App
+                app.Command("Snapshot", c => {
+
+                    c.HelpOption("-?");
+                    c.Description = "Create or restore snapshot of a Logic App.";
+
+                    #region Create snapshot
+                    c.Command("Create", sub =>
+                    {
+                        sub.HelpOption("-?");
+                        sub.Description = "Create a snapshot of your current Logic App environment, appsettings and wwwroot folder will be included, API connection will not be backup.";
+
+                        sub.OnExecute(() =>
+                        {
+                            CreateSnapshot();
+
+                            return 0;
+                        });
+                    });
+                    #endregion
+
+                    #region Restore from existing snapshot
+                    c.Command("Restore", sub =>
+                    {
+                        CommandOption pathCO = sub.Option("-p|--path", "(Mandatory) Path of parent folder of the snapshot.", CommandOptionType.SingleValue).IsRequired();
+
+                        sub.HelpOption("-?");
+                        sub.Description = "Restore Logic App environment from existing snapshot, only appsettings and wwwroot folder will be restored.";
+
+                        sub.OnExecute(() =>
+                        {
+                            string path = pathCO.Value();
+
+                            RestoreSnapshot(path);
+
+                            return 0;
+                        });
+                    });
+                    #endregion
+
+                    c.OnExecute(() =>
+                    {
+                        throw new UserInputException("Please provide sub command, use -? for help.");
+                    });
+                });
+                #endregion
+
                 #region Internal tools
                 app.Command("Tools", c => {
 
