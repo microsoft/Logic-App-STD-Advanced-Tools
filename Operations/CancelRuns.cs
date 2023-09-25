@@ -45,6 +45,8 @@ namespace LogicAppAdvancedTool
                 updatedEntity.PartitionKey = te.PartitionKey;
                 updatedEntity.RowKey = te.RowKey;
 
+                //When instances status changed (eg: waiting -> running, running -> succeeded), the update will fail
+                //it is an expected behavior, but we need to run the command again for verification
                 try
                 {
                     runTableClient.UpdateEntity<TableEntity>(updatedEntity, te.ETag);
@@ -56,7 +58,7 @@ namespace LogicAppAdvancedTool
                 }
             }
 
-            Console.WriteLine($"{CancelledCount} runns cancelled sucessfully");
+            Console.WriteLine($"{CancelledCount} runs cancelled sucessfully");
 
             if (FailedCount != 0)
             { 

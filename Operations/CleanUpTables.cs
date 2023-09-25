@@ -27,6 +27,8 @@ namespace LogicAppAdvancedTool
             tablePrefix = $"flow{tablePrefix}";
 
             TableServiceClient client = new TableServiceClient(AppSettings.ConnectionString);
+
+            //List all the actions, variable table befire specific date
             List<string> tables = client.Query()
                                     .Where(x => x.Name.StartsWith(tablePrefix) && (x.Name.EndsWith("actions") || x.Name.EndsWith("variables")) && Int32.Parse(x.Name.Substring(34,8)) < targetDate)
                                     .Select(s => s.Name)

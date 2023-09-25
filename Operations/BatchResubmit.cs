@@ -26,6 +26,8 @@ namespace LogicAppAdvancedTool
 
             List<RunInfo> failedRuns = new List<RunInfo>();
 
+            //Create log file for processed run ids based on provided parameters
+            //Resubmit execution might be unexpected terminated due to Logic App runtime reboot, so use log file to store all processed runs to avoid resubmit same failed run multiple times
             string logPath = $"BatchResubmit_{workflowName}_{DateTime.Parse(startTime).ToString("yyyyMMddHHmmss")}_{DateTime.Parse(endTime).ToString("yyyyMMddHHmmss")}";
 
             List<string> processedRuns = new List<string>();
@@ -43,50 +45,35 @@ namespace LogicAppAdvancedTool
 
                     Console.WriteLine($"{processedRuns.Count} records founds, will ignore those runs.");
                 }
-                else 
+                else
                 {
                     Console.WriteLine("Resubmitted records file not found, will resubmit all failed runs.");
                 }
-                
+
             }
 
             while (!String.IsNullOrEmpty(listFailedRunUrl))
             {
                 VerifyToken(ref token);
 
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(listFailedRunUrl);
-                request.Method = "GET";
-                request.Headers.Clear();
-                request.Headers.Add("Authorization", $"Bearer {token.access_token}");
+                string content = HttpOperations.HttpGetWithToken(listFailedRunUrl, "GET", token.access_token, "Failed to retrieve failed runs");
+                JObject rawResponse = JObject.Parse(content);
+                List<JToken> runs = rawResponse["value"].ToObject<List<JToken>>();
 
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-                if (response.StatusCode == HttpStatusCode.OK)
+                foreach (JToken run in runs)
                 {
-                    using (StreamReader sr = new StreamReader(response.GetResponseStream()))
+                    if (ignoreProcessed)
                     {
-                        string content = sr.ReadToEnd();
-
-                        JObject rawResponse = JObject.Parse(content);
-
-                        List<JToken> runs = rawResponse["value"].ToObject<List<JToken>>();
-
-                        foreach (JToken run in runs)
+                        if (processedRuns.Contains(run["name"].ToString()))
                         {
-                            if (ignoreProcessed)
-                            {
-                                if (processedRuns.Contains(run["name"].ToString()))
-                                {
-                                    continue;
-                                }
-                            }
-
-                            failedRuns.Add(new RunInfo(run["name"].ToString(), run["properties"]?["trigger"]?["name"].ToString()));
+                            continue;
                         }
-
-                        listFailedRunUrl = rawResponse["nextLink"]?.ToString();
                     }
+
+                    failedRuns.Add(new RunInfo(run["name"].ToString(), run["properties"]?["trigger"]?["name"].ToString()));
                 }
+
+                listFailedRunUrl = rawResponse["nextLink"]?.ToString();
             }
 
             if (failedRuns.Count == 0)
@@ -106,7 +93,7 @@ namespace LogicAppAdvancedTool
             {
                 Console.WriteLine($"Start to resubmit failed runs, remain {failedRuns.Count} runs.");
 
-                for (int i = failedRuns.Count - 1; i>=0; i--)
+                for (int i = failedRuns.Count - 1; i >= 0; i--)
                 {
                     RunInfo info = failedRuns[i];
 
@@ -150,24 +137,25 @@ namespace LogicAppAdvancedTool
 
         private static void VerifyToken(ref MSIToken token)
         {
+#if !DEBUG  //no need to verify token when debug
             long epochNow = DateTime.UtcNow.ToEpoch();
             long diff = long.Parse(token.expires_on) - epochNow;
 
-            if (diff < 300) 
+            if (diff < 300)
             {
                 Console.WriteLine($"MSI token will be expired in {diff} seconds, refresh token.");
 
                 token = RetrieveToken("https://management.azure.com");
             }
+#endif
         }
-
         private class RunInfo
-        { 
+        {
             public string RunID { get; private set; }
-            public string Trigger { get; private set;}
+            public string Trigger { get; private set; }
 
-            public RunInfo(string RunID, string Trigger) 
-            { 
+            public RunInfo(string RunID, string Trigger)
+            {
                 this.RunID = RunID;
                 this.Trigger = Trigger;
             }

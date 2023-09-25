@@ -13,7 +13,7 @@ namespace LogicAppAdvancedTool
     {
         private static void BackupDefinitions(string date = "19700101")
         {
-
+            //Create backup folder
             string backupFolder = $"{Directory.GetCurrentDirectory()}/Backup";
             Directory.CreateDirectory(backupFolder);
 
@@ -22,6 +22,8 @@ namespace LogicAppAdvancedTool
 
             string formattedDate = DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture).ToString("yyyy-MM-ddT00:00:00Z");
 
+            //In Storage Table, all the in-used workflows have duplicate records which start with "MYEDGEENVIRONMENT_FLOWIDENTIFIER" and "MYEDGEENVIRONMENT_FLOWLOOKUP"
+            //Filter only for "MYEDGEENVIRONMENT_FLOWVERSION" to exclude duplicate workflow definitions
             List<TableEntity> tableEntities = TableOperations.QueryMainTable($"ChangedTime ge datetime'{formattedDate}'")
                                                             .Where(t => t.GetString("RowKey").StartsWith("MYEDGEENVIRONMENT_FLOWVERSION"))
                                                             .ToList();

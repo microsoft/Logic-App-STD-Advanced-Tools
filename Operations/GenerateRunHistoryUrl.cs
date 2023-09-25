@@ -54,7 +54,7 @@ namespace LogicAppAdvancedTool
                         {
                             runs.Add(new WorkflowRunInfo(workflowName, runID, startTime, endTime));
 
-                            break;
+                            break;  //we only need run id, break loop when keyword has been found in first action
                         }
                     }
                 }

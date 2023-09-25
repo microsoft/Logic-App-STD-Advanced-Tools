@@ -95,7 +95,6 @@ namespace LogicAppAdvancedTool
             {
                 string runID = entity.GetString("FlowRunSequenceId");
 
-                //need to test with blob content
                 HistoryRecords filteredRecords = new HistoryRecords(entity);
 
                 if (!records.ContainsKey(runID))

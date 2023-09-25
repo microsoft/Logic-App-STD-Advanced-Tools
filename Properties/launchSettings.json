@@ -2,7 +2,7 @@
   "profiles": {
     "LogicAppAdvancedTool": {
       "commandName": "Project",
-      "commandLineArgs": "Snapshot restore -p Snapshot_20230919161006"
+      "commandLineArgs": "BatchResubmit -wf Test -st 2023-09-25 -et 2023-09-26"
     }
   }
 }

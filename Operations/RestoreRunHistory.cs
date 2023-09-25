@@ -53,7 +53,7 @@ namespace LogicAppAdvancedTool
             }
             else
             {
-                Console.WriteLine($"There are {entities.Count} worklfows found in Storage Table, due to workflow overwritten(delete and create workflow with same name).");
+                Console.WriteLine($"There are {entities.Count} worklfows found in Storage Table, due to workflow overwritten (delete and create workflow with same name).");
                 Console.WriteLine("Please enter the Index which you would like to restore the run history");
 
                 int rowID = Int32.Parse(Console.ReadLine());
@@ -78,6 +78,8 @@ namespace LogicAppAdvancedTool
 
             List<TableEntity> reviewerWorkflowEntities = new List<TableEntity>();
 
+            //After create an empty workflow, it might take several seconds to update Storage Table
+            //try 10 times to retrieve newly create worklfow id
             for (int i = 1; i <= 10; i++)
             {
                 reviewerWorkflowEntities = TableOperations.QueryMainTable($"FlowName eq '{reviewerWorkflowName}'");
@@ -93,7 +95,7 @@ namespace LogicAppAdvancedTool
                     return;
                 }
 
-                Console.WriteLine($"Records not ingeted into Storage Table yet, retry after 5 seconds, execution count {i}/10");
+                Console.WriteLine($"Records not ingested into Storage Table yet, retry after 5 seconds, execution count {i}/10");
                 Thread.Sleep(5000);
             }
 
