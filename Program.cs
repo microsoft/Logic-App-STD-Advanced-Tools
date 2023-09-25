@@ -27,7 +27,7 @@ namespace LogicAppAdvancedTool
                     CommandOption dateCO = c.Option("-d|--date", "(Optional) Retrieve workflow definitions which be modified/created later than this date (format: \"yyyyMMdd\"). Default value: 1970-01-01", CommandOptionType.SingleValue);
                     
                     c.HelpOption("-?");
-                    c.Description = "Retrieve all existing definitions from Storage Table and save as Json files. The storage table saves the definition for past 90 days by default even workflows have been deleted.";
+                    c.Description = "Retrieve all existing definitions from Storage Table and save as Json files. Storage table saves workflow definitions for past 90 days by default even workflows have been deleted.";
 
                     c.OnExecute(() =>
                     {
@@ -47,7 +47,7 @@ namespace LogicAppAdvancedTool
                     CommandOption versionCO = c.Option("-v|--version", "(Mandatory) Version, you can use \"ListVersions\" command to retrieve all existing versions of a workflow.", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
-                    c.Description = "Revert a workflow to a specific previous version.";
+                    c.Description = "Revert a workflow to a specific version, the current version will be override.";
 
                     c.OnExecute(() =>
                     {
@@ -68,7 +68,7 @@ namespace LogicAppAdvancedTool
                     CommandOption versionCO = c.Option("-v|--version", "(Mandatory) Version, you can use \"ListVersions\" command to retrieve all existing versions of a workflow.", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
-                    c.Description = "Decode a workflow based on provided flow version to human readable content.";
+                    c.Description = "Decode a workflow definition based on provided flow version to human readable Json content.";
 
                     c.OnExecute(() =>
                     {
@@ -87,10 +87,10 @@ namespace LogicAppAdvancedTool
                 {
                     CommandOption sourceNameCO = c.Option("-sn|--sourcename", "(Mandatory) Source Workflow Name", CommandOptionType.SingleValue).IsRequired();
                     CommandOption targetNameCO = c.Option("-tn|--targetname", "(Mandatory) Target Workflow Name", CommandOptionType.SingleValue).IsRequired();
-                    CommandOption versionCO = c.Option("-v|--version", "(Optional) Version of the workflow the latest version will be cloned, if not provided the latest version will be selected.)", CommandOptionType.SingleValue);
+                    CommandOption versionCO = c.Option("-v|--version", "(Optional) Version of the workflow the latest version will be cloned, if not provided the latest version will be cloned.)", CommandOptionType.SingleValue);
 
                     c.HelpOption("-?");
-                    c.Description = "Clone an existing workflow to a new workflow, only support in same Logic App Standard.";
+                    c.Description = "Clone an existing workflow to a new workflow, only support in same Logic App Standard, run history will not be available in new workflow.";
 
                     c.OnExecute(() =>
                     {
@@ -111,7 +111,7 @@ namespace LogicAppAdvancedTool
                     CommandOption workflowNameCO = c.Option("-wf|--workflow", "(Mandatory) Workflow Name", CommandOptionType.SingleValue).IsRequired();
                     
                     c.HelpOption("-?");
-                    c.Description = "List all the exisiting versions of a specific workflow.";
+                    c.Description = "List all exisiting versions of a specific workflow (if workflow was deleted and created new with same name, the old workflow will also be listed).";
 
                     c.OnExecute(() => 
                     {
@@ -190,7 +190,7 @@ namespace LogicAppAdvancedTool
                         CommandOption runIDCO = sub.Option("-id|--id", "(Mandatory) The workflow run id", CommandOptionType.SingleValue).IsRequired();
 
                         sub.HelpOption("-?");
-                        sub.Description = "Retrieve all the detail failure information of a workflow for a specific run.";
+                        sub.Description = "Retrieve all the detail failure information for a specific run.";
 
                         sub.OnExecute(() =>
                         {
@@ -235,7 +235,7 @@ namespace LogicAppAdvancedTool
                 #region Clear Queue
                 app.Command("ClearJobQueue", c => {
                     c.HelpOption("-?");
-                    c.Description = "Clear Logic App storage queue for stopping any running instances, this action may casue data lossing.";
+                    c.Description = "(Deprecated, use CancelRuns instead) Clear Logic App storage queue for stopping any running instances, this action may casue data lossing.";
 
                     c.OnExecute(() =>
                     {
@@ -252,7 +252,7 @@ namespace LogicAppAdvancedTool
                     CommandOption workflowNameCO = c.Option("-wf|--workflow", "(Mandatory) The name of the workflow", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
-                    c.Description = "Restore a deleted workflow if still can be found in Storage Table.";
+                    c.Description = "Restore a deleted workflow if its definition still can be found in Storage Table.";
 
                     c.OnExecute(() =>
                     {
@@ -284,7 +284,7 @@ namespace LogicAppAdvancedTool
                 app.Command("SyncToLocal", c => {
 
                     c.HelpOption("-?");
-                    c.Description = "Sync remote wwwroot folder of Logic App Standard to local folder. This command must run in local computer.";
+                    c.Description = "Sync remote wwwroot folder of Logic App Standard to local folder. This command only can run in local computer.";
 
                     #region Normal Mode
                     c.Command("Normal", sub =>
@@ -370,7 +370,7 @@ namespace LogicAppAdvancedTool
                 app.Command("CheckConnectivity", c =>
                 {
                     c.HelpOption("-?");
-                    c.Description = "Check the connectivity between Logic App STD and it's backend Storage Account";
+                    c.Description = "Check the connectivity between Logic App STD and it's backend Storage Account.";
 
                     c.OnExecute(() =>
                     {
@@ -407,7 +407,7 @@ namespace LogicAppAdvancedTool
                     CommandOption filterCO = c.Option("-f|--filter", "(Optional) Filter for specific exception messages", CommandOptionType.SingleValue);
 
                     c.HelpOption("-?");
-                    c.Description = "Generate run history of workflow failure runs in a specific day.";
+                    c.Description = "Generate workflow run history URL of all failure runs in a specific day.";
 
                     c.OnExecute(() =>
                     {
@@ -454,7 +454,7 @@ namespace LogicAppAdvancedTool
                     CommandOption onlyFailuresCO = c.Option("-of|--onlyFailures", "(Optional) Whether only search for failed runs.", CommandOptionType.NoValue);
 
                     c.HelpOption("-?");
-                    c.Description = "Search a keywords in workflow run history";
+                    c.Description = "Search a keywords in workflow run history, any playload larger than 1 MB will not be inculded due to memory saving.";
 
                     c.OnExecute(() =>
                     {
@@ -530,7 +530,7 @@ namespace LogicAppAdvancedTool
                     CommandOption workflowNameCO = c.Option("-wf|--workflow", "(Mandatory) Workflow Name", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
-                    c.Description = "Cancel all running/waiting instances of a workflow.";
+                    c.Description = "Cancel all running/waiting instances of a workflow, will cause data lossing for running instances.";
 
                     c.OnExecute(() =>
                     {
@@ -549,7 +549,7 @@ namespace LogicAppAdvancedTool
                     CommandOption workflowNameCO = c.Option("-wf|--workflow", "(Mandatory) Workflow Name", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
-                    c.Description = "Restore run history of a deleted/overwritten workflow. This command will create a new workflow for showing run history.";
+                    c.Description = "(Experimental feature) Restore run history of a deleted/overwritten workflow. This command will create a new workflow for showing run history.";
 
                     c.OnExecute(() =>
                     {
@@ -566,7 +566,7 @@ namespace LogicAppAdvancedTool
                 app.Command("ValidateSPConnectivity", c => {
 
                     c.HelpOption("-?");
-                    c.Description = "Validate connectivity of all the Service Providers endpoints.";
+                    c.Description = "Validate connectivity of all the Service Providers endpoints (SAP, JDBC and FileSystem connections are not supported).";
 
                     c.OnExecute(() =>
                     {
@@ -587,7 +587,7 @@ namespace LogicAppAdvancedTool
                     CommandOption ignoreProcessedCO = c.Option("-ignore|--ignoreProcessed", "(Optional) Whether need to ignore the runs already be resubmitted in previous executions. True or False (default vaule is true).", CommandOptionType.SingleValue);
 
                     c.HelpOption("-?");
-                    c.Description = "Resubmit all failed runs of a specific workflow within provided time peroid.";
+                    c.Description = "Resubmit all failed runs of a specific workflow within provided time peroid. If we have large count of runs need to be resubmitted, we will hit throttling (~50 execution per 5 minutes) but it will be handled internally.";
 
                     c.OnExecute(() =>
                     {
@@ -639,7 +639,7 @@ namespace LogicAppAdvancedTool
                     CommandOption actionNameCO = c.Option("-a|--action", "(Manadatory) The action name which you would like to retrieve the payload(input/output)", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
-                    c.Description = "Retrieve all inputs/outputs of a provided action within specific time peroid.";
+                    c.Description = "Retrieve all inputs/outputs of a provided action within specific time peroid, payload saved in Blob Storage will be ignored.";
 
                     c.OnExecute(() =>
                     {
@@ -658,7 +658,7 @@ namespace LogicAppAdvancedTool
                 app.Command("Snapshot", c => {
 
                     c.HelpOption("-?");
-                    c.Description = "Create or restore snapshot of a Logic App.";
+                    c.Description = "Create or restore snapshot of Logic App.";
 
                     #region Create snapshot
                     c.Command("Create", sub =>
