@@ -21,7 +21,7 @@ namespace LogicAppAdvancedTool
             string filter = $"$filter=status eq 'Failed' and startTime gt {startTime} and startTime lt {endTime}";
 
             string listFailedRunUrl = $"{baseUrl}/runs?api-version=2018-11-01&{filter}";
-            MSIToken token = MSITokenService.RetrieveToken("https://management.azure.com");
+            MSIToken token = RetrieveToken("https://management.azure.com");
             Console.WriteLine("Managed Identity token retrieved");
 
             List<RunInfo> failedRuns = new List<RunInfo>();

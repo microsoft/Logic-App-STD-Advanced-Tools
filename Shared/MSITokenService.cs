@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.WindowsAzure.ResourceStack.Common.Extensions;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -56,7 +57,6 @@ namespace LogicAppAdvancedTool
 
         public static void VerifyToken(ref MSIToken token)
         {
-            //no need to verify token when debug
 #if !DEBUG  
             long epochNow = DateTime.UtcNow.ToEpoch();
             long diff = long.Parse(token.expires_on) - epochNow;

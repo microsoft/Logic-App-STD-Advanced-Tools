@@ -64,7 +64,7 @@ namespace LogicAppAdvancedTool
             }
 
             string appsettingsUrl = $"https://management.azure.com/subscriptions/{AppSettings.SubscriptionID}/resourceGroups/{AppSettings.ResourceGroup}/providers/Microsoft.Web/sites/{AppSettings.LogicAppName}/config/appsettings/list?api-version=2022-03-01";
-            MSIToken token = MSITokenService.RetrieveToken("https://management.azure.com");
+            MSIToken token = RetrieveToken("https://management.azure.com");
             string response = HttpOperations.HttpGetWithToken(appsettingsUrl, "POST", token.access_token, $"Cannot retrieve appsettings for {AppSettings.LogicAppName}");
             JToken appSettingRuntime = JObject.Parse(response);
 
