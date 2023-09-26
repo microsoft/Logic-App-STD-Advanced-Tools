@@ -25,7 +25,6 @@ namespace LogicAppAdvancedTool
                 throw new UserCanceledException("Operation Cancelled");
             }
         }
-
         private static string GetMainTableName()
         {
             string tableName = $"flow{StoragePrefixGenerator.Generate(AppSettings.LogicAppName.ToLower())}flows";
@@ -43,7 +42,7 @@ namespace LogicAppAdvancedTool
             throw new UserInputException("No table found in Azure Storage Account, please check whether the Logic App Name correct or not.");
         }
 
-        private static string GenerateLogicAppPrefix() 
+        private static string GenerateLogicAppPrefix()
         {
             return StoragePrefixGenerator.Generate(AppSettings.LogicAppName.ToLower());
         }
@@ -110,7 +109,7 @@ namespace LogicAppAdvancedTool
         #endregion
 
         #region Storage operation
-        public static string GetBlobContent(string blobUri, int contentSize = 1024*1024)
+        public static string GetBlobContent(string blobUri, int contentSize = -1)
         {
             Uri uri = new Uri(blobUri);
             ConnectionInfo info = new ConnectionInfo(AppSettings.ConnectionString);
@@ -118,11 +117,9 @@ namespace LogicAppAdvancedTool
 
             BlobClient client = new BlobClient(uri, cred);
 
-            BlobDownloadResult result = client.DownloadContent().Value;
-
             long blobSize = client.GetProperties().Value.ContentLength;
 
-            if (blobSize > contentSize)
+            if (contentSize != -1 && blobSize > contentSize)
             {
                 string blobName = blobUri.Split("/").Last();
 
@@ -131,17 +128,15 @@ namespace LogicAppAdvancedTool
                 return String.Empty;
             }
 
+            BlobDownloadResult result = client.DownloadContent().Value;
             Stream contentStream = result.Content.ToStream();
-            string content;
 
             using (BinaryReader br = new BinaryReader(contentStream))
             {
                 byte[] b = br.ReadBytes((int)contentStream.Length);
 
-                content = DecompressContent(b);
+                return DecompressContent(b);
             }
-
-            return content;
         }
 
         public class ConnectionInfo

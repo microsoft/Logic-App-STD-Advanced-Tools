@@ -135,20 +135,6 @@ namespace LogicAppAdvancedTool
             Console.WriteLine("All failed run resubmitted successfully");
         }
 
-        private static void VerifyToken(ref MSIToken token)
-        {
-#if !DEBUG  //no need to verify token when debug
-            long epochNow = DateTime.UtcNow.ToEpoch();
-            long diff = long.Parse(token.expires_on) - epochNow;
-
-            if (diff < 300)
-            {
-                Console.WriteLine($"MSI token will be expired in {diff} seconds, refresh token.");
-
-                token = RetrieveToken("https://management.azure.com");
-            }
-#endif
-        }
         private class RunInfo
         {
             public string RunID { get; private set; }

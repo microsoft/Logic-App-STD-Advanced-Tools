@@ -16,14 +16,14 @@ namespace LogicAppAdvancedTool
         public string InlinedContent { get; private set; }
         public bool IsEmpty { get; private set; }
 
-        public string ActualContent 
+        public string ActualContent
         {
             get
-            { 
+            {
                 return String.IsNullOrEmpty(InlinedContent) ? BlobUri : InlinedContent;
             }
         }
-        public ContentDecoder(byte[] binaryContent) 
+        public ContentDecoder(byte[] binaryContent)
         {
             string rawContent = DecompressContent(binaryContent) ?? string.Empty;
 
@@ -53,7 +53,7 @@ namespace LogicAppAdvancedTool
                 BlobUri = PayloadBody.uri ?? String.Empty;
                 IsBlobLink = !String.IsNullOrEmpty(BlobUri);
             }
-            else 
+            else
             {
                 IsEmpty = true;
             }
@@ -71,9 +71,9 @@ namespace LogicAppAdvancedTool
                 return true;
             }
 
-            if (IsBlobLink && includeBlob) 
-            { 
-                string contentInBlob = GetBlobContent(BlobUri);
+            if (IsBlobLink && includeBlob)
+            {
+                string contentInBlob = GetBlobContent(BlobUri, 1024 * 1024);
 
                 if (contentInBlob.StartsWith(_byteOrderMarkUtf8))
                 {

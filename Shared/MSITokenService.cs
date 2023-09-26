@@ -6,7 +6,7 @@ using System.Net;
 
 namespace LogicAppAdvancedTool
 {
-    class MSITokenService
+    public class MSITokenService
     {
         public static MSIToken RetrieveToken(string resource)
         {
@@ -52,6 +52,22 @@ namespace LogicAppAdvancedTool
             MSIToken token = JsonConvert.DeserializeObject<MSIToken>(result);
 
             return token;
+        }
+
+        public static void VerifyToken(ref MSIToken token)
+        {
+            //no need to verify token when debug
+#if !DEBUG  
+            long epochNow = DateTime.UtcNow.ToEpoch();
+            long diff = long.Parse(token.expires_on) - epochNow;
+
+            if (diff < 300)
+            {
+                Console.WriteLine($"MSI token will be expired in {diff} seconds, refresh token.");
+
+                token = RetrieveToken("https://management.azure.com");
+            }
+#endif
         }
 
         public class MSIToken

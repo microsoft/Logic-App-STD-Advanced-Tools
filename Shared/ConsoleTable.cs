@@ -4,79 +4,76 @@ using System.Text;
 
 namespace LogicAppAdvancedTool
 {
-    public partial class Program
+    public class ConsoleTable
     {
-        public class ConsoleTable
+        private int ColumnCount;
+        private List<string[]> Rows;
+        private List<int> ColumnWidth;
+
+        public ConsoleTable(params string[] headers)
         {
-            private int ColumnCount;
-            private List<string[]> Rows;
-            private List<int> ColumnWidth;
+            ColumnCount = headers.Length;
 
-            public ConsoleTable(params string[] headers) 
+            Rows = new List<string[]>();
+            Rows.Add(headers);
+
+            ColumnWidth = new List<int>();
+            foreach (string header in headers)
             {
-                ColumnCount = headers.Length;
+                ColumnWidth.Add(header.Length + 2);
+            }
+        }
 
-                Rows = new List<string[]>();
-                Rows.Add(headers);
-
-                ColumnWidth = new List<int>();
-                foreach (string header in headers)
-                {
-                    ColumnWidth.Add(header.Length + 2);
-                }
+        public void AddRow(params string[] contents)
+        {
+            if (contents.Length != ColumnCount)
+            {
+                throw new Exception("Column count mismatch");
             }
 
-            public void AddRow(params string[] contents)
+            Rows.Add(contents);
+
+            for (int i = 0; i < contents.Length; i++)
             {
-                if (contents.Length != ColumnCount)
+                if (String.IsNullOrEmpty(contents[i]))
                 {
-                    throw new Exception("Column count mismatch");
+                    continue;
                 }
 
-                Rows.Add(contents);
-
-                for (int i = 0; i < contents.Length; i++)
+                if (ColumnWidth[i] < contents[i].Length + 2)
                 {
-                    if (String.IsNullOrEmpty(contents[i]))
-                    {
-                        continue;
-                    }
-
-                    if (ColumnWidth[i] < contents[i].Length + 2) 
-                    {
-                        ColumnWidth[i] = contents[i].Length + 2;
-                    }
+                    ColumnWidth[i] = contents[i].Length + 2;
                 }
             }
+        }
 
-            public void Print()
+        public void Print()
+        {
+            int rowLength = 0;
+
+            foreach (int l in ColumnWidth)
             {
-                int rowLength = 0;
+                rowLength += l;
+            }
 
-                foreach (int l in ColumnWidth)
-                { 
-                    rowLength+= l;
-                }
+            rowLength += ColumnWidth.Count + 1;
 
-                rowLength += ColumnWidth.Count + 1;
+            Console.WriteLine(new string('-', rowLength));
 
-                Console.WriteLine(new string('-', rowLength));
+            foreach (string[] row in Rows)
+            {
+                StringBuilder rowContent = new StringBuilder();
 
-                foreach (string[] row in Rows)
+                for (int i = 0; i < row.Length; i++)
                 {
-                    StringBuilder rowContent = new StringBuilder();
-
-                    for (int i = 0; i < row.Length; i++)
-                    {
-                        rowContent.Append("|");
-                        rowContent.Append(string.Format($" {row[i]}".PadRight(ColumnWidth[i])));
-                    }
-
                     rowContent.Append("|");
-
-                    Console.WriteLine(rowContent.ToString());
-                    Console.WriteLine(new string('-', rowLength));
+                    rowContent.Append(string.Format($" {row[i]}".PadRight(ColumnWidth[i])));
                 }
+
+                rowContent.Append("|");
+
+                Console.WriteLine(rowContent.ToString());
+                Console.WriteLine(new string('-', rowLength));
             }
         }
     }
