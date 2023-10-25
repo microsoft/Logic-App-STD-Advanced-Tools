@@ -41,6 +41,7 @@ If you would like to compile the binary yourself, please always use "Publish" in
 | WhitelistConnectorIP | Whitelist Logic App connector ip range in other Azure services ( recently only support for Storage Account, Key Vault and Event Hub) |
 | RetrieveActionPayload | Retrieve all the payload(input/output) of an action within a specific day. |
 | Snapshot | Create a snapshot or restore from a snapshot based on provided sub-command. All the files under wwwroot folder and appsettings can be restored. |
+| ScanConnections | Retrieve all connections (API connections and Service Providers) in all workflows and compare with connections.json and list all unused connections. |
 
 ## How to use (Demo of restore a workflow)
 1. Open Kudu (Advanced Tools) of Logic App Standard and upload this tool into a folder
