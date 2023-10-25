@@ -5,12 +5,13 @@ using System.Net.Sockets;
 using Azure.Storage.Queues;
 using Azure.Storage.Files.Shares;
 using Azure.Storage.Blobs;
+using static LogicAppAdvancedTool.CommonOperations;
 
 namespace LogicAppAdvancedTool
 {
-    partial class Program
+    public static class CheckConnectivity
     {
-        private static void CheckConnectivity()
+        public static void Run()
         {
             ConnectionInfo connectionInfo = new ConnectionInfo(AppSettings.ConnectionString);
             ConnectionValidator connectionValidator = new ConnectionValidator(connectionInfo);
@@ -132,14 +133,6 @@ namespace LogicAppAdvancedTool
 
                 return Results;
             }
-        }
-
-        public enum StorageType
-        {
-            Blob = 1,
-            File = 2,
-            Queue = 4,
-            Table = 8
         }
     }
 }

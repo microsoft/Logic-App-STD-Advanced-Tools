@@ -9,10 +9,10 @@ using Azure;
 
 namespace LogicAppAdvancedTool
 {
-    partial class Program
+    public static class CloudSync
     {
         #region Normal Sync
-        private static void SyncToLocal(string shareName, string connectionString, string localPath)
+        public static void SyncToLocal(string shareName, string connectionString, string localPath)
         {
             ShareClient shareClient = new ShareClient(connectionString, shareName);
 
@@ -59,7 +59,7 @@ namespace LogicAppAdvancedTool
         }
         #endregion
 
-        private static void BatchSyncToLocal(string configFile)
+        public static void BatchSyncToLocal(string configFile)
         {
             if (!File.Exists(configFile))
             {
@@ -78,7 +78,7 @@ namespace LogicAppAdvancedTool
         }
 
         #region Auto sync
-        private static void AutoSyncToLocal(string shareName, string connectionString, string localPath, List<string> excludes)
+        public static void AutoSyncToLocal(string shareName, string connectionString, string localPath, List<string> excludes)
         {
             ShareClient shareClient = new ShareClient(connectionString, shareName);
             ShareDirectoryClient directoryClient = shareClient.GetDirectoryClient("site/wwwroot/");

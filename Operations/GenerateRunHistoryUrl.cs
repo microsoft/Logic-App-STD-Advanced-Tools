@@ -9,9 +9,9 @@ using System.Text.Encodings.Web;
 
 namespace LogicAppAdvancedTool
 {
-    partial class Program
+    public static class GenerateRunHistoryUrl
     {
-        private static void GenerateRunHistoryUrl(string workflowName, string date, string filter)
+        public static void Run(string workflowName, string date, string filter)
         {
             DateTime minTimeStamp = DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture);
             DateTime maxTimeStamp = minTimeStamp.AddDays(1);
@@ -47,7 +47,7 @@ namespace LogicAppAdvancedTool
                     foreach (TableEntity te in actionEntities)
                     {
                         ContentDecoder outputContent = new ContentDecoder(te.GetBinary("OutputsLinkCompressed"));
-                        string rawError = DecompressContent(te.GetBinary("Error")) ?? "";
+                        string rawError = CommonOperations.DecompressContent(te.GetBinary("Error")) ?? "";
                         string code = te.GetString("Code");
 
                         if (outputContent.SearchKeyword(filter) || rawError.Contains(filter) || code.Contains(filter))

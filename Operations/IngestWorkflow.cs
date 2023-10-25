@@ -7,11 +7,11 @@ using System.Linq;
 
 namespace LogicAppAdvancedTool
 {
-    partial class Program
+    public static class IngestWorkflow
     {
-        public static void IngestWorkflow(string workflowName)
+        public static void Run(string workflowName)
         {
-            AlertExperimentalFeature();
+            CommonOperations.AlertExperimentalFeature();
 
             string WorkflowPath = $"C:/home/site/wwwroot/{workflowName}/workflow.json";
 
@@ -26,9 +26,9 @@ namespace LogicAppAdvancedTool
 
             WorkflowTemplate template = JsonConvert.DeserializeObject<WorkflowTemplate>(content);
             string definition = JsonConvert.SerializeObject(template.definition);
-            byte[] compressedDefinition = CompressContent(definition);
+            byte[] compressedDefinition = CommonOperations.CompressContent(definition);
 
-            string backupPath = BackupCurrentSite();
+            string backupPath = CommonOperations.BackupCurrentSite();
             Console.WriteLine($"Backup current workflows, you can find in path: {backupPath}");
 
             List<TableEntity> mainLatestEntities = TableOperations.QueryMainTable($"FlowName eq '{workflowName}'")

@@ -1,12 +1,8 @@
 ﻿using McMaster.Extensions.CommandLineUtils;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Sockets;
 
 namespace LogicAppAdvancedTool
 {
@@ -33,7 +29,7 @@ namespace LogicAppAdvancedTool
                     {
                         string date = dateCO.Value() ?? "19700101";
 
-                        BackupDefinitions(date);
+                        Backup.Run(date);
 
                         return 0;
                     });
@@ -54,7 +50,7 @@ namespace LogicAppAdvancedTool
                         string workflowName = workflowNameCO.Value();
                         string version = versionCO.Value();
 
-                        RevertVersion(workflowName, version);
+                        RevertVersion.Run(workflowName, version);
 
                         return 0;
                     });
@@ -75,7 +71,7 @@ namespace LogicAppAdvancedTool
                         string workflowName = workflowNameCO.Value();
                         string version = versionCO.Value();
 
-                        Decode(workflowName, version);
+                        Decode.Run(workflowName, version);
 
                         return 0;
                     });
@@ -98,7 +94,7 @@ namespace LogicAppAdvancedTool
                         string targetName = targetNameCO.Value();
                         string version = versionCO.Value();
 
-                        Clone(sourceName, targetName, version);
+                        Clone.Run(sourceName, targetName, version);
 
                         return 0;
                     });
@@ -117,7 +113,7 @@ namespace LogicAppAdvancedTool
                     {
                         string workflowName = workflowNameCO.Value();
 
-                        ListVersions(workflowName);
+                        ListVersions.Run(workflowName);
 
                         return 0;
                     });
@@ -132,7 +128,7 @@ namespace LogicAppAdvancedTool
 
                     c.OnExecute(() =>
                     {
-                        RestoreAll();
+                        RestoreAll.Run();
 
                         return 0;
                     });
@@ -151,7 +147,7 @@ namespace LogicAppAdvancedTool
                     {
                         string workflowName = workflowCO.Value();
 
-                        GenerateTablePrefix(workflowName);
+                        GenerateTablePrefix.Run(workflowName);
 
                         return 0;
                     });
@@ -177,7 +173,7 @@ namespace LogicAppAdvancedTool
                             string workflowName = workflowCO.Value();
                             string date = dateCO.Value();
 
-                            RetrieveFailuresByDate(workflowName, date);
+                            RetrieveFailures.RetrieveFailuresByDate(workflowName, date);
 
                             return 0;
                         });
@@ -197,7 +193,7 @@ namespace LogicAppAdvancedTool
                             string workflowName = workflowCO.Value();
                             string runID = runIDCO.Value();
 
-                            RetrieveFailuresByRun(workflowName, runID);
+                            RetrieveFailures.RetrieveFailuresByRun(workflowName, runID);
 
                             return 0;
                         });
@@ -225,7 +221,7 @@ namespace LogicAppAdvancedTool
                         string sourceName = sourceNameCO.Value();
                         string targetName = targetNameCO.Value();
 
-                        ConvertToStateful(sourceName, targetName);
+                        ConvertToStateful.Run(sourceName, targetName);
 
                         return 0;
                     });
@@ -239,7 +235,7 @@ namespace LogicAppAdvancedTool
 
                     c.OnExecute(() =>
                     {
-                        ClearJobQueue(AppSettings.LogicAppName);
+                        ClearJobQueue.Run(AppSettings.LogicAppName);
 
                         return 0;
                     });
@@ -258,7 +254,7 @@ namespace LogicAppAdvancedTool
                     {
                         string workflowName = workflowNameCO.Value();
 
-                        RestoreSingleWorkflow(workflowName);
+                        RestoreSingleWorkflow.Run(workflowName);
 
                         return 0;
                     });
@@ -273,7 +269,7 @@ namespace LogicAppAdvancedTool
 
                     c.OnExecute(() =>
                     {
-                        ListWorkflows();
+                        ListWorkflows.Run();
 
                         return 0;
                     });
@@ -302,7 +298,7 @@ namespace LogicAppAdvancedTool
                             string connectionString = connectionStringCO.Value();
                             string localPath = localPathCO.Value();
 
-                            SyncToLocal(shareName, connectionString, localPath);
+                            CloudSync.SyncToLocal(shareName, connectionString, localPath);
 
                             return 0;
                         });
@@ -333,7 +329,7 @@ namespace LogicAppAdvancedTool
                                 excludeItems = excludes.Split(',').ToList();
                             }
 
-                            AutoSyncToLocal(shareName, connectionString, localPath, excludeItems);
+                            CloudSync.AutoSyncToLocal(shareName, connectionString, localPath, excludeItems);
 
                             return 0;
                         });
@@ -352,7 +348,7 @@ namespace LogicAppAdvancedTool
                         {
                             string configFile = configFileCO.Value();
 
-                            BatchSyncToLocal(configFile);
+                            CloudSync.BatchSyncToLocal(configFile);
 
                             return 0;
                         });
@@ -374,7 +370,7 @@ namespace LogicAppAdvancedTool
 
                     c.OnExecute(() =>
                     {
-                        CheckConnectivity();
+                        CheckConnectivity.Run();
 
                         return 0;
                     });
@@ -392,7 +388,7 @@ namespace LogicAppAdvancedTool
                     {
                         string workflowName = workflowCO.Value();
 
-                        IngestWorkflow(workflowName);
+                        IngestWorkflow.Run(workflowName);
 
                         return 0;
                     });
@@ -415,7 +411,7 @@ namespace LogicAppAdvancedTool
                         string date = dateCO.Value();
                         string filter = filterCO.Value();
 
-                        GenerateRunHistoryUrl(workflowName, date, filter);
+                        GenerateRunHistoryUrl.Run(workflowName, date, filter);
 
                         return 0;
                     });
@@ -437,7 +433,7 @@ namespace LogicAppAdvancedTool
                         string workflowName = workflowCO.Value();
                         string date = dateCO.Value();
 
-                        CleanUpContainers(workflowName, date);
+                        CleanUpContainers.Run(workflowName, date);
 
                         return 0;
                     });
@@ -474,7 +470,7 @@ namespace LogicAppAdvancedTool
                             throw new UserInputException("Keyword cannot be empty");
                         }
 
-                        SearchInHistory(workflowName, date, keyword, includeBlob, onlyFailures);
+                        SearchInHistory.Run(workflowName, date, keyword, includeBlob, onlyFailures);
 
                         return 0;
                     });
@@ -495,7 +491,7 @@ namespace LogicAppAdvancedTool
                         string workflowName = workflowCO.Value();
                         string date = dateCO.Value();
 
-                        CleanUpTables(workflowName, date);
+                        CleanUpTables.Run(workflowName, date);
 
                         return 0;
                     });
@@ -516,8 +512,8 @@ namespace LogicAppAdvancedTool
                         string workflowName = workflowCO.Value();
                         string date = dateCO.Value();
 
-                        CleanUpTables(workflowName, date);
-                        CleanUpContainers(workflowName, date);
+                        CleanUpTables.Run(workflowName, date);
+                        CleanUpContainers.Run(workflowName, date);
 
                         return 0;
                     });
@@ -536,7 +532,7 @@ namespace LogicAppAdvancedTool
                     {
                         string workflowName = workflowNameCO.Value();
 
-                        CancelRuns(workflowName);
+                        CancelRuns.Run(workflowName);
 
                         return 0;
                     });
@@ -555,7 +551,7 @@ namespace LogicAppAdvancedTool
                     {
                         string workflowName = workflowNameCO.Value();
 
-                        RestoreRunHistory(workflowName);
+                        RestoreRunHistory.Run(workflowName);
 
                         return 0;
                     });
@@ -570,7 +566,7 @@ namespace LogicAppAdvancedTool
 
                     c.OnExecute(() =>
                     {
-                        ValidateServiceProviderConnectivity();
+                        ValidateServiceProviderConnectivity.Run();
 
                         return 0;
                     });
@@ -605,7 +601,7 @@ namespace LogicAppAdvancedTool
                         string endTime = et.ToString("yyyy-MM-ddTHH:mm:ssZ");
                         bool ignoreProcessed = bool.Parse(ignoreProcessedCO.Value() ?? "true");
 
-                        BatchResubmit(workflowName, startTime, endTime, ignoreProcessed);
+                        BatchResubmit.Run(workflowName, startTime, endTime, ignoreProcessed);
 
                         return 0;
                     });
@@ -624,7 +620,7 @@ namespace LogicAppAdvancedTool
                     {
                         string resourceID = resourceIDCO.Value();
 
-                        WhitelistConnectorIP(resourceID);
+                        WhitelistConnectorIP.Run(resourceID);
 
                         return 0;
                     });
@@ -647,7 +643,7 @@ namespace LogicAppAdvancedTool
                         string date = dateCO.Value();
                         string actionName = actionNameCO.Value().Replace(" ", "_");
 
-                        RetrieveActionPayload(workflowName, date, actionName);
+                        RetrieveActionPayload.Run(workflowName, date, actionName);
 
                         return 0;
                     });
@@ -668,7 +664,7 @@ namespace LogicAppAdvancedTool
 
                         sub.OnExecute(() =>
                         {
-                            CreateSnapshot();
+                            Snapshot.CreateSnapshot();
 
                             return 0;
                         });
@@ -687,7 +683,7 @@ namespace LogicAppAdvancedTool
                         {
                             string path = pathCO.Value();
 
-                            RestoreSnapshot(path);
+                            Snapshot.RestoreSnapshot(path);
 
                             return 0;
                         });
@@ -785,7 +781,6 @@ namespace LogicAppAdvancedTool
 
                 //TODO:
                 //feature: grab Kudu log and filter for errors
-                //feature: scan unused service providers
 
                 app.Execute(args);
             }

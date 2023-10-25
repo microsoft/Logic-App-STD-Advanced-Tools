@@ -10,9 +10,9 @@ using static LogicAppAdvancedTool.MSITokenService;
 
 namespace LogicAppAdvancedTool
 {
-    partial class Program
+    public static class BatchResubmit
     {
-        private static void BatchResubmit(string workflowName, string startTime, string endTime, bool ignoreProcessed)
+        public static void Run(string workflowName, string startTime, string endTime, bool ignoreProcessed)
         {
             string baseUrl = $"https://management.azure.com/subscriptions/{AppSettings.SubscriptionID}/resourceGroups/{AppSettings.ResourceGroup}/providers/Microsoft.Web/sites/{AppSettings.LogicAppName}/hostruntime/runtime/webhooks/workflow/api/management/workflows/{workflowName}";
             string filter = $"$filter=status eq 'Failed' and startTime gt {startTime} and startTime lt {endTime}";

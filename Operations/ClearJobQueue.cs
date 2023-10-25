@@ -4,11 +4,11 @@ using McMaster.Extensions.CommandLineUtils;
 
 namespace LogicAppAdvancedTool
 {
-    partial class Program
+    public static class ClearJobQueue
     {
-        public static void ClearJobQueue(string logicAppName)
+        public static void Run(string logicAppName)
         {
-            AlertExperimentalFeature();
+            CommonOperations.AlertExperimentalFeature();
 
             string queueName = $"flow{StoragePrefixGenerator.Generate(logicAppName.ToLower())}jobtriggers00";
 

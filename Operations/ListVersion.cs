@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace LogicAppAdvancedTool
 {
-    partial class Program
+    public static class ListVersions
     {
-        private static void ListVersions(string workflowName)
+        public static void Run(string workflowName)
         {
             List<TableEntity> tableEntities = TableOperations.QueryMainTable($"FlowName eq '{workflowName}'", new string[] { "RowKey", "FlowId", "FlowSequenceId", "FlowUpdatedTime" })
                                                 .Where(t => t.GetString("RowKey").Contains("FLOWVERSION"))

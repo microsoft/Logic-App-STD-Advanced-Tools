@@ -9,9 +9,9 @@ using System.Linq;
 
 namespace LogicAppAdvancedTool
 {
-    partial class Program
+    public static class Backup
     {
-        private static void BackupDefinitions(string date = "19700101")
+        public static void Run(string date = "19700101")
         {
             //Create backup folder
             string backupFolder = $"{Directory.GetCurrentDirectory()}/Backup";
@@ -51,7 +51,7 @@ namespace LogicAppAdvancedTool
 
                 byte[] definitionCompressed = entity.GetBinary("DefinitionCompressed");
                 string kind = entity.GetString("Kind");
-                string decompressedDefinition = DecompressContent(definitionCompressed);
+                string decompressedDefinition = CommonOperations.DecompressContent(definitionCompressed);
 
                 string outputContent = $"{{\"definition\": {decompressedDefinition},\"kind\": \"{kind}\"}}";
                 dynamic jsonObject = JsonConvert.DeserializeObject(outputContent);

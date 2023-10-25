@@ -7,9 +7,9 @@ using Azure.Data.Tables;
 
 namespace LogicAppAdvancedTool
 {
-    partial class Program
+    public static class CleanUpTables
     {
-        public static void CleanUpTables(string workflowName, string date)
+        public static void Run(string workflowName, string date)
         {
             int targetDate = Int32.Parse(date);
             string formattedDate = DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture).ToString("yyyy-MM-dd");
@@ -17,11 +17,11 @@ namespace LogicAppAdvancedTool
             string tablePrefix;
             if (string.IsNullOrEmpty(workflowName))
             {
-                tablePrefix = GenerateLogicAppPrefix();
+                tablePrefix = CommonOperations.GenerateLogicAppPrefix();
             }
             else
             {
-                tablePrefix = GenerateWorkflowTablePrefix(workflowName);
+                tablePrefix = CommonOperations.GenerateWorkflowTablePrefix(workflowName);
             }
 
             tablePrefix = $"flow{tablePrefix}";

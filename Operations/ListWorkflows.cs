@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace LogicAppAdvancedTool
 {
-    partial class Program
+    public static class ListWorkflows
     {
-        private static void ListWorkflows()
+        public static void Run()
         {
             List<TableEntity> entities = TableOperations.QueryMainTable(null, select: new string[] { "FlowName", "ChangedTime", "Kind" })
                                 .GroupBy(t => t.GetString("FlowName"))

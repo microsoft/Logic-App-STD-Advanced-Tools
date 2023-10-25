@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace LogicAppAdvancedTool
 {
-    partial class Program
+    public static class GenerateTablePrefix
     {
-        private static void GenerateTablePrefix(string workflowName)
+        public static void Run(string workflowName)
         {
             string logicAppPrefix = StoragePrefixGenerator.Generate(AppSettings.LogicAppName.ToLower());
 

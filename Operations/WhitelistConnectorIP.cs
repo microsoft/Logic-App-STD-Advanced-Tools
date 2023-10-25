@@ -5,13 +5,13 @@ using Newtonsoft.Json.Linq;
 using Microsoft.WindowsAzure.ResourceStack.Common.Extensions;
 using System.Linq;
 using static LogicAppAdvancedTool.MSITokenService;
-using LogicAppAdvancedTool.AzureService;
+using LogicAppAdvancedTool.Structures;
 
 namespace LogicAppAdvancedTool
 {
-    partial class Program
+    public static class WhitelistConnectorIP
     {
-        private static void WhitelistConnectorIP(string resourceID)
+        public static void Run(string resourceID)
         {
             string[] resource = resourceID.TrimStart('/').Split('/');
 
@@ -21,7 +21,7 @@ namespace LogicAppAdvancedTool
                 targetResourceInfo.Add(resource[i], resource[i + 1]);
             }
 
-            string providerContent = GetEmbeddedResource("LogicAppAdvancedTool.Resources.RegisteredProvider.json");
+            string providerContent = CommonOperations.GetEmbeddedResource("LogicAppAdvancedTool.Resources.RegisteredProvider.json");
             Dictionary<string, RegisteredProvider> supportedProviders = JsonConvert.DeserializeObject<Dictionary<string, RegisteredProvider>>(providerContent);
             string resourceProvider = targetResourceInfo["providers"];
 

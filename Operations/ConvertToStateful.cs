@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace LogicAppAdvancedTool
 {
-    partial class Program
+    public static class ConvertToStateful
     {
-        private static void ConvertToStateful(string sourceName, string targetName)
+        public static void Run(string sourceName, string targetName)
         {
             TableEntity entity = TableOperations.QueryMainTable($"FlowName eq '{sourceName}'")
                                                         .Where(t => t.GetString("RowKey").Contains("FLOWIDENTIFIER"))
@@ -15,7 +15,7 @@ namespace LogicAppAdvancedTool
 
 
             byte[] definitionCompressed = entity.GetBinary("DefinitionCompressed");
-            string decompressedDefinition = DecompressContent(definitionCompressed);
+            string decompressedDefinition = CommonOperations.DecompressContent(definitionCompressed);
 
             string outputContent = $"{{\"definition\": {decompressedDefinition},\"kind\": \"Stateful\"}}";
             string clonePath = $"C:/home/site/wwwroot/{targetName}";

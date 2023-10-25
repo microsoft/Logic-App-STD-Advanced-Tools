@@ -1,19 +1,10 @@
-﻿using Azure.Data.Tables;
-using Azure.Storage.Blobs;
-using Azure.Storage.Files.Shares;
-using Azure.Storage.Queues;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Net;
 using System.Net.Sockets;
 
-namespace LogicAppAdvancedTool
+namespace LogicAppAdvancedTool.Structures
 {
-    public partial class Program
-    {
-        public class ServiceProviderValidator
+    public class ServiceProviderValidator
         {
             public string Name { get; set; }
             public string DisplayName { get; set; }
@@ -139,4 +130,3 @@ namespace LogicAppAdvancedTool
             NotSupported
         }
     }
-}

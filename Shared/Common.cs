@@ -15,7 +15,7 @@ using System.Reflection;
 
 namespace LogicAppAdvancedTool
 {
-    public partial class Program
+    public static class CommonOperations
     {
         public static void AlertExperimentalFeature()
         {
@@ -42,7 +42,7 @@ namespace LogicAppAdvancedTool
             throw new UserInputException("No table found in Azure Storage Account, please check whether the Logic App Name correct or not.");
         }
 
-        private static string GenerateLogicAppPrefix()
+        public static string GenerateLogicAppPrefix()
         {
             return StoragePrefixGenerator.Generate(AppSettings.LogicAppName.ToLower());
         }
@@ -67,7 +67,7 @@ namespace LogicAppAdvancedTool
             return $"{logicAppPrefix}{workflowPrefix}";
         }
 
-        private static string BackupCurrentSite()
+        public static string BackupCurrentSite()
         {
             string filePath = $"{Directory.GetCurrentDirectory()}/Backup_{DateTime.Now.ToString("yyyyMMddHHmmss")}.zip";
 
@@ -202,7 +202,7 @@ namespace LogicAppAdvancedTool
         #endregion
 
         #region Get embdded resource
-        private static string GetEmbeddedResource(string resourceName)
+        public static string GetEmbeddedResource(string resourceName)
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
             string[] s = assembly.GetManifestResourceNames();
@@ -214,7 +214,7 @@ namespace LogicAppAdvancedTool
         }
         #endregion
 
-        private static void CopyDirectory(string sourceDir, string destinationDir, bool recursive)
+        public static void CopyDirectory(string sourceDir, string destinationDir, bool recursive)
         {
             var dir = new DirectoryInfo(sourceDir);
             if (!dir.Exists)

@@ -1,10 +1,9 @@
-﻿using McMaster.Extensions.CommandLineUtils;
+﻿using LogicAppAdvancedTool.Structures;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using static LogicAppAdvancedTool.Program;
 
 namespace LogicAppAdvancedTool
 {

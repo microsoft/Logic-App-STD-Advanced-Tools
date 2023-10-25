@@ -1,4 +1,5 @@
-﻿using Microsoft.WindowsAzure.ResourceStack.Common.Extensions;
+﻿using LogicAppAdvancedTool.Structures;
+using Microsoft.WindowsAzure.ResourceStack.Common.Extensions;
 using Microsoft.WindowsAzure.ResourceStack.Common.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -8,9 +9,9 @@ using System.Linq;
 
 namespace LogicAppAdvancedTool
 {
-    partial class Program
+    public static class ValidateServiceProviderConnectivity
     {
-        private static void ValidateServiceProviderConnectivity()
+        public static void Run()
         {
             string connectionPath = "C:/home/site/wwwroot/connections.json";
 

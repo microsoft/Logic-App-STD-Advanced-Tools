@@ -9,10 +9,10 @@ using static LogicAppAdvancedTool.MSITokenService;
 
 namespace LogicAppAdvancedTool
 {
-    partial class Program
+    public static class Snapshot
     {
         #region Create a snapshot
-        private static void CreateSnapshot()
+        public static void CreateSnapshot()
         {
             string backupPath = $"Snapshot_{DateTime.Now.ToString("yyyyMMddHHmmss")}";
 
@@ -26,7 +26,7 @@ namespace LogicAppAdvancedTool
             Console.WriteLine("Backing up workflow related files (definition, artifacts, host.json, etc.)");
             string sourceFolder = "C:\\home\\site\\wwwroot";
 
-            CopyDirectory(sourceFolder, backupPath, true);
+            CommonOperations.CopyDirectory(sourceFolder, backupPath, true);
 
             Console.WriteLine("Retrieving appsettings..");
 
@@ -47,7 +47,7 @@ namespace LogicAppAdvancedTool
         #endregion
 
         #region restore from Snapshot
-        private static void RestoreSnapshot(string path)
+        public static void RestoreSnapshot(string path)
         {
             if (!Directory.Exists(path))
             {
@@ -57,7 +57,7 @@ namespace LogicAppAdvancedTool
             Console.WriteLine("Restoring files in wwwroot folder.");
 
             string destinationFolder = "C:\\home\\site\\wwwroot";
-            CopyDirectory(path, destinationFolder, true);
+            CommonOperations.CopyDirectory(path, destinationFolder, true);
 
             Console.WriteLine("All files are restored");
 

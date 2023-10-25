@@ -6,9 +6,9 @@ using System.Linq;
 
 namespace LogicAppAdvancedTool
 {
-    partial class Program
+    public static class Decode
     {
-        private static void Decode(string workflowName, string version)
+        public static void Run(string workflowName, string version)
         {
             List<TableEntity> tableEntities = TableOperations.QueryMainTable($"FlowName eq '{workflowName}' and FlowSequenceId eq '{version}'", new string[] { "DefinitionCompressed", "Kind" });
 
@@ -21,7 +21,7 @@ namespace LogicAppAdvancedTool
 
             byte[] definitionCompressed = entity.GetBinary("DefinitionCompressed");
             string kind = entity.GetString("Kind");
-            string decompressedDefinition = DecompressContent(definitionCompressed);
+            string decompressedDefinition = CommonOperations.DecompressContent(definitionCompressed);
             string definition = $"{{\"definition\": {decompressedDefinition},\"kind\": \"{kind}\"}}";
 
             dynamic jsonObject = JsonConvert.DeserializeObject(definition);

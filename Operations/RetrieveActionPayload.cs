@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 using System.Globalization;
+using LogicAppAdvancedTool.Structures;
 
 namespace LogicAppAdvancedTool
 {
-    partial class Program
+    public static class RetrieveActionPayload
     {
-        private static void RetrieveActionPayload(string workflowName, string date, string actionName)
+        public static void Run(string workflowName, string date, string actionName)
         {
             List<TableEntity> histories = new List<TableEntity>();
 

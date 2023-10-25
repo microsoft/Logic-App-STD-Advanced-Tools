@@ -2,7 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Text;
-using static LogicAppAdvancedTool.Program;
+using LogicAppAdvancedTool.Structures;
 
 namespace LogicAppAdvancedTool
 {
@@ -25,7 +25,7 @@ namespace LogicAppAdvancedTool
         }
         public ContentDecoder(byte[] binaryContent)
         {
-            string rawContent = DecompressContent(binaryContent) ?? string.Empty;
+            string rawContent = CommonOperations.DecompressContent(binaryContent) ?? string.Empty;
 
             if (!String.IsNullOrEmpty(rawContent))
             {
@@ -73,7 +73,7 @@ namespace LogicAppAdvancedTool
 
             if (IsBlobLink && includeBlob)
             {
-                string contentInBlob = GetBlobContent(BlobUri, 1024 * 1024);
+                string contentInBlob = CommonOperations.GetBlobContent(BlobUri, 1024 * 1024);
 
                 if (contentInBlob.StartsWith(_byteOrderMarkUtf8))
                 {

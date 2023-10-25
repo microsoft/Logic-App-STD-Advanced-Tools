@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace LogicAppAdvancedTool
 {
-    partial class Program
+    public static class RestoreSingleWorkflow
     {
-        private static void RestoreSingleWorkflow(string workflowName)
+        public static void Run(string workflowName)
         {
             TableEntity entity = TableOperations.QueryMainTable($"FlowName eq '{workflowName}'", select: new string[] { "FlowName", "ChangedTime", "DefinitionCompressed", "Kind" })
                                         .GroupBy(t => t.GetString("FlowName"))
@@ -25,7 +25,7 @@ namespace LogicAppAdvancedTool
             string flowName = entity.GetString("FlowName");
             byte[] definitionCompressed = entity.GetBinary("DefinitionCompressed");
             string kind = entity.GetString("Kind");
-            string decompressedDefinition = DecompressContent(definitionCompressed);
+            string decompressedDefinition = CommonOperations.DecompressContent(definitionCompressed);
 
             string outputContent = $"{{\"definition\": {decompressedDefinition},\"kind\": \"{kind}\"}}";
 

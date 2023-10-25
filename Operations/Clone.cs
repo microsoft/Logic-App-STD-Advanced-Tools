@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace LogicAppAdvancedTool
 {
-    partial class Program
+    public static class Clone
     {
-        private static void Clone(string sourceName, string targetName, string version)
+        public static void Run(string sourceName, string targetName, string version)
         {
             string identity = string.IsNullOrEmpty(version) ? "FLOWIDENTIFIER" : version.ToUpper();
 
@@ -24,7 +24,7 @@ namespace LogicAppAdvancedTool
 
             byte[] definitionCompressed = entity.GetBinary("DefinitionCompressed");
             string kind = entity.GetString("Kind");
-            string decompressedDefinition = DecompressContent(definitionCompressed);
+            string decompressedDefinition = CommonOperations.DecompressContent(definitionCompressed);
 
             string outputContent = $"{{\"definition\": {decompressedDefinition},\"kind\": \"{kind}\"}}";
             string clonePath = $"C:/home/site/wwwroot/{targetName}";

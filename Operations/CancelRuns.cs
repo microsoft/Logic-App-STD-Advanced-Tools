@@ -5,11 +5,11 @@ using McMaster.Extensions.CommandLineUtils;
 
 namespace LogicAppAdvancedTool
 {
-    partial class Program
+    public static class CancelRuns
     {
-        private static void CancelRuns(string workflowName)
+        public static void Run(string workflowName)
         {
-            AlertExperimentalFeature();
+            CommonOperations.AlertExperimentalFeature();
 
             string query = $"Status eq 'Running' or Status eq 'Waiting'";
             List<TableEntity> inprocessRuns = TableOperations.QueryRunTable(workflowName, query, new string[] { "Status", "PartitionKey", "RowKey" });
@@ -27,7 +27,7 @@ namespace LogicAppAdvancedTool
                 throw new UserCanceledException("Operation Cancelled");
             }
 
-            string prefix = GenerateWorkflowTablePrefix(workflowName);
+            string prefix = CommonOperations.GenerateWorkflowTablePrefix(workflowName);
             string runTableName = $"flow{prefix}runs";
 
             TableClient runTableClient = new TableClient(AppSettings.ConnectionString, runTableName);

@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 using System.Globalization;
+using LogicAppAdvancedTool.Structures;
 
 namespace LogicAppAdvancedTool
 {
-    partial class Program
+    public static class SearchInHistory
     {
-        private static void SearchInHistory(string workflowName, string date, string keyword, bool includeBlob = false, bool onlyFailures = false)
+        public static void Run(string workflowName, string date, string keyword, bool includeBlob = false, bool onlyFailures = false)
         {
             List<TableEntity> tableEntities = new List<TableEntity>();
 

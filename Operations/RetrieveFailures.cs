@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
+using LogicAppAdvancedTool.Structures;
 
 namespace LogicAppAdvancedTool
 {
-    partial class Program
+    public static class RetrieveFailures
     {
-        private static void RetrieveFailuresByDate(string workflowName, string date)
+        public static void RetrieveFailuresByDate(string workflowName, string date)
         {
             List<TableEntity> tableEntities = TableOperations.QueryActionTable(workflowName, date, "Status eq 'Failed'");
 
@@ -18,7 +19,7 @@ namespace LogicAppAdvancedTool
             SaveFailureLogs(tableEntities, fileName);
         }
 
-        private static void RetrieveFailuresByRun(string workflowName, string runID)
+        public static void RetrieveFailuresByRun(string workflowName, string runID)
         {
             TableEntity runEntity = TableOperations.QueryRunTable(workflowName, $"FlowRunSequenceId eq '{runID}'").First();
 

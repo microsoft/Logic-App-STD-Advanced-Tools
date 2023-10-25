@@ -3,7 +3,6 @@ using Azure.Data.Tables;
 using Azure.Data.Tables.Models;
 using System.Collections.Generic;
 using System.Linq;
-using static LogicAppAdvancedTool.Program;
 
 namespace LogicAppAdvancedTool
 {
@@ -43,28 +42,28 @@ namespace LogicAppAdvancedTool
 
         public static List<TableEntity> QueryHistoryTable(string workflowName, string filter, string[] select = null)
         {
-            string historyTableName = $"flow{GenerateWorkflowTablePrefix(workflowName)}histories";
+            string historyTableName = $"flow{CommonOperations.GenerateWorkflowTablePrefix(workflowName)}histories";
 
             return QueryTable(historyTableName, filter, select);
         }
 
         public static List<TableEntity> QueryRunTable(string workflowName, string filter, string[] select = null)
         {
-            string runTableName = $"flow{GenerateWorkflowTablePrefix(workflowName)}runs";
+            string runTableName = $"flow{CommonOperations.GenerateWorkflowTablePrefix(workflowName)}runs";
 
             return QueryTable(runTableName, filter, select);
         }
 
         public static List<TableEntity> QueryActionTable(string workflowName, string date, string filter, string[] select = null)
         { 
-            string actionTableName = $"flow{GenerateWorkflowTablePrefix(workflowName)}{date}t000000zactions";
+            string actionTableName = $"flow{CommonOperations.GenerateWorkflowTablePrefix(workflowName)}{date}t000000zactions";
 
             return QueryTable(actionTableName, filter, select);
         }
 
         public static List<TableEntity> QueryWorkflowTable(string workflowName, string filter, string[] select = null)
         { 
-            string workflowTableName = $"flow{GenerateWorkflowTablePrefix(workflowName)}flows";
+            string workflowTableName = $"flow{CommonOperations.GenerateWorkflowTablePrefix(workflowName)}flows";
 
             return QueryTable(workflowTableName, filter, select);
         }

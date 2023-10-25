@@ -8,9 +8,9 @@ using System.Globalization;
 
 namespace LogicAppAdvancedTool
 {
-    partial class Program
+    public static class CleanUpContainers
     {
-        public static void CleanUpContainers(string workflowName, string date)
+        public static void Run(string workflowName, string date)
         {
             int targetDate = Int32.Parse(date);
             string formattedDate = DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture).ToString("yyyy-MM-dd");
@@ -18,11 +18,11 @@ namespace LogicAppAdvancedTool
             string containerPrefix;
             if (string.IsNullOrEmpty(workflowName))
             {
-                containerPrefix = GenerateLogicAppPrefix();
+                containerPrefix = CommonOperations.GenerateLogicAppPrefix();
             }
             else
             {
-                containerPrefix = GenerateWorkflowTablePrefix(workflowName);
+                containerPrefix = CommonOperations.GenerateWorkflowTablePrefix(workflowName);
             }
 
             containerPrefix = $"flow{containerPrefix}";

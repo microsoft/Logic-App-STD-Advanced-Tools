@@ -52,7 +52,7 @@ namespace LogicAppAdvancedTool
 
                 stream.Position = 0;
 
-                return Program.DecompressContent(stream.ToArray());
+                return CommonOperations.DecompressContent(stream.ToArray());
             }
 
             return null;

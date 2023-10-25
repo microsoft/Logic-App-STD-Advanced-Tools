@@ -7,9 +7,9 @@ using System.Linq;
 
 namespace LogicAppAdvancedTool
 {
-    partial class Program
+    public static class RestoreAll
     {
-        private static void RestoreAll()
+        public static void Run()
         {
             string confirmationMessage = "WARNING!!!\r\nThis operation will restore all the deleted workflows, if there's any invalid workflows, it might cause unexpected behavior on Logic App runtime.\r\nBe cautuion if you are running this command in PROD environment\r\nPlease input for confirmation:";
             if (!Prompt.GetYesNo(confirmationMessage, false, ConsoleColor.Red))
@@ -17,7 +17,7 @@ namespace LogicAppAdvancedTool
                 throw new UserCanceledException("Operation Cancelled");
             }
 
-            string backupPath = BackupCurrentSite();
+            string backupPath = CommonOperations.BackupCurrentSite();
             Console.WriteLine($"Backup current workflows, you can find in path: {backupPath}");
 
             List<TableEntity> entities = TableOperations.QueryMainTable(null, select: new string[] { "FlowName", "ChangedTime", "DefinitionCompressed", "Kind" })
@@ -32,7 +32,7 @@ namespace LogicAppAdvancedTool
                 string flowName = entity.GetString("FlowName");
                 byte[] definitionCompressed = entity.GetBinary("DefinitionCompressed");
                 string kind = entity.GetString("Kind");
-                string decompressedDefinition = DecompressContent(definitionCompressed);
+                string decompressedDefinition = CommonOperations.DecompressContent(definitionCompressed);
 
                 string outputContent = $"{{\"definition\": {decompressedDefinition},\"kind\": \"{kind}\"}}";
 

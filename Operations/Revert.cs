@@ -6,9 +6,9 @@ using System.IO;
 
 namespace LogicAppAdvancedTool
 {
-    partial class Program
+    public static class RevertVersion
     {
-        private static void RevertVersion(string workflowName, string version)
+        public static void Run(string workflowName, string version)
         {
             List<TableEntity> tableEntities = TableOperations.QueryMainTable($"FlowSequenceId eq '{version}'");
 
@@ -26,7 +26,7 @@ namespace LogicAppAdvancedTool
             TableEntity entity = tableEntities[0];
             byte[] definitionCompressed = entity.GetBinary("DefinitionCompressed");
             string kind = entity.GetString("Kind");
-            string decompressedDefinition = DecompressContent(definitionCompressed);
+            string decompressedDefinition = CommonOperations.DecompressContent(definitionCompressed);
             string definition = $"{{\"definition\": {decompressedDefinition},\"kind\": \"{kind}\"}}";
 
             string definitionTemplatePath = $"C:/home/site/wwwroot/{workflowName}/workflow.json";

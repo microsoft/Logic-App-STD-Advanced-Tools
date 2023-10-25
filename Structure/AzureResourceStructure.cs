@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
-namespace LogicAppAdvancedTool.AzureService
+namespace LogicAppAdvancedTool.Structures
 {
     public class IPRule
     {
