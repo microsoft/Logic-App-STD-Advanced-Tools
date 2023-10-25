@@ -1,9 +1,4 @@
-﻿using Azure.Data.Tables;
-using Newtonsoft.Json;
-using System;
-using System.Data;
-
-namespace LogicAppAdvancedTool.Structures
+﻿namespace LogicAppAdvancedTool.Structures
 {
     public class WorkflowTemplate
     {

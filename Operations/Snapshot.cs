@@ -1,9 +1,6 @@
-﻿using Azure.Data.Tables;
-using McMaster.Extensions.CommandLineUtils;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using LogicAppAdvancedTool.Structures;
 

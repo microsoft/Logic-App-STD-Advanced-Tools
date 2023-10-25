@@ -1,7 +1,4 @@
-﻿using Azure.Data.Tables;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using Newtonsoft.Json;
 
 namespace LogicAppAdvancedTool.Structures
 {
@@ -28,6 +25,11 @@ namespace LogicAppAdvancedTool.Structures
             }
 
             return this.value == rule.value;
+        }
+
+        public override int GetHashCode()
+        {
+            return value.GetHashCode();
         }
 
         public string value { get; set; }

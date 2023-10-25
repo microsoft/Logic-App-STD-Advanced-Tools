@@ -1,9 +1,7 @@
 ﻿using LogicAppAdvancedTool.Structures;
-using Microsoft.WindowsAzure.ResourceStack.Common.Extensions;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 
 namespace LogicAppAdvancedTool

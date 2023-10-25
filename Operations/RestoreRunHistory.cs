@@ -1,11 +1,7 @@
 ﻿using Azure.Data.Tables;
 using System;
 using System.Collections.Generic;
-using McMaster.Extensions.CommandLineUtils;
 using System.Linq;
-using System.Reflection;
-using LogicAppAdvancedTool.Properties;
-using System.Text;
 using System.IO;
 using System.Threading;
 
