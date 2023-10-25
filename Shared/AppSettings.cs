@@ -63,6 +63,14 @@ namespace LogicAppAdvancedTool
             }
         }
 
+        public static string RootFolder
+        {
+            get
+            {
+                return "C:\\home\\site\\wwwroot";
+            }
+        }
+
         public static string GetRemoteAppsettings()
         {
             string Url = $"https://management.azure.com/subscriptions/{SubscriptionID}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{LogicAppName}/config/appsettings/list?api-version=2022-03-01";

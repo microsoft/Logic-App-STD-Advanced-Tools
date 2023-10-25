@@ -2,7 +2,7 @@
   "profiles": {
     "LogicAppAdvancedTool": {
       "commandName": "Project",
-      "commandLineArgs": "BatchResubmit -wf Test -st 2023-09-25 -et 2023-09-26"
+      "commandLineArgs": "ScanConnections"
     }
   }
 }

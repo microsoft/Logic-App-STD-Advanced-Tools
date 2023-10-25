@@ -701,6 +701,21 @@ namespace LogicAppAdvancedTool
                 });
                 #endregion
 
+                #region Scan unused Service Providers and API connection of all existing workflows
+                app.Command("ScanConnections", c => {
+
+                    c.HelpOption("-?");
+                    c.Description = "Scan all the api connections and service providers not used in all workflows.";
+
+                    c.OnExecute(() =>
+                    {
+                        ScanConnections.Run();
+
+                        return 0;
+                    });
+                });
+                #endregion
+
                 #region Internal tools
                 app.Command("Tools", c => {
 
@@ -770,6 +785,7 @@ namespace LogicAppAdvancedTool
 
                 //TODO:
                 //feature: grab Kudu log and filter for errors
+                //feature: scan unused service providers
 
                 app.Execute(args);
             }

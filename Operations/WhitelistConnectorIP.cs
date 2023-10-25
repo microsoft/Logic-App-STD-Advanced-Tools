@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
-using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Microsoft.WindowsAzure.ResourceStack.Common.Extensions;
 using System.Linq;
 using static LogicAppAdvancedTool.MSITokenService;
-using System.Text;
 using LogicAppAdvancedTool.AzureService;
-using Azure;
-using Azure.Core.Pipeline;
 
 namespace LogicAppAdvancedTool
 {

@@ -23,17 +23,24 @@ namespace LogicAppAdvancedTool
 
             Directory.CreateDirectory(backupPath);
 
-            Console.WriteLine("Retrieving appsettings..");
-
-            string appSettings = AppSettings.GetRemoteAppsettings();
-            File.AppendAllText($"{backupPath}/appsettings.json", appSettings);
-
-            Console.WriteLine("Appsettings backup successfully.");
-
             Console.WriteLine("Backing up workflow related files (definition, artifacts, host.json, etc.)");
             string sourceFolder = "C:\\home\\site\\wwwroot";
 
             CopyDirectory(sourceFolder, backupPath, true);
+
+            Console.WriteLine("Retrieving appsettings..");
+
+            try
+            {
+                string appSettings = AppSettings.GetRemoteAppsettings();
+                File.AppendAllText($"{backupPath}/appsettings.json", appSettings);
+
+                Console.WriteLine("Appsettings backup successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed to retrieve appsettings, only wwwroot folder will be backup.");
+            }
 
             Console.WriteLine($"Snapshot created, you can review all files in folder {backupPath}");
         }

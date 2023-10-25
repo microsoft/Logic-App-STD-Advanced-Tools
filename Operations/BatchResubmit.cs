@@ -1,12 +1,9 @@
-﻿using Azure.Data.Tables;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using McMaster.Extensions.CommandLineUtils;
 using System.Net;
 using System.IO;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Microsoft.WindowsAzure.ResourceStack.Common.Extensions;
 using System.Threading;
 using System.Linq;
 using static LogicAppAdvancedTool.MSITokenService;
