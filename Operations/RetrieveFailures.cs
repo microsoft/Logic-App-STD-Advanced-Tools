@@ -6,7 +6,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using LogicAppAdvancedTool.Structures;
 
-namespace LogicAppAdvancedTool
+namespace LogicAppAdvancedTool.Operations
 {
     public static class RetrieveFailures
     {

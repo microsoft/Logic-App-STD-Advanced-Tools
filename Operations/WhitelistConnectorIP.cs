@@ -4,10 +4,9 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Microsoft.WindowsAzure.ResourceStack.Common.Extensions;
 using System.Linq;
-using static LogicAppAdvancedTool.MSITokenService;
 using LogicAppAdvancedTool.Structures;
 
-namespace LogicAppAdvancedTool
+namespace LogicAppAdvancedTool.Operations
 {
     public static class WhitelistConnectorIP
     {
@@ -33,7 +32,7 @@ namespace LogicAppAdvancedTool
 
             RegisteredProvider resourceProviderInfo = supportedProviders[resourceProvider];
 
-            MSIToken token = RetrieveToken("https://management.azure.com");
+            MSIToken token = MSITokenService.RetrieveToken("https://management.azure.com");
 
             string resourceUrl = $"https://management.azure.com{resourceID}{resourceProviderInfo.UrlParameter ?? String.Empty}?api-version={resourceProviderInfo.APIVersion}";
             string validateResponse = HttpOperations.HttpGetWithToken(resourceUrl, "GET", token.access_token, "Validate resource failed");

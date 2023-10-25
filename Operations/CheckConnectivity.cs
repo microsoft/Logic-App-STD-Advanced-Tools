@@ -5,15 +5,15 @@ using System.Net.Sockets;
 using Azure.Storage.Queues;
 using Azure.Storage.Files.Shares;
 using Azure.Storage.Blobs;
-using static LogicAppAdvancedTool.CommonOperations;
+using LogicAppAdvancedTool.Structures;
 
-namespace LogicAppAdvancedTool
+namespace LogicAppAdvancedTool.Operations
 {
     public static class CheckConnectivity
     {
         public static void Run()
         {
-            ConnectionInfo connectionInfo = new ConnectionInfo(AppSettings.ConnectionString);
+            StorageConnectionInfo connectionInfo = new StorageConnectionInfo(AppSettings.ConnectionString);
             ConnectionValidator connectionValidator = new ConnectionValidator(connectionInfo);
 
             List<StorageValidationInfo> results = connectionValidator.Validate();
@@ -36,9 +36,9 @@ namespace LogicAppAdvancedTool
         public class ConnectionValidator
         {
             private string LogicAppName;
-            private ConnectionInfo ConnectionInfo;
+            private StorageConnectionInfo ConnectionInfo;
             private List<StorageValidationInfo> Results;
-            public ConnectionValidator(ConnectionInfo connectionInfo)
+            public ConnectionValidator(StorageConnectionInfo connectionInfo)
             {
                 ConnectionInfo = connectionInfo;
                 LogicAppName = AppSettings.LogicAppName;

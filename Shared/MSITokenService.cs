@@ -1,4 +1,5 @@
-﻿using Microsoft.WindowsAzure.ResourceStack.Common.Extensions;
+﻿using LogicAppAdvancedTool.Structures;
+using Microsoft.WindowsAzure.ResourceStack.Common.Extensions;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Net;
 
 namespace LogicAppAdvancedTool
 {
-    public class MSITokenService
+    public static class MSITokenService
     {
         public static MSIToken RetrieveToken(string resource)
         {
@@ -68,17 +69,6 @@ namespace LogicAppAdvancedTool
                 token = RetrieveToken("https://management.azure.com");
             }
 #endif
-        }
-
-        public class MSIToken
-        { 
-            public string access_token { get; set; }
-            public string expires_on { get; set; }
-            public string resource { get; set; }
-            public string token_type { get; set; }
-            public string client_id { get; set; }
-
-            public MSIToken() { }
         }
     }
 }

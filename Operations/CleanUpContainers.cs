@@ -6,7 +6,7 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using System.Globalization;
 
-namespace LogicAppAdvancedTool
+namespace LogicAppAdvancedTool.Operations
 {
     public static class CleanUpContainers
     {

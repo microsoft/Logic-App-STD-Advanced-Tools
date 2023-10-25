@@ -7,7 +7,7 @@ using System.Linq;
 using System.Globalization;
 using System.Text.Encodings.Web;
 
-namespace LogicAppAdvancedTool
+namespace LogicAppAdvancedTool.Operations
 {
     public static class GenerateRunHistoryUrl
     {

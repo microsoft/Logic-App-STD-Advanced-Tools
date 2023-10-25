@@ -4,6 +4,7 @@ using Azure.Data.Tables.Models;
 using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using LogicAppAdvancedTool.Structures;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.WindowsAzure.ResourceStack.Common.Utilities;
 using System;
@@ -112,7 +113,7 @@ namespace LogicAppAdvancedTool
         public static string GetBlobContent(string blobUri, int contentSize = -1)
         {
             Uri uri = new Uri(blobUri);
-            ConnectionInfo info = new ConnectionInfo(AppSettings.ConnectionString);
+            StorageConnectionInfo info = new StorageConnectionInfo(AppSettings.ConnectionString);
             StorageSharedKeyCredential cred = new StorageSharedKeyCredential(info.AccountName, info.AccountKey);
 
             BlobClient client = new BlobClient(uri, cred);
@@ -136,67 +137,6 @@ namespace LogicAppAdvancedTool
                 byte[] b = br.ReadBytes((int)contentStream.Length);
 
                 return DecompressContent(b);
-            }
-        }
-
-        public class ConnectionInfo
-        {
-            private Dictionary<string, string> CSInfo;
-            public ConnectionInfo(string connectionString)
-            {
-                CSInfo = new Dictionary<string, string>();
-
-                string[] infos = connectionString.Split(";");
-                foreach (string info in infos)
-                {
-                    int index = info.IndexOf('=');
-                    string key = info.Substring(0, index);
-                    string value = info.Substring(index + 1, info.Length - index - 1);
-
-                    CSInfo.Add(key, value);
-                }
-
-                BlobEndpoint = $"{AccountName}.blob.{EndpointSuffix}";
-                FileEndpoint = $"{AccountName}.file.{EndpointSuffix}";
-                QueueEndpoint = $"{AccountName}.queue.{EndpointSuffix}";
-                TableEndpoint = $"{AccountName}.table.{EndpointSuffix}";
-            }
-
-            public string BlobEndpoint { get; private set; }
-            public string FileEndpoint { get; private set; }
-            public string QueueEndpoint { get; private set; }
-            public string TableEndpoint { get; private set; }
-
-            public string DefaultEndpointsProtocol
-            {
-                get
-                {
-                    return CSInfo["DefaultEndpointsProtocol"];
-                }
-            }
-
-            public string AccountName
-            {
-                get
-                {
-                    return CSInfo["AccountName"];
-                }
-            }
-
-            public string AccountKey
-            {
-                get
-                {
-                    return CSInfo["AccountKey"];
-                }
-            }
-
-            public string EndpointSuffix
-            {
-                get
-                {
-                    return CSInfo["EndpointSuffix"];
-                }
             }
         }
         #endregion

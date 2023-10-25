@@ -2,7 +2,7 @@
 using Azure.Storage.Queues;
 using McMaster.Extensions.CommandLineUtils;
 
-namespace LogicAppAdvancedTool
+namespace LogicAppAdvancedTool.Operations
 {
     public static class ClearJobQueue
     {

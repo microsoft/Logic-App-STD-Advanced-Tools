@@ -5,7 +5,7 @@ using McMaster.Extensions.CommandLineUtils;
 using System.Globalization;
 using Azure.Data.Tables;
 
-namespace LogicAppAdvancedTool
+namespace LogicAppAdvancedTool.Operations
 {
     public static class CleanUpTables
     {

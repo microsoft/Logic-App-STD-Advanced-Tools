@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Linq;
 
-namespace LogicAppAdvancedTool
+namespace LogicAppAdvancedTool.Operations
 {
     public static class ConvertToStateful
     {

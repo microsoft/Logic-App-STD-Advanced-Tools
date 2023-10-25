@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using Azure;
 
-namespace LogicAppAdvancedTool
+namespace LogicAppAdvancedTool.Operations
 {
     public static class CloudSync
     {

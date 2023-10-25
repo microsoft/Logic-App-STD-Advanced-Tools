@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using McMaster.Extensions.CommandLineUtils;
 
-namespace LogicAppAdvancedTool
+namespace LogicAppAdvancedTool.Operations
 {
     public static class CancelRuns
     {

@@ -9,7 +9,7 @@ using System.Text;
 using System.IO;
 using System.Threading;
 
-namespace LogicAppAdvancedTool
+namespace LogicAppAdvancedTool.Operations
 {
     public static class RestoreRunHistory
     {

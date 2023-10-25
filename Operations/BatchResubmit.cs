@@ -6,9 +6,9 @@ using System.IO;
 using Newtonsoft.Json.Linq;
 using System.Threading;
 using System.Linq;
-using static LogicAppAdvancedTool.MSITokenService;
+using LogicAppAdvancedTool.Structures;
 
-namespace LogicAppAdvancedTool
+namespace LogicAppAdvancedTool.Operations
 {
     public static class BatchResubmit
     {
@@ -18,7 +18,7 @@ namespace LogicAppAdvancedTool
             string filter = $"$filter=status eq 'Failed' and startTime gt {startTime} and startTime lt {endTime}";
 
             string listFailedRunUrl = $"{baseUrl}/runs?api-version=2018-11-01&{filter}";
-            MSIToken token = RetrieveToken("https://management.azure.com");
+            MSIToken token = MSITokenService.RetrieveToken("https://management.azure.com");
             Console.WriteLine("Managed Identity token retrieved");
 
             List<RunInfo> failedRuns = new List<RunInfo>();
@@ -51,7 +51,7 @@ namespace LogicAppAdvancedTool
 
             while (!String.IsNullOrEmpty(listFailedRunUrl))
             {
-                VerifyToken(ref token);
+                MSITokenService.VerifyToken(ref token);
 
                 string content = HttpOperations.HttpGetWithToken(listFailedRunUrl, "GET", token.access_token, "Failed to retrieve failed runs");
                 JObject rawResponse = JObject.Parse(content);
@@ -98,7 +98,7 @@ namespace LogicAppAdvancedTool
 
                     try
                     {
-                        VerifyToken(ref token);
+                        MSITokenService.VerifyToken(ref token);
 
                         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(resubmitUrl);
                         request.Method = "POST";

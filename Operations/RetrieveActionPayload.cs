@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using System.Globalization;
 using LogicAppAdvancedTool.Structures;
 
-namespace LogicAppAdvancedTool
+namespace LogicAppAdvancedTool.Operations
 {
     public static class RetrieveActionPayload
     {
