@@ -1,3 +1,7 @@
+2023-10-25
+1. New command "ScanConnections" added which will list all unused connections (API connection and Service Providers) in connections.json.
+2. Fixed a bug when Logic App MI doesn't have Logic App Contributor role, "Snapshot" command will not backup any files. Now if MI doesn't have permission, then expcet Appsettings, all other files will be backup.
+
 2023-09-19
 1. Add a new command "Snapshot" which can create a snapshot or restore from a snapshot. Appsettings and all the files under wwwroot folder can be backup and restore. API connection resources will not be backup, if the workflow was deleted, the workflow itself can be restored, but run history will lost.
 
