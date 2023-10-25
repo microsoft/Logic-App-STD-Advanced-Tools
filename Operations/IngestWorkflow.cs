@@ -1,4 +1,5 @@
 ﻿using Azure.Data.Tables;
+using LogicAppAdvancedTool.Structures;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
