@@ -82,5 +82,19 @@ namespace LogicAppAdvancedTool
 
             return appSettings;
         }
+
+        public static void UpdateRemoteAppsettings(string appsettingContent)
+        {
+            string appsettingsUrl = $"https://management.azure.com/subscriptions/{SubscriptionID}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{LogicAppName}/config/appsettings/list?api-version=2022-03-01";
+            MSIToken token = MSITokenService.RetrieveToken("https://management.azure.com");
+            string response = HttpOperations.HttpGetWithToken(appsettingsUrl, "POST", token.access_token, $"Cannot retrieve appsettings for {LogicAppName}");
+            JToken appSettingRuntime = JObject.Parse(response);
+
+            appSettingRuntime["properties"] = JObject.Parse(appsettingContent);
+
+            string updateUrl = $"https://management.azure.com/subscriptions/{AppSettings.SubscriptionID}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{LogicAppName}/config/appsettings?api-version=2022-03-01";
+            string updatedPayload = JsonConvert.SerializeObject(appSettingRuntime);
+            HttpOperations.HttpSendWithToken(updateUrl, "PUT", updatedPayload, token.access_token, $"Failed to restore appsettings.");
+        }
     }
 }

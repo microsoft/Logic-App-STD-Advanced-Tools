@@ -67,18 +67,9 @@ namespace LogicAppAdvancedTool.Operations
                 throw new ExpectedException("Warning!!! Missing appsettings.json, appsetting won't be restored.");
             }
 
-            string appsettingsUrl = $"https://management.azure.com/subscriptions/{AppSettings.SubscriptionID}/resourceGroups/{AppSettings.ResourceGroup}/providers/Microsoft.Web/sites/{AppSettings.LogicAppName}/config/appsettings/list?api-version=2022-03-01";
-            MSIToken token = MSITokenService.RetrieveToken("https://management.azure.com");
-            string response = HttpOperations.HttpGetWithToken(appsettingsUrl, "POST", token.access_token, $"Cannot retrieve appsettings for {AppSettings.LogicAppName}");
-            JToken appSettingRuntime = JObject.Parse(response);
+            string appSettingsSnapshot = File.ReadAllText(appSettingPath);
 
-            JToken appSettingsSnapshot = JObject.Parse(File.ReadAllText(appSettingPath));
-
-            appSettingRuntime["properties"] = appSettingsSnapshot;
-
-            string updateUrl = $"https://management.azure.com/subscriptions/{AppSettings.SubscriptionID}/resourceGroups/{AppSettings.ResourceGroup}/providers/Microsoft.Web/sites/{AppSettings.LogicAppName}/config/appsettings?api-version=2022-03-01";
-            string updatedPayload = JsonConvert.SerializeObject(appSettingRuntime);
-            HttpOperations.HttpSendWithToken(updateUrl, "PUT", updatedPayload, token.access_token, $"Failed to restore appsettings.");
+            AppSettings.UpdateRemoteAppsettings(appSettingsSnapshot);
 
             Console.WriteLine($"Restore successfully, Logic App will restart automatically to refresh appsettings.");
         }

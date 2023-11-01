@@ -1,4 +1,5 @@
 ﻿using LogicAppAdvancedTool.Structures;
+using McMaster.Extensions.CommandLineUtils;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -24,8 +25,8 @@ namespace LogicAppAdvancedTool.Operations
 
             List<WorkflowConnection> allConnections = DecodeConnection();
 
-            List<WorkflowConnection> UnusedConections = allConnections.Where(s => !connInWorkflows.Contains(s)).ToList();
-            if (UnusedConections.Count == 0)
+            List<WorkflowConnection> unusedConections = allConnections.Where(s => !connInWorkflows.Contains(s)).ToList();
+            if (unusedConections.Count == 0)
             {
                 Console.WriteLine("There's no unsed connections.");
                 return;
@@ -34,44 +35,73 @@ namespace LogicAppAdvancedTool.Operations
             Console.WriteLine("Following connections are not used in your workflows");
 
             ConsoleTable table = new ConsoleTable("Connection Type", "Connection Name");
-            foreach (WorkflowConnection wc in UnusedConections)
+            foreach (WorkflowConnection wc in unusedConections)
             {
                 table.AddRow(wc.ConnectionType, wc.ConnectionName);
             }
 
             table.Print();
-        }
-        
-        private static List<WorkflowConnection> RetrieveConnectionsInWorkflows()
-        {
-            string[] workflowPath = Directory.GetDirectories(AppSettings.RootFolder);
 
-            List<WorkflowConnection> connections = new List<WorkflowConnection>();
-
-            Console.WriteLine("Retrieving API connections and Service Providers from all existing workflows.");
-
-            foreach (string path in workflowPath)
+            string confirmationMessage = $"Whether you would like to remove those data in connections.json and appsettings?\r\nPlease input for confirmation:";
+            if (!Prompt.GetYesNo(confirmationMessage, false, ConsoleColor.Red))
             {
-                string definitionPath = $"{path}/workflow.json";
-
-                if (!File.Exists(definitionPath))
-                {
-                    continue;       //no definition file found, skip
-                }
-
-                string definition = File.ReadAllText(definitionPath);
-
-                JToken def = JObject.Parse(definition)["definition"];
-                JToken trigger = def?["triggers"];
-                connections.AddRange(ParseActions(trigger));
-
-                JToken actions = def?["actions"];
-                connections.AddRange(ParseActions(actions));
+                throw new UserCanceledException("Operation Cancelled");
             }
 
-            connections = connections.Distinct().ToList();
+            Console.WriteLine("Start to clean up...");
 
-            return connections;
+            CleanUpConnections(unusedConections);
+        }
+
+        private static void CleanUpConnections(List<WorkflowConnection> unusedConnections)
+        {
+            string connectionsDefinitionPath = $"{AppSettings.RootFolder}\\connections.json";
+            string connContent = File.ReadAllText(connectionsDefinitionPath);
+            JToken connJToken = JObject.Parse(connContent);
+
+            JToken apiConnections = connJToken?["managedApiConnections"];
+            List<WorkflowConnection> unusedAPI = unusedConnections.Where( s => s.ConnectionType == "ApiConnection").ToList();
+
+            foreach (WorkflowConnection conn in unusedAPI)
+            {
+                JToken token = apiConnections?[conn.ConnectionName];
+                token.Parent.Remove();
+            }
+
+            JToken spConnections = connJToken?["serviceProviderConnections"];
+            List<string> unusedAppsettings = new List<string>();
+            List<WorkflowConnection> unusedSP = unusedConnections.Where( s => s.ConnectionType == "ServiceProvider").ToList();
+            foreach (WorkflowConnection conn in unusedSP)
+            { 
+                JToken token = spConnections?[conn.ConnectionName];
+
+                foreach (JToken parameterValue in token?["parameterValues"])
+                { 
+                    string param = ((JProperty)parameterValue).Value.ToString();
+
+                    if (param.Contains("@appsetting"))
+                    {
+                        string settingName = param.Replace("@appsetting('", "").Replace("')", "");
+                        unusedAppsettings.Add(settingName);
+                    }
+                }
+
+                token.Parent.Remove();
+            }
+
+            string appSettings = AppSettings.GetRemoteAppsettings();
+            JToken appsettingToken = JObject.Parse(appSettings);
+
+            foreach (string appsettingName in unusedAppsettings)
+            {
+                appsettingToken[appsettingName].Parent.Remove();
+            }
+
+            string appsettingContent = appsettingToken.ToString();
+
+            AppSettings.UpdateRemoteAppsettings(appsettingContent);
+
+            Console.WriteLine($"All data related to unused API connections and Service Providers have been cleaned up.");
         }
 
         private static List<WorkflowConnection> DecodeConnection()
@@ -101,6 +131,38 @@ namespace LogicAppAdvancedTool.Operations
             }
 
             Console.WriteLine($"{connections.Count} connections found in connections.json.");
+
+            return connections;
+        }
+
+        private static List<WorkflowConnection> RetrieveConnectionsInWorkflows()
+        {
+            string[] workflowPath = Directory.GetDirectories(AppSettings.RootFolder);
+
+            List<WorkflowConnection> connections = new List<WorkflowConnection>();
+
+            Console.WriteLine("Retrieving API connections and Service Providers from all existing workflows.");
+
+            foreach (string path in workflowPath)
+            {
+                string definitionPath = $"{path}/workflow.json";
+
+                if (!File.Exists(definitionPath))
+                {
+                    continue;       //no definition file found, skip
+                }
+
+                string definition = File.ReadAllText(definitionPath);
+
+                JToken def = JObject.Parse(definition)["definition"];
+                JToken trigger = def?["triggers"];
+                connections.AddRange(ParseActions(trigger));
+
+                JToken actions = def?["actions"];
+                connections.AddRange(ParseActions(actions));
+            }
+
+            connections = connections.Distinct().ToList();
 
             return connections;
         }
