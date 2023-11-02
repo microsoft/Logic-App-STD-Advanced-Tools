@@ -53,7 +53,7 @@ namespace LogicAppAdvancedTool.Operations
             {
                 MSITokenService.VerifyToken(ref token);
 
-                string content = HttpOperations.HttpGetWithToken(listFailedRunUrl, "GET", token.access_token, "Failed to retrieve failed runs");
+                string content = HttpOperations.HttpRequestWithToken(listFailedRunUrl, "GET", null, token.access_token, "Failed to retrieve failed runs");
                 JObject rawResponse = JObject.Parse(content);
                 List<JToken> runs = rawResponse["value"].ToObject<List<JToken>>();
 

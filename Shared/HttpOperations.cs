@@ -1,71 +1,62 @@
-﻿using System.IO;
+﻿using Azure.Core;
+using Microsoft.WindowsAzure.ResourceStack.Common.Services.ADAuthentication;
+using System;
+using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Text;
+using System.Threading;
 
 namespace LogicAppAdvancedTool
 {
     public class HttpOperations
     {
-        public static string HttpGetWithToken(string Url, string method, string token, string exceptionMessage)
+        public static string HttpRequestWithToken(string url, string method, string content, string token, string exceptionMessage)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Url);
-            request.Method = method;
-            request.Headers.Clear();
-            request.Headers.Add("Authorization", $"Bearer {token}");
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Clear();
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
 
-            try
-            {
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            HttpMethod httpMethod;
 
-                using (StreamReader sr = new StreamReader(response.GetResponseStream()))
-                { 
-                    return sr.ReadToEnd();
-                }
+            switch (method)
+            { 
+                case "GET":
+                    httpMethod = HttpMethod.Get; 
+                    break;
+                case "POST":
+                    httpMethod = HttpMethod.Post;
+                    break;
+                case "PUT":
+                    httpMethod = HttpMethod.Put;
+                    break;
+                case "DELETE":
+                    httpMethod = HttpMethod.Delete;
+                    break;
+                case "PATCH":
+                    httpMethod = HttpMethod.Patch;
+                    break;
+                default:
+                    throw new ArgumentException("Invalid Http Method");
             }
-            catch (WebException ex)
+
+            HttpRequestMessage requestMessage = new HttpRequestMessage(httpMethod, url);
+
+            if (content != null)
             {
-                HttpWebResponse response = ex.Response as HttpWebResponse;
-
-                string errorResponse;
-                using (StreamReader sr = new StreamReader(response.GetResponseStream()))
-                {
-                    errorResponse = sr.ReadToEnd();
-                }
-
-                throw new ExpectedException($"{exceptionMessage}, status code {response.StatusCode}\r\nDetail message:{errorResponse}");
+                requestMessage.Content = new StringContent(content, Encoding.UTF8, "application/json");
             }
-        }
 
-        public static void HttpSendWithToken(string Url, string method, string payload, string token, string exceptionMessage)
-        {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Url);
-            request.Method = method;
-            request.Headers.Clear();
-            request.Headers.Add("Authorization", $"Bearer {token}");
-            request.ContentType = "application/json";
+            HttpResponseMessage response = client.Send(requestMessage);
 
-            try
+            string responseMessage = response.Content.ReadAsStringAsync().Result;
+
+            if (!response.IsSuccessStatusCode)
             {
-                byte[] data = Encoding.UTF8.GetBytes(payload);
-
-                Stream requestStream = request.GetRequestStream();
-                requestStream.Write(data, 0, data.Length);
-                requestStream.Close();
-
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                throw new ExpectedException($"{exceptionMessage}, status code {response.StatusCode}\r\nDetail message:{responseMessage}");
             }
-            catch (WebException ex)
-            {
-                HttpWebResponse response = ex.Response as HttpWebResponse;
 
-                string errorResponse;
-                using (StreamReader sr = new StreamReader(response.GetResponseStream()))
-                {
-                    errorResponse = sr.ReadToEnd();
-                }
-
-                throw new ExpectedException($"{exceptionMessage}, status code {response.StatusCode}\r\nDetail message:{errorResponse}");
-            }
+            return responseMessage;
         }
     }
 }

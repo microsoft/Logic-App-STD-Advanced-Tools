@@ -615,7 +615,7 @@ namespace LogicAppAdvancedTool
                     CommandOption resourceIDCO = c.Option("-id|--resourceId", "(Mandatory) The resource id of target service.\r\nThe format is '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{provider}/{ServiceType}/{ResourceName}'", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
-                    c.Description = "Ingest Logic App Connector IPs in target services.\r\n Limitation:\r\n1. Only support for Storage Account and Key Vault for now.\r\n2. Logic App's Managed Identity must have permission to operate target service's firewall.";
+                    c.Description = "Ingest Logic App Connector IPs in target services.\r\n Limitation:\r\n1. Only support for Storage Account, Key Vault and EventHub for now.\r\n2. Logic App's Managed Identity must have permission to operate target service's firewall.";
 
                     c.OnExecute(() =>
                     {

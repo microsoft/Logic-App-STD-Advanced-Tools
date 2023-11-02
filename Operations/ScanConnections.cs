@@ -94,7 +94,10 @@ namespace LogicAppAdvancedTool.Operations
 
             foreach (string appsettingName in unusedAppsettings)
             {
-                appsettingToken[appsettingName].Parent.Remove();
+                if (appsettingToken[appsettingName] != null)
+                { 
+                    appsettingToken[appsettingName].Parent.Remove();
+                }
             }
 
             string appsettingContent = appsettingToken.ToString();
