@@ -14,7 +14,7 @@ namespace LogicAppAdvancedTool.Operations
         {
             CommonOperations.AlertExperimentalFeature();
 
-            string WorkflowPath = $"C:/home/site/wwwroot/{workflowName}/workflow.json";
+            string WorkflowPath = $"{AppSettings.RootFolder}\\{workflowName}\\workflow.json";
 
             if (!File.Exists(WorkflowPath))
             {

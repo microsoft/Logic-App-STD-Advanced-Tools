@@ -72,7 +72,7 @@ namespace LogicAppAdvancedTool
         {
             string filePath = $"{Directory.GetCurrentDirectory()}/Backup_{DateTime.Now.ToString("yyyyMMddHHmmss")}.zip";
 
-            ZipFile.CreateFromDirectory("C:/home/site/wwwroot/", filePath, CompressionLevel.Fastest, false);
+            ZipFile.CreateFromDirectory(AppSettings.RootFolder, filePath, CompressionLevel.Fastest, false);
 
             return filePath;
         }

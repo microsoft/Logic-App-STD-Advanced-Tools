@@ -1,8 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.IO;
-using LogicAppAdvancedTool.Structures;
 
 namespace LogicAppAdvancedTool.Operations
 {
@@ -21,9 +18,8 @@ namespace LogicAppAdvancedTool.Operations
             Directory.CreateDirectory(backupPath);
 
             Console.WriteLine("Backing up workflow related files (definition, artifacts, host.json, etc.)");
-            string sourceFolder = "C:\\home\\site\\wwwroot";
 
-            CommonOperations.CopyDirectory(sourceFolder, backupPath, true);
+            CommonOperations.CopyDirectory(AppSettings.RootFolder, backupPath, true);
 
             Console.WriteLine("Retrieving appsettings..");
 
@@ -53,8 +49,7 @@ namespace LogicAppAdvancedTool.Operations
 
             Console.WriteLine("Restoring files in wwwroot folder.");
 
-            string destinationFolder = "C:\\home\\site\\wwwroot";
-            CommonOperations.CopyDirectory(path, destinationFolder, true);
+            CommonOperations.CopyDirectory(path, AppSettings.RootFolder, true);
 
             Console.WriteLine("All files are restored");
 

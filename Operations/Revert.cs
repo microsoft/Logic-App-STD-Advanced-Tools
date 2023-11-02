@@ -29,7 +29,7 @@ namespace LogicAppAdvancedTool.Operations
             string decompressedDefinition = CommonOperations.DecompressContent(definitionCompressed);
             string definition = $"{{\"definition\": {decompressedDefinition},\"kind\": \"{kind}\"}}";
 
-            string definitionTemplatePath = $"C:/home/site/wwwroot/{workflowName}/workflow.json";
+            string definitionTemplatePath = $"{AppSettings.RootFolder}\\{workflowName}\\workflow.json";
 
             File.WriteAllText(definitionTemplatePath, definition);
 

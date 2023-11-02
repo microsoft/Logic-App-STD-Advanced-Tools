@@ -29,7 +29,7 @@ namespace LogicAppAdvancedTool.Operations
 
             string outputContent = $"{{\"definition\": {decompressedDefinition},\"kind\": \"{kind}\"}}";
 
-            string workflowPath = $"C:/home/site/wwwroot/{flowName}";
+            string workflowPath = $"{AppSettings.RootFolder}\\{flowName}";
             if (!Directory.Exists(workflowPath))
             {
                 Directory.CreateDirectory(workflowPath);

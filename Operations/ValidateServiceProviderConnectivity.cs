@@ -13,7 +13,7 @@ namespace LogicAppAdvancedTool.Operations
     {
         public static void Run()
         {
-            string connectionPath = "C:/home/site/wwwroot/connections.json";
+            string connectionPath = $"{AppSettings.RootFolder}\\connections.json";
 
             if (!File.Exists(connectionPath))
             {

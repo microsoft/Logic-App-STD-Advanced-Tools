@@ -18,7 +18,7 @@ namespace LogicAppAdvancedTool.Operations
             string decompressedDefinition = CommonOperations.DecompressContent(definitionCompressed);
 
             string outputContent = $"{{\"definition\": {decompressedDefinition},\"kind\": \"Stateful\"}}";
-            string clonePath = $"C:/home/site/wwwroot/{targetName}";
+            string clonePath = $"{AppSettings.RootFolder}\\{targetName}";
 
             if (Directory.Exists(clonePath))
             {
