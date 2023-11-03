@@ -23,21 +23,9 @@ namespace LogicAppAdvancedTool.Operations
             }
 
             string flowName = entity.GetString("FlowName");
-            byte[] definitionCompressed = entity.GetBinary("DefinitionCompressed");
-            string kind = entity.GetString("Kind");
-            string decompressedDefinition = CommonOperations.DecompressContent(definitionCompressed);
-
-            string outputContent = $"{{\"definition\": {decompressedDefinition},\"kind\": \"{kind}\"}}";
-
             string workflowPath = $"{AppSettings.RootFolder}\\{flowName}";
-            if (!Directory.Exists(workflowPath))
-            {
-                Directory.CreateDirectory(workflowPath);
-            }
 
-            string definitionPath = $"{workflowPath}/workflow.json";
-
-            File.WriteAllText(definitionPath, outputContent);
+            CommonOperations.SaveDefinition(workflowPath, "workflow.json", entity);
 
             Console.WriteLine($"Workflow: {flowName} restored successfully.");
         }

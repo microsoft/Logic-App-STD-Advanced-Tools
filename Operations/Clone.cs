@@ -17,16 +17,9 @@ namespace LogicAppAdvancedTool.Operations
 
             if (entity == null)
             {
-                throw new UserInputException("No workflow found, please check workflow name and version is correct or not");
+                throw new UserInputException("No workflow found, please check provided workflow name and version.");
             }
 
-            string rowKey = entity.GetString("RowKey");
-
-            byte[] definitionCompressed = entity.GetBinary("DefinitionCompressed");
-            string kind = entity.GetString("Kind");
-            string decompressedDefinition = CommonOperations.DecompressContent(definitionCompressed);
-
-            string outputContent = $"{{\"definition\": {decompressedDefinition},\"kind\": \"{kind}\"}}";
             string clonePath = $"{AppSettings.RootFolder}\\{targetName}";
 
             if (Directory.Exists(clonePath))
@@ -34,8 +27,7 @@ namespace LogicAppAdvancedTool.Operations
                 throw new UserInputException("Workflow already exists, workflow will not be cloned. Please use another target name.");
             }
 
-            Directory.CreateDirectory(clonePath);
-            File.WriteAllText($"{clonePath}/workflow.json", outputContent);
+            CommonOperations.SaveDefinition(clonePath, "workflow.json", entity);
 
 
             Console.WriteLine("Clone finished, please refresh workflow page");

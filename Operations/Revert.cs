@@ -3,6 +3,7 @@ using McMaster.Extensions.CommandLineUtils;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace LogicAppAdvancedTool.Operations
 {
@@ -10,9 +11,9 @@ namespace LogicAppAdvancedTool.Operations
     {
         public static void Run(string workflowName, string version)
         {
-            List<TableEntity> tableEntities = TableOperations.QueryMainTable($"FlowSequenceId eq '{version}'");
+            TableEntity entity = TableOperations.QueryMainTable($"FlowSequenceId eq '{version}'").FirstOrDefault();
 
-            if (tableEntities.Count == 0)
+            if (entity == null)
             {
                 throw new UserInputException($"No workflow definition found with version: {version}");
             }
@@ -23,15 +24,7 @@ namespace LogicAppAdvancedTool.Operations
                 throw new UserCanceledException("Operation Cancelled");
             }
 
-            TableEntity entity = tableEntities[0];
-            byte[] definitionCompressed = entity.GetBinary("DefinitionCompressed");
-            string kind = entity.GetString("Kind");
-            string decompressedDefinition = CommonOperations.DecompressContent(definitionCompressed);
-            string definition = $"{{\"definition\": {decompressedDefinition},\"kind\": \"{kind}\"}}";
-
-            string definitionTemplatePath = $"{AppSettings.RootFolder}\\{workflowName}\\workflow.json";
-
-            File.WriteAllText(definitionTemplatePath, definition);
+            CommonOperations.SaveDefinition($"{AppSettings.RootFolder}\\{workflowName}", "workflow.json", entity);
 
             Console.WriteLine("Revert finished, please refresh the workflow page");
         }

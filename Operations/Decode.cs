@@ -1,4 +1,5 @@
 ﻿using Azure.Data.Tables;
+using Microsoft.WindowsAzure.ResourceStack.Common.Extensions;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -10,14 +11,12 @@ namespace LogicAppAdvancedTool.Operations
     {
         public static void Run(string workflowName, string version)
         {
-            List<TableEntity> tableEntities = TableOperations.QueryMainTable($"FlowName eq '{workflowName}' and FlowSequenceId eq '{version}'", new string[] { "DefinitionCompressed", "Kind" });
+            TableEntity entity = TableOperations.QueryMainTable($"FlowName eq '{workflowName}' and FlowSequenceId eq '{version}'", new string[] { "DefinitionCompressed", "Kind" }).FirstOrDefault();
 
-            if (tableEntities.Count() == 0)
+            if (entity == null)
             {
                 throw new UserInputException($"{workflowName} with version {version} cannot be found in storage table, please check your input.");
             }
-
-            TableEntity entity = tableEntities.FirstOrDefault();
 
             byte[] definitionCompressed = entity.GetBinary("DefinitionCompressed");
             string kind = entity.GetString("Kind");

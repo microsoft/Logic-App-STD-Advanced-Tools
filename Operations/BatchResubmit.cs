@@ -25,7 +25,7 @@ namespace LogicAppAdvancedTool.Operations
 
             //Create log file for processed run ids based on provided parameters
             //Resubmit execution might be unexpected terminated due to Logic App runtime reboot, so use log file to store all processed runs to avoid resubmit same failed run multiple times
-            string logPath = $"BatchResubmit_{workflowName}_{DateTime.Parse(startTime).ToString("yyyyMMddHHmmss")}_{DateTime.Parse(endTime).ToString("yyyyMMddHHmmss")}";
+            string logPath = $"BatchResubmit_{workflowName}_{DateTime.Parse(startTime).ToString("yyyyMMddHHmmss")}_{DateTime.Parse(endTime).ToString("yyyyMMddHHmmss")}.log";
 
             List<string> processedRuns = new List<string>();
 

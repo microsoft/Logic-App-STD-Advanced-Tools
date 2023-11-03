@@ -7,6 +7,7 @@ using Azure.Storage.Blobs.Models;
 using LogicAppAdvancedTool.Structures;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.WindowsAzure.ResourceStack.Common.Utilities;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -76,6 +77,29 @@ namespace LogicAppAdvancedTool
 
             return filePath;
         }
+
+        #region Save worklfow definition from TableEntity
+        public static void SaveDefinition(string path, string fileName, TableEntity entity)
+        {
+            byte[] definitionCompressed = entity.GetBinary("DefinitionCompressed");
+            string kind = entity.GetString("Kind");
+            string decompressedDefinition = DecompressContent(definitionCompressed);
+
+            string fileContent = $"{{\"definition\": {decompressedDefinition},\"kind\": \"{kind}\"}}";
+
+            dynamic jsonObject = JsonConvert.DeserializeObject(fileContent);
+            string formattedContent = JsonConvert.SerializeObject(jsonObject, Formatting.Indented);
+
+            string filePath = $"{path}\\{fileName}";
+
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            File.WriteAllText(filePath, formattedContent);
+        }
+        #endregion
 
         #region Deflate/infalte related
         public static string DecompressContent(byte[] content)
