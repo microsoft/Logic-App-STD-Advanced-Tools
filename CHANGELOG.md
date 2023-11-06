@@ -1,5 +1,6 @@
 2023-11-06
 1. "BatchResubmit" command now supports a new filter parameter (-s|--status) which can resubmit runs based on execution result (succeeded, failed and cancelled).
+2. Fix a bug in "ScanConnections" which could cause unused connections not be removed when there's no API connections and service providers in worklfows.
 
 2023-10-25
 1. New command "ScanConnections" added which will list all unused connections (API connection and Service Providers) in connections.json.
