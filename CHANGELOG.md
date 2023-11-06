@@ -1,3 +1,6 @@
+2023-11-06
+1. "BatchResubmit" command now supports a new filter parameter (-s|--status) which can resubmit runs based on execution result (succeeded, failed and cancelled).
+
 2023-10-25
 1. New command "ScanConnections" added which will list all unused connections (API connection and Service Providers) in connections.json.
 2. Fixed a bug when Logic App MI doesn't have Logic App Contributor role, "Snapshot" command will not backup any files. Now if MI doesn't have permission, then expcet Appsettings, all other files will be backup.
