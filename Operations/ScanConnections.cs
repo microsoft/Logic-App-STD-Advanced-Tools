@@ -1,5 +1,6 @@
 ﻿using LogicAppAdvancedTool.Structures;
 using McMaster.Extensions.CommandLineUtils;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -14,18 +15,12 @@ namespace LogicAppAdvancedTool.Operations
         {
             List<WorkflowConnection> connInWorkflows = RetrieveConnectionsInWorkflows();
 
-            if (connInWorkflows.Count == 0)
-            {
-                Console.WriteLine("No connections found in existing workflows.");
-
-                return;
-            }
-
             Console.WriteLine($"{connInWorkflows.Count} identical connections found");
 
             List<WorkflowConnection> allConnections = DecodeConnection();
 
             List<WorkflowConnection> unusedConections = allConnections.Where(s => !connInWorkflows.Contains(s)).ToList();
+
             if (unusedConections.Count == 0)
             {
                 Console.WriteLine("There's no unsed connections.");
@@ -88,6 +83,8 @@ namespace LogicAppAdvancedTool.Operations
 
                 token.Parent.Remove();
             }
+
+            File.WriteAllText($"{AppSettings.RootFolder}\\connections.json", JsonConvert.SerializeObject(connJToken, Formatting.Indented));
 
             string appSettings = AppSettings.GetRemoteAppsettings();
             JToken appsettingToken = JObject.Parse(appSettings);
