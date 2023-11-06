@@ -12,16 +12,14 @@ namespace LogicAppAdvancedTool.Operations
 {
     public static class BatchResubmit
     {
-        public static void Run(string workflowName, string startTime, string endTime, bool ignoreProcessed)
+        public static void Run(string workflowName, string startTime, string endTime, bool ignoreProcessed, string status)
         {
             string baseUrl = $"https://management.azure.com/subscriptions/{AppSettings.SubscriptionID}/resourceGroups/{AppSettings.ResourceGroup}/providers/Microsoft.Web/sites/{AppSettings.LogicAppName}/hostruntime/runtime/webhooks/workflow/api/management/workflows/{workflowName}";
-            string filter = $"$filter=status eq 'Failed' and startTime gt {startTime} and startTime lt {endTime}";
+            string filter = $"$filter=status eq '{status}' and startTime gt {startTime} and startTime lt {endTime}";
 
             string listFailedRunUrl = $"{baseUrl}/runs?api-version=2018-11-01&{filter}";
             MSIToken token = MSITokenService.RetrieveToken("https://management.azure.com");
             Console.WriteLine("Managed Identity token retrieved");
-
-            List<RunInfo> failedRuns = new List<RunInfo>();
 
             //Create log file for processed run ids based on provided parameters
             //Resubmit execution might be unexpected terminated due to Logic App runtime reboot, so use log file to store all processed runs to avoid resubmit same failed run multiple times
@@ -48,6 +46,8 @@ namespace LogicAppAdvancedTool.Operations
                 }
 
             }
+
+            List<RunInfo> failedRuns = new List<RunInfo>();
 
             while (!String.IsNullOrEmpty(listFailedRunUrl))
             {

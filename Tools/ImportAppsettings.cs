@@ -19,7 +19,7 @@ namespace LogicAppAdvancedTool
                 throw new UserInputException($"File: {filePath} not exists!");
             }
 
-            Console.WriteLine("This command need to run with Administrator mode");
+            Console.WriteLine("This command need to be executed in Administrator mode");
 
             string confirmationMessage = "WARNING!!!\r\nAll existing environment variables will be overwritten.\r\ninput for confirmation:";
             if (!Prompt.GetYesNo(confirmationMessage, false, ConsoleColor.Red))

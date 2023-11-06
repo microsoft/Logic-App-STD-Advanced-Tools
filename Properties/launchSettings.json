@@ -2,7 +2,7 @@
   "profiles": {
     "LogicAppAdvancedTool": {
       "commandName": "Project",
-      "commandLineArgs": "ConvertToStateful -sn Tesaat -tn Test123"
+      "commandLineArgs": "BatchResubmit -wf Test -st 2023-11-05 -et 2023-11-07 -s cancelled"
     }
   }
 }
