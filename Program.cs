@@ -603,7 +603,12 @@ namespace LogicAppAdvancedTool
                         string endTime = et.ToString("yyyy-MM-ddTHH:mm:ssZ");
                         bool ignoreProcessed = bool.Parse(ignoreProcessedCO.Value() ?? "true");
 
-                        string status = statusCO.Value() ?? "Failed";
+                        string status = statusCO.Value().ToLower() ?? "failed";
+
+                        if (status != "failed" && status != "succeeded" && status != "cancelled")
+                        {
+                            Console.WriteLine("Invalid value of parameter \"status\", available parameters are \"Cancelled\", \"Succeeded\" and \"Failed\".");
+                        }
 
                         BatchResubmit.Run(workflowName, startTime, endTime, ignoreProcessed, status);
 
