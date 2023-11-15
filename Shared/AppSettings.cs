@@ -71,9 +71,17 @@ namespace LogicAppAdvancedTool
             }
         }
 
+        public static string ManagementBaseUrl
+        {
+            get
+            {
+                return $"https://management.azure.com/subscriptions/{SubscriptionID}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{LogicAppName}";
+            }
+        }
+
         public static string GetRemoteAppsettings()
         {
-            string Url = $"https://management.azure.com/subscriptions/{SubscriptionID}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{LogicAppName}/config/appsettings/list?api-version=2022-03-01";
+            string Url = $"{ManagementBaseUrl}/config/appsettings/list?api-version=2022-03-01";
 
             MSIToken token = MSITokenService.RetrieveToken("https://management.azure.com");
             string response = HttpOperations.HttpRequestWithToken(Url, "POST", null, token.access_token, $"Cannot retrieve appsettings for {LogicAppName}");
@@ -85,14 +93,14 @@ namespace LogicAppAdvancedTool
 
         public static void UpdateRemoteAppsettings(string appsettingContent)
         {
-            string appsettingsUrl = $"https://management.azure.com/subscriptions/{SubscriptionID}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{LogicAppName}/config/appsettings/list?api-version=2022-03-01";
+            string appsettingsUrl = $"{ManagementBaseUrl}/config/appsettings/list?api-version=2022-03-01";
             MSIToken token = MSITokenService.RetrieveToken("https://management.azure.com");
             string response = HttpOperations.HttpRequestWithToken(appsettingsUrl, "POST", null, token.access_token, $"Cannot retrieve appsettings for {LogicAppName}");
             JToken appSettingRuntime = JObject.Parse(response);
 
             appSettingRuntime["properties"] = JObject.Parse(appsettingContent);
 
-            string updateUrl = $"https://management.azure.com/subscriptions/{AppSettings.SubscriptionID}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{LogicAppName}/config/appsettings?api-version=2022-03-01";
+            string updateUrl = $"{ManagementBaseUrl}/config/appsettings?api-version=2022-03-01";
             string updatedPayload = JsonConvert.SerializeObject(appSettingRuntime);
             HttpOperations.HttpRequestWithToken(updateUrl, "PUT", updatedPayload, token.access_token, $"Failed to restore appsettings.");
         }

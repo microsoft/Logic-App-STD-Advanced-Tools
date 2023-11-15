@@ -44,7 +44,6 @@ namespace LogicAppAdvancedTool.Operations
                 {
                     Console.WriteLine("Resubmitted records file not found, will resubmit all failed runs.");
                 }
-
             }
 
             List<RunInfo> remainRuns = new List<RunInfo>();

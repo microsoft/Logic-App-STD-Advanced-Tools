@@ -1,11 +1,6 @@
-﻿using Azure.Core;
-using Microsoft.WindowsAzure.ResourceStack.Common.Services.ADAuthentication;
-using System;
-using System.IO;
-using System.Net;
+﻿using System;
 using System.Net.Http;
 using System.Text;
-using System.Threading;
 
 namespace LogicAppAdvancedTool
 {

@@ -785,6 +785,21 @@ namespace LogicAppAdvancedTool
                         });
                     });
                     #endregion
+
+                    #region Restart Logic App
+                    c.Command("Restart", sub =>
+                    {
+                        sub.HelpOption("-?");
+                        sub.Description = "Restart Logic App runtime";
+
+                        sub.OnExecute(() =>
+                        {
+                            Tools.Restart();
+
+                            return 0;
+                        });
+                    });
+                    #endregion
                 });
                 #endregion
 
