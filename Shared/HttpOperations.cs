@@ -6,36 +6,14 @@ namespace LogicAppAdvancedTool
 {
     public class HttpOperations
     {
-        public static string HttpRequestWithToken(string url, string method, string content, string token, string exceptionMessage)
+        public static string HttpRequestWithToken(string url, HttpMethod method, string content, string token, string exceptionMessage)
         {
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Clear();
             client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
 
-            HttpMethod httpMethod;
 
-            switch (method)
-            { 
-                case "GET":
-                    httpMethod = HttpMethod.Get; 
-                    break;
-                case "POST":
-                    httpMethod = HttpMethod.Post;
-                    break;
-                case "PUT":
-                    httpMethod = HttpMethod.Put;
-                    break;
-                case "DELETE":
-                    httpMethod = HttpMethod.Delete;
-                    break;
-                case "PATCH":
-                    httpMethod = HttpMethod.Patch;
-                    break;
-                default:
-                    throw new ArgumentException("Invalid Http Method");
-            }
-
-            HttpRequestMessage requestMessage = new HttpRequestMessage(httpMethod, url);
+            HttpRequestMessage requestMessage = new HttpRequestMessage(method, url);
 
             if (content != null)
             {

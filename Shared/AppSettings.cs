@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Net.Http;
 
 namespace LogicAppAdvancedTool
 {
@@ -84,7 +85,7 @@ namespace LogicAppAdvancedTool
             string Url = $"{ManagementBaseUrl}/config/appsettings/list?api-version=2022-03-01";
 
             MSIToken token = MSITokenService.RetrieveToken("https://management.azure.com");
-            string response = HttpOperations.HttpRequestWithToken(Url, "POST", null, token.access_token, $"Cannot retrieve appsettings for {LogicAppName}");
+            string response = HttpOperations.HttpRequestWithToken(Url, HttpMethod.Post, null, token.access_token, $"Cannot retrieve appsettings for {LogicAppName}");
 
             string appSettings = JsonConvert.SerializeObject(JObject.Parse(response)["properties"], Formatting.Indented);
 
@@ -95,14 +96,14 @@ namespace LogicAppAdvancedTool
         {
             string appsettingsUrl = $"{ManagementBaseUrl}/config/appsettings/list?api-version=2022-03-01";
             MSIToken token = MSITokenService.RetrieveToken("https://management.azure.com");
-            string response = HttpOperations.HttpRequestWithToken(appsettingsUrl, "POST", null, token.access_token, $"Cannot retrieve appsettings for {LogicAppName}");
+            string response = HttpOperations.HttpRequestWithToken(appsettingsUrl, HttpMethod.Post, null, token.access_token, $"Cannot retrieve appsettings for {LogicAppName}");
             JToken appSettingRuntime = JObject.Parse(response);
 
             appSettingRuntime["properties"] = JObject.Parse(appsettingContent);
 
             string updateUrl = $"{ManagementBaseUrl}/config/appsettings?api-version=2022-03-01";
             string updatedPayload = JsonConvert.SerializeObject(appSettingRuntime);
-            HttpOperations.HttpRequestWithToken(updateUrl, "PUT", updatedPayload, token.access_token, $"Failed to restore appsettings.");
+            HttpOperations.HttpRequestWithToken(updateUrl, HttpMethod.Put, updatedPayload, token.access_token, $"Failed to restore appsettings.");
         }
     }
 }

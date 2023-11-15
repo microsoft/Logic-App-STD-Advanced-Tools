@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 using System.Threading;
 using System.Linq;
 using LogicAppAdvancedTool.Structures;
+using System.Net.Http;
 
 namespace LogicAppAdvancedTool.Operations
 {
@@ -14,7 +15,7 @@ namespace LogicAppAdvancedTool.Operations
     {
         public static void Run(string workflowName, string startTime, string endTime, bool ignoreProcessed, string status)
         {
-            string baseUrl = $"https://management.azure.com/subscriptions/{AppSettings.SubscriptionID}/resourceGroups/{AppSettings.ResourceGroup}/providers/Microsoft.Web/sites/{AppSettings.LogicAppName}/hostruntime/runtime/webhooks/workflow/api/management/workflows/{workflowName}";
+            string baseUrl = $"{AppSettings.ManagementBaseUrl}/hostruntime/runtime/webhooks/workflow/api/management/workflows/{workflowName}";
             string filter = $"$filter=status eq '{status}' and startTime gt {startTime} and startTime lt {endTime}";
 
             string listRunUrl = $"{baseUrl}/runs?api-version=2018-11-01&{filter}";
@@ -52,7 +53,7 @@ namespace LogicAppAdvancedTool.Operations
             {
                 MSITokenService.VerifyToken(ref token);
 
-                string content = HttpOperations.HttpRequestWithToken(listRunUrl, "GET", null, token.access_token, "Failed to retrieve failed runs");
+                string content = HttpOperations.HttpRequestWithToken(listRunUrl, HttpMethod.Get, null, token.access_token, "Failed to retrieve failed runs");
                 JObject rawResponse = JObject.Parse(content);
                 List<JToken> runs = rawResponse["value"].ToObject<List<JToken>>();
 
