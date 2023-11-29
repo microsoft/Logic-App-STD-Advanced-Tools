@@ -1,3 +1,6 @@
+2023-11-29
+1. Added a new command "FilterHostLogs", it can retrieve all error and warning logs from Logic App host logs and generate a new log file in the tool folder.
+
 2023-11-06
 1. "BatchResubmit" command now supports a new filter parameter (-s|--status) which can resubmit runs based on execution result (succeeded, failed and cancelled).
 2. Fix a bug in "ScanConnections" which could cause unused connections not be removed when there's no API connections and service providers in worklfows.
