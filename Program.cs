@@ -721,6 +721,21 @@ namespace LogicAppAdvancedTool
                 });
                 #endregion
 
+                #region Filter Kudu host logs
+                app.Command("FilterHostLogs", c => {
+
+                    c.HelpOption("-?");
+                    c.Description = "Filter all the Error and Warning messages in Kudu host log.";
+
+                    c.OnExecute(() =>
+                    {
+                        FilterHostLogs.Run();
+
+                        return 0;
+                    });
+                });
+                #endregion
+
                 #region Internal tools
                 app.Command("Tools", c => {
 
