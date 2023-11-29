@@ -819,7 +819,7 @@ namespace LogicAppAdvancedTool
                 #endregion
 
                 //TODO:
-                //feature: grab Kudu log and filter for errors
+
 
                 app.Execute(args);
             }
