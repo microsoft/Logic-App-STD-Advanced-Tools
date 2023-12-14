@@ -736,6 +736,21 @@ namespace LogicAppAdvancedTool
                 });
                 #endregion
 
+                #region Validate Workflows
+                app.Command("ValidateWorkflows", c => {
+
+                    c.HelpOption("-?");
+                    c.Description = "Validate all existing workflows definition.";
+
+                    c.OnExecute(() =>
+                    {
+                        ValidateWorkflows.Run();
+
+                        return 0;
+                    });
+                });
+                #endregion
+
                 #region Internal tools
                 app.Command("Tools", c => {
 

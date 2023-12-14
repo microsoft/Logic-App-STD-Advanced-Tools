@@ -13,7 +13,7 @@ namespace LogicAppAdvancedTool
 
             string restartUrl = $"{AppSettings.ManagementBaseUrl}/restart?api-version=2018-11-01";
 
-            HttpOperations.HttpRequestWithToken(restartUrl, HttpMethod.Post, null, token.access_token, "Failed to restart Logic App.");
+            HttpOperations.ValidatedHttpRequestWithToken(restartUrl, HttpMethod.Post, null, token.access_token, "Failed to restart Logic App.");
 
             Console.WriteLine("Logic App has been restarted.");
         }

@@ -36,7 +36,7 @@ namespace LogicAppAdvancedTool.Operations
             MSIToken token = MSITokenService.RetrieveToken("https://management.azure.com");
 
             string resourceUrl = $"https://management.azure.com{resourceID}{resourceProviderInfo.UrlParameter ?? String.Empty}?api-version={resourceProviderInfo.APIVersion}";
-            string validateResponse = HttpOperations.HttpRequestWithToken(resourceUrl, HttpMethod.Get, null, token.access_token, "Validate resource failed");
+            string validateResponse = HttpOperations.ValidatedHttpRequestWithToken(resourceUrl, HttpMethod.Get, null, token.access_token, "Validate resource failed");
 
             JToken resourceProperties = JObject.Parse(validateResponse);
 
@@ -61,7 +61,7 @@ namespace LogicAppAdvancedTool.Operations
             Console.WriteLine($"Resource found in Azure, retrieving Azure Connector IP range in {region}");
             string serviceTagUrl = $"https://management.azure.com/subscriptions/{subscriptionID}/providers/Microsoft.Network/locations/{region.ToLower()}/serviceTags?api-version=2023-02-01";
 
-            string serviceTagResponse = HttpOperations.HttpRequestWithToken(serviceTagUrl, HttpMethod.Get, null, token.access_token, "Cannot grab Azure Connector IP range from Internet");
+            string serviceTagResponse = HttpOperations.ValidatedHttpRequestWithToken(serviceTagUrl, HttpMethod.Get, null, token.access_token, "Cannot grab Azure Connector IP range from Internet");
 
             JToken regionalIPInfo = JObject.Parse(serviceTagResponse)["values"].ToList()
                                     .Where(s => s["name"].ToString() == $"AzureConnectors.{region}")
@@ -108,7 +108,7 @@ namespace LogicAppAdvancedTool.Operations
             string httpPayload = JsonConvert.SerializeObject(resourceProperties, Formatting.Indented);
 
             string ingestUrl = $"https://management.azure.com{resourceID}{resourceProviderInfo.UrlParameter ?? String.Empty}?api-version={resourceProviderInfo.APIVersion}";
-            HttpOperations.HttpRequestWithToken(ingestUrl, HttpMethod.Put, httpPayload, token.access_token, "Failed to add IP range");
+            HttpOperations.ValidatedHttpRequestWithToken(ingestUrl, HttpMethod.Put, httpPayload, token.access_token, "Failed to add IP range");
 
             Console.WriteLine("Firewall updated, please refresh (press F5) the whole page.");
         }
