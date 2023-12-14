@@ -42,6 +42,7 @@ If you would like to compile the binary yourself, please always use "Publish" in
 | RetrieveActionPayload | Retrieve all the payload(input/output) of an action within a specific day. |
 | Snapshot | Create a snapshot or restore from a snapshot based on provided sub-command. All the files under wwwroot folder and appsettings can be restored. This command need Website Contributor role on Logic App MI to retrieve appsettings. |
 | ScanConnections | Retrieve all connections (API connections and Service Providers) in all workflows and compare with connections.json and list all unused connections. |
+| FilterHostLogs | Grab all error and warning logs from \LogFiles\Application\Functions\Host\ |
 
 ## How to use (Demo of restore a workflow)
 1. Open Kudu (Advanced Tools) of Logic App Standard and upload this tool into a folder
