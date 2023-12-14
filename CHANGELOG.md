@@ -1,5 +1,6 @@
 2023-12-14
 1. Added a new command "ValidateWorkflows", it will validate workflow definition and provide result.
+2. Add async http request metohd
 
 2023-11-29
 1. Added a new command "FilterHostLogs", it can retrieve all error and warning logs from Logic App host logs and generate a new log file in the tool folder.
