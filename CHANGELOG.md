@@ -1,3 +1,7 @@
+2023-12-26
+1. Change command "CheckConnectivity" to "CheckStorageConnectivity" to avoid confusion.
+2. Added a new command "EndpointValidation" which can validate http(s) endpoint name resolution, connectivity, SSL certifcate issue.
+
 2023-12-14
 1. Added a new command "ValidateWorkflows", it will validate workflow definition and provide result.
 2. Add async http request method
