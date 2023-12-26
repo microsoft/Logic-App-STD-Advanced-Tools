@@ -29,7 +29,7 @@ If you would like to compile the binary yourself, please always use "Publish" in
 | RetrieveFailures | Retrieve all the detail failure information of a workflow for a specific day/run.|
 | Revert | Revert a workflow to a speicfic version.|
 | SyncToLocal | Sync remote wwwroot folder of Logic App Standard to local project. This command must run in local computer. There are 3 subcommands for different usage, please use -? for more information.|
-| CheckConnectivity | Check the connection between Logic App and Storage Account via DNS resolution and tcp ping of 443 port. This command need Kudu site is available. |
+| CheckStorageConnectivity | Check the connection between Logic App and Storage Account via DNS resolution and tcp ping of 443 port. This command need Kudu site is available. |
 | GenerateRunHistoryUrl | Generate run history of failure runs of a specific workflow on a specific day. The url can directly open the run history page |
 | CleanUpContainers | Delete all the Logic App auto-generated blob containers for run history before a specific date. |
 | CleanUpTables | Delete all the Logic App auto-generated storage tables for run history before a specific date. |
@@ -44,6 +44,7 @@ If you would like to compile the binary yourself, please always use "Publish" in
 | ScanConnections | Retrieve all connections (API connections and Service Providers) in all workflows and compare with connections.json and list all unused connections. |
 | FilterHostLogs | Grab all error and warning logs from \LogFiles\Application\Functions\Host\ |
 | ValidateWorkflows | Validate existing workflows definition. |
+| EndpointValidation | Validate an Http(s) endpoint via name resolution, tcp connectivity, SSL certificate (if http, then SSL validation will be skipped) |
 
 ## How to use (Demo of restore a workflow)
 1. Open Kudu (Advanced Tools) of Logic App Standard and upload this tool into a folder
