@@ -58,13 +58,13 @@ namespace LogicAppAdvancedTool.Structures
                     IPAddress[] ipAddresses = Dns.GetHostAddresses(Result.Endpoint, AddressFamily.InterNetwork);
 
                     IP = ipAddresses[0];   //assume only 1 IP will return
-                    Result.DNSStatus = ValidateStatus.Succeeded;
+                    Result.DNSStatus = ValidationStatus.Succeeded;
 
                     DNSTestResult = "Passed";
                 }
                 catch
                 {
-                    Result.DNSStatus = ValidateStatus.Failed;
+                    Result.DNSStatus = ValidationStatus.Failed;
                     DNSTestResult = "Failed";
                     ConnectionTestResult = "N/A (DNS test failed)";
 
@@ -82,13 +82,13 @@ namespace LogicAppAdvancedTool.Structures
                 TcpClient tcpClient = new TcpClient();
                 if (tcpClient.ConnectAsync(IP.ToString(), Port).Wait(1000))
                 {
-                    Result.PingStatus = ValidateStatus.Succeeded;
+                    Result.PingStatus = ValidationStatus.Succeeded;
 
                     ConnectionTestResult = "Passed";
                 }
                 else
                 {
-                    Result.PingStatus = ValidateStatus.Failed;
+                    Result.PingStatus = ValidationStatus.Failed;
 
                     ConnectionTestResult = "Failed";
                 }

@@ -364,14 +364,14 @@ namespace LogicAppAdvancedTool
                 #endregion
 
                 #region Check Connectivity
-                app.Command("CheckConnectivity", c =>
+                app.Command("CheckStorageConnectivity", c =>
                 {
                     c.HelpOption("-?");
                     c.Description = "Check the connectivity between Logic App STD and it's backend Storage Account.";
 
                     c.OnExecute(() =>
                     {
-                        CheckConnectivity.Run();
+                        CheckStorageConnectivity.Run();
 
                         return 0;
                     });
@@ -751,6 +751,25 @@ namespace LogicAppAdvancedTool
                 });
                 #endregion
 
+                #region Event Listener
+                app.Command("HttpsValidation", c => {
+
+                    CommandOption urlCO = c.Option("-url|--url", "(Mandatory) The Url which need to be validated, only Https protocol supported.", CommandOptionType.SingleValue).IsRequired();
+
+                    c.HelpOption("-?");
+                    c.Description = "Validate DNS resolution, tcp connection and SSL handshake of a Https url.";
+
+                    c.OnExecute(() =>
+                    {
+                        string url = urlCO.Value();
+
+                        EndpointValidation.Run(url);
+
+                        return 0;
+                    });
+                });
+                #endregion
+
                 #region Internal tools
                 app.Command("Tools", c => {
 
@@ -834,6 +853,9 @@ namespace LogicAppAdvancedTool
                 #endregion
 
                 //TODO:
+                //httpsvalidation
+                //tracert
+
 
 
                 app.Execute(args);

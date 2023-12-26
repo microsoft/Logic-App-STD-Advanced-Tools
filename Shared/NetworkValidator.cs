@@ -1,0 +1,143 @@
+﻿using LogicAppAdvancedTool.Operations;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.Tracing;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Sockets;
+
+namespace LogicAppAdvancedTool
+{
+    public class DNSValidator
+    {
+        public string Endpoint { get; private set; }
+        public IPAddress[] IPs { get; private set; }
+        public ValidationStatus Result { get; private set; }
+
+        public DNSValidator(string endpoint)
+        {
+            Result = ValidationStatus.NotApplicable;
+            this.Endpoint = endpoint;
+        }
+
+        public DNSValidator Validate()
+        {
+            try
+            {
+                IPs = Dns.GetHostAddresses(Endpoint);
+
+                Result = ValidationStatus.Succeeded;
+
+            }
+            catch
+            {
+                Result = ValidationStatus.Failed;
+            }
+
+            return this;
+        }
+    }
+
+    public class SocketValidator
+    {
+        public string IP { get; private set; }
+        public int Port { get; private set; }
+        public ValidationStatus Result { get; private set; }
+
+        public SocketValidator(IPAddress ip, int port)
+        {
+            Result = ValidationStatus.NotApplicable;
+            this.IP = ip.ToString();
+            this.Port = port;
+        }
+
+        public SocketValidator Validate()
+        {
+            try
+            {
+                using (TcpClient client = new TcpClient(IP, Port)) { };
+                Result = ValidationStatus.Succeeded;
+            }
+            catch
+            {
+                Result = ValidationStatus.Failed;
+            }
+
+            return this;
+        }
+    }
+
+    public class SSLValidator
+    {
+        public string Endpoint { get; private set; }
+        public ValidationStatus Result { get; private set; }
+
+        private List<EventWrittenEventArgs> es;
+
+        public SSLValidator(string endpoint)
+        {
+            Result = ValidationStatus.NotApplicable;
+            this.Endpoint = endpoint;
+            es= new List<EventWrittenEventArgs>();
+        }
+
+        public SSLValidator Validate()
+        {
+            SSLCertListener sslListener = new SSLCertListener();
+            sslListener.EventWritten += SslListener_EventWritten;
+
+            try
+            {
+                Result = ValidationStatus.Succeeded;
+
+                HttpClient client = new HttpClient();
+                HttpResponseMessage response = client.GetAsync(Endpoint).Result;
+            }
+            catch
+            {
+                Result = ValidationStatus.Failed;
+            }
+            finally
+            {
+                sslListener.EventWritten -= SslListener_EventWritten;
+                sslListener.Dispose();
+            }
+
+            string s = JsonConvert.SerializeObject(es, Formatting.Indented);
+
+            return this;
+        }
+
+        private void SslListener_EventWritten(object sender, EventWrittenEventArgs e)
+        {
+            foreach (string payload in e.Payload)
+            {
+                if (payload.Contains("RemoteCertificateNameMismatch"))
+                {
+                    Result = ValidationStatus.Failed;    
+                }
+            }
+        }
+
+        public class SSLCertListener : EventListener
+        {
+            protected override void OnEventSourceCreated(EventSource eventSource)
+            {
+                if (eventSource.Name == "Private.InternalDiagnostics.System.Net.Http")
+                {
+                    EnableEvents(eventSource, EventLevel.LogAlways);
+                }
+            }
+
+            protected override void OnEventWritten(EventWrittenEventArgs eventData)
+            {
+                if (eventData.EventName == "ErrorMessage")
+                {
+                    base.OnEventWritten(eventData);
+                }
+            }
+        }
+    }
+}

@@ -5,14 +5,14 @@ namespace LogicAppAdvancedTool
     public class ValidationInfo
     {
         public string Endpoint;
-        public ValidateStatus DNSStatus;
-        public ValidateStatus PingStatus;
+        public ValidationStatus DNSStatus;
+        public ValidationStatus PingStatus;
 
         public ValidationInfo(string endpoint)
         {
             Endpoint = endpoint;
-            DNSStatus = ValidateStatus.NotApplicable;
-            PingStatus = ValidateStatus.NotApplicable;
+            DNSStatus = ValidationStatus.NotApplicable;
+            PingStatus = ValidationStatus.NotApplicable;
         }
     }
 
@@ -20,12 +20,12 @@ namespace LogicAppAdvancedTool
     {
         public StorageType ServiceType;
         public IPAddress[] IPs;
-        public ValidateStatus AuthStatus;
+        public ValidationStatus AuthStatus;
 
         public StorageValidationInfo(string endpoint, StorageType serviceType) : base(endpoint)
         {
             ServiceType = serviceType;
-            AuthStatus = ValidateStatus.NotApplicable;
+            AuthStatus = ValidationStatus.NotApplicable;
         }
 
         public string GetIPsAsString()
@@ -45,11 +45,12 @@ namespace LogicAppAdvancedTool
         }
     }
 
-    public enum ValidateStatus
+    public enum ValidationStatus
     {
         Succeeded,
         Failed,
-        NotApplicable
+        NotApplicable,
+        Skipped
     }
 
     public enum StorageType

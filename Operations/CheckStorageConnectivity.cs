@@ -9,8 +9,11 @@ using LogicAppAdvancedTool.Structures;
 
 namespace LogicAppAdvancedTool.Operations
 {
-    public static class CheckConnectivity
+    public static class CheckStorageConnectivity
     {
+        //TODO:
+        //Switch to Network Validator in Validate() method
+
         public static void Run()
         {
             StorageConnectionInfo connectionInfo = new StorageConnectionInfo(AppSettings.ConnectionString);
@@ -62,17 +65,17 @@ namespace LogicAppAdvancedTool.Operations
                         IPAddress[] ipAddressess = Dns.GetHostAddresses(info.Endpoint);
 
                         info.IPs = ipAddressess;
-                        info.DNSStatus = ValidateStatus.Succeeded;
+                        info.DNSStatus = ValidationStatus.Succeeded;
                     }
                     catch
                     {
-                        info.DNSStatus = ValidateStatus.Failed;
+                        info.DNSStatus = ValidationStatus.Failed;
                     }
                 }
 
                 foreach (StorageValidationInfo info in Results)
                 {
-                    if (info.DNSStatus != ValidateStatus.Succeeded)
+                    if (info.DNSStatus != ValidationStatus.Succeeded)
                     {
                         continue;
                     }
@@ -84,12 +87,12 @@ namespace LogicAppAdvancedTool.Operations
                             using (TcpClient client = new TcpClient(ip.ToString(), 443)) { };
                         }
 
-                        info.PingStatus = ValidateStatus.Succeeded;
+                        info.PingStatus = ValidationStatus.Succeeded;
 
                     }
                     catch
                     {
-                        info.PingStatus = ValidateStatus.Failed;
+                        info.PingStatus = ValidationStatus.Failed;
                     }
                 }
 
@@ -97,7 +100,7 @@ namespace LogicAppAdvancedTool.Operations
                 {
                     try
                     {
-                        if (info.PingStatus != ValidateStatus.Succeeded)
+                        if (info.PingStatus != ValidationStatus.Succeeded)
                         {
                             continue;
                         }
@@ -123,11 +126,11 @@ namespace LogicAppAdvancedTool.Operations
                             default: break;
                         }
 
-                        info.AuthStatus = ValidateStatus.Succeeded;
+                        info.AuthStatus = ValidationStatus.Succeeded;
                     }
                     catch
                     {
-                        info.AuthStatus = ValidateStatus.Failed;
+                        info.AuthStatus = ValidationStatus.Failed;
                     }
                 }
 
