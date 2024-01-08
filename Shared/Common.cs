@@ -8,11 +8,14 @@ using LogicAppAdvancedTool.Structures;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.WindowsAzure.ResourceStack.Common.Utilities;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 
 namespace LogicAppAdvancedTool
@@ -203,6 +206,24 @@ namespace LogicAppAdvancedTool
                     CopyDirectory(subDir.FullName, newDestinationDir, true);
                 }
             }
+        }
+
+        public static List<string> RetrieveServiceTagIPs(string serviceTag)
+        {
+            MSIToken token = MSITokenService.RetrieveToken("https://management.azure.com");
+            string serviceTagUrl = $"https://management.azure.com/subscriptions/{AppSettings.SubscriptionID}/providers/Microsoft.Network/locations/{AppSettings.Region.ToLower()}/serviceTags?api-version=2023-06-01";
+            string serviceTagResponse = HttpOperations.ValidatedHttpRequestWithToken(serviceTagUrl, HttpMethod.Get, null, token.access_token, "Cannot grab Azure Connector IP range from Internet");
+
+            JToken serviceTagInfo = JObject.Parse(serviceTagResponse)["values"].ToList()
+                                    .Where(s => s["name"].ToString() == $"{serviceTag}")
+                                    .FirstOrDefault();
+
+            List<string> ipPrefixes = serviceTagInfo["properties"]?["addressPrefixes"].ToList()
+                                        .Select(s => s.ToString())
+                                        .Where( s=> !s.Contains(":"))   //we don't need IPv6
+                                        .ToList();
+
+            return ipPrefixes;
         }
     }
 }

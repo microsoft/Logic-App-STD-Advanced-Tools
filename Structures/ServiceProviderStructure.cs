@@ -14,10 +14,9 @@ namespace LogicAppAdvancedTool.Structures
         public IPAddress IP { get; private set; }
         public bool IsIPAddress { get; private set; }
         public bool IsEndpointEmpty { get; private set; }
-        public ValidationInfo Result { get; private set; }
 
-        public string DNSTestResult { get; private set; }
-        public string ConnectionTestResult { get; private set; }
+        public string NameResolutionResult { get; private set; }
+        public string TcpConnectionResult { get; private set; }
 
         public ServiceProviderValidator(string Name, string DisplayName, ServiceProviderType ServiceProvider, string Endpoint, int Port)
         {
@@ -42,38 +41,33 @@ namespace LogicAppAdvancedTool.Structures
         {
             if (IsEndpointEmpty)
             {
-                DNSTestResult = "No Endpoint found";
-                ConnectionTestResult = "No Endpoint found";
-
+                NameResolutionResult = "No Endpoint found";
+                TcpConnectionResult = "No Endpoint found";
 
                 return;
             }
-
-            Result = new ValidationInfo(Endpoint);
 
             if (!IsIPAddress)
             {
                 try
                 {
-                    IPAddress[] ipAddresses = Dns.GetHostAddresses(Result.Endpoint, AddressFamily.InterNetwork);
+                    IPAddress[] ipAddresses = Dns.GetHostAddresses(Endpoint, AddressFamily.InterNetwork);
 
                     IP = ipAddresses[0];   //assume only 1 IP will return
-                    Result.DNSStatus = ValidationStatus.Succeeded;
 
-                    DNSTestResult = "Passed";
+                    NameResolutionResult = "Passed";
                 }
                 catch
                 {
-                    Result.DNSStatus = ValidationStatus.Failed;
-                    DNSTestResult = "Failed";
-                    ConnectionTestResult = "N/A (DNS test failed)";
+                    NameResolutionResult = "Failed";
+                    TcpConnectionResult = "N/A (DNS test failed)";
 
                     return;
                 }
             }
             else
             {
-                DNSTestResult = "N/A (Only IP)";
+                NameResolutionResult = "N/A (Only IP)";
             }
 
 
@@ -82,51 +76,18 @@ namespace LogicAppAdvancedTool.Structures
                 TcpClient tcpClient = new TcpClient();
                 if (tcpClient.ConnectAsync(IP.ToString(), Port).Wait(1000))
                 {
-                    Result.PingStatus = ValidationStatus.Succeeded;
-
-                    ConnectionTestResult = "Passed";
+                    TcpConnectionResult = "Passed";
                 }
                 else
                 {
-                    Result.PingStatus = ValidationStatus.Failed;
-
-                    ConnectionTestResult = "Failed";
+                    TcpConnectionResult = "Failed";
                 }
             }
             catch (Exception ex)
             {
-                ConnectionTestResult = "Failed";
+                TcpConnectionResult = "Failed";
             }
 
         }
-    }
-
-    public enum ServiceAuthProvider
-    {
-        ActiveDirectoryOAuth,
-        ManagedServiceIdentity,
-        connectionString,
-        accessKey,
-        None
-    }
-
-    public enum ServiceProviderType
-    {
-        AzureBlob,
-        AzureCosmosDB,
-        AzureFile,
-        DB2,
-        Ftp,
-        Sftp,
-        Smtp,
-        azureTables,
-        azurequeues,
-        eventGridPublisher,
-        eventHub,
-        keyVault,
-        mq,
-        serviceBus,
-        sql,
-        NotSupported
     }
 }

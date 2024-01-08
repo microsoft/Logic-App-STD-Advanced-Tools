@@ -11,131 +11,91 @@ namespace LogicAppAdvancedTool.Operations
 {
     public static class CheckStorageConnectivity
     {
-        //TODO:
-        //Switch to Network Validator in Validate() method
-
         public static void Run()
         {
             StorageConnectionInfo connectionInfo = new StorageConnectionInfo(AppSettings.ConnectionString);
-            ConnectionValidator connectionValidator = new ConnectionValidator(connectionInfo);
 
-            List<StorageValidationInfo> results = connectionValidator.Validate();
+            List<BackendStorageValidator> results = new List<BackendStorageValidator>
+                {
+                    new BackendStorageValidator(connectionInfo.BlobEndpoint, StorageType.Blob),
+                    new BackendStorageValidator(connectionInfo.FileEndpoint, StorageType.File),
+                    new BackendStorageValidator(connectionInfo.QueueEndpoint, StorageType.Queue),
+                    new BackendStorageValidator(connectionInfo.TableEndpoint, StorageType.Table)
+                };
+
+            foreach (BackendStorageValidator validator in results)
+            {
+                validator.Validate();
+            }
 
             if (results != null)
             {
-                ConsoleTable consoleTable = new ConsoleTable("EndPoint", "Type", "DNS Test", "Endpoint IP", "TCP Port (443)", "Auth Status");
+                ConsoleTable consoleTable = new ConsoleTable("Storage Name", "Type", "DNS Resolution", "Endpoint IP", "Is PE", "TCP Conn", "Authentication");
 
-                foreach (StorageValidationInfo result in results)
+                foreach (BackendStorageValidator result in results)
                 {
-                    string endpoint = result.Endpoint;
-
-                    consoleTable.AddRow(endpoint, result.ServiceType.ToString(), result.DNSStatus.ToString(), result.GetIPsAsString(), result.PingStatus.ToString(), result.AuthStatus.ToString());
+                    consoleTable.AddRow(connectionInfo.AccountName, result.ServiceType.ToString(), result.NameResolutionStatus.ToString(), result.GetIPsAsString(), "YES", result.SocketConnectionStatus.ToString(), result.AuthenticationStatus.ToString());
                 }
 
                 consoleTable.Print();
             }
         }
+    }
 
-        public class ConnectionValidator
+    public class BackendStorageValidator
+    {
+        public string Endpoint;
+        public StorageType ServiceType;
+        public int Port;
+        public IPAddress[] IPs;
+
+        public ValidationStatus AuthenticationStatus;
+        public ValidationStatus NameResolutionStatus;
+        public ValidationStatus SocketConnectionStatus;
+
+        public BackendStorageValidator(string endpoint, StorageType serviceType)
         {
-            private string LogicAppName;
-            private StorageConnectionInfo ConnectionInfo;
-            private List<StorageValidationInfo> Results;
-            public ConnectionValidator(StorageConnectionInfo connectionInfo)
-            {
-                ConnectionInfo = connectionInfo;
-                LogicAppName = AppSettings.LogicAppName;
+            Endpoint = endpoint;
+            Port = 443;
+            ServiceType = serviceType;
+            AuthenticationStatus = ValidationStatus.NotApplicable;
+        }
 
-                Results = new List<StorageValidationInfo>
+        public void Validate()
+        {
+            DNSValidator dnsValidator = new DNSValidator(Endpoint).Validate();
+            NameResolutionStatus = dnsValidator.Result;
+
+            IPs = dnsValidator.IPs;
+
+            if (NameResolutionStatus == ValidationStatus.Succeeded)
+            {
+                foreach (IPAddress ip in IPs)
                 {
-                    new StorageValidationInfo(connectionInfo.BlobEndpoint, StorageType.Blob),
-                    new StorageValidationInfo(connectionInfo.FileEndpoint, StorageType.File),
-                    new StorageValidationInfo(connectionInfo.QueueEndpoint, StorageType.Queue),
-                    new StorageValidationInfo(connectionInfo.TableEndpoint, StorageType.Table)
-                };
+                    SocketConnectionStatus = new SocketValidator(ip, Port).Validate().Result;
+                }
             }
 
-            //temp resolution, need to improve in the future
-            public List<StorageValidationInfo> Validate()
+            if (SocketConnectionStatus == ValidationStatus.Succeeded)
             {
-                foreach (StorageValidationInfo info in Results)
-                {
-                    try
-                    {
-                        IPAddress[] ipAddressess = Dns.GetHostAddresses(info.Endpoint);
-
-                        info.IPs = ipAddressess;
-                        info.DNSStatus = ValidationStatus.Succeeded;
-                    }
-                    catch
-                    {
-                        info.DNSStatus = ValidationStatus.Failed;
-                    }
-                }
-
-                foreach (StorageValidationInfo info in Results)
-                {
-                    if (info.DNSStatus != ValidationStatus.Succeeded)
-                    {
-                        continue;
-                    }
-
-                    try
-                    {
-                        foreach (IPAddress ip in info.IPs)
-                        {
-                            using (TcpClient client = new TcpClient(ip.ToString(), 443)) { };
-                        }
-
-                        info.PingStatus = ValidationStatus.Succeeded;
-
-                    }
-                    catch
-                    {
-                        info.PingStatus = ValidationStatus.Failed;
-                    }
-                }
-
-                foreach (StorageValidationInfo info in Results)
-                {
-                    try
-                    {
-                        if (info.PingStatus != ValidationStatus.Succeeded)
-                        {
-                            continue;
-                        }
-
-                        switch (info.ServiceType)
-                        {
-                            case StorageType.Blob:
-                                BlobServiceClient blobClient = new BlobServiceClient(AppSettings.ConnectionString);
-                                blobClient.GetProperties();
-                                break;
-                            case StorageType.File:
-                                ShareServiceClient shareClient = new ShareServiceClient(AppSettings.ConnectionString);
-                                shareClient.GetProperties();
-                                break;
-                            case StorageType.Queue:
-                                QueueServiceClient queueClient = new QueueServiceClient(AppSettings.ConnectionString);
-                                queueClient.GetProperties();
-                                break;
-                            case StorageType.Table:
-                                TableServiceClient tableClient = new TableServiceClient(AppSettings.ConnectionString);
-                                tableClient.GetProperties();
-                                break;
-                            default: break;
-                        }
-
-                        info.AuthStatus = ValidationStatus.Succeeded;
-                    }
-                    catch
-                    {
-                        info.AuthStatus = ValidationStatus.Failed;
-                    }
-                }
-
-                return Results;
+                AuthenticationStatus = new StorageValidator(Endpoint, ServiceType).Validate().Result;
             }
+        }
+
+        public string GetIPsAsString()
+        {
+            if (IPs != null)
+            {
+                string IPsAsString = "";
+                foreach (IPAddress ip in IPs)
+                {
+                    IPsAsString += ip.ToString() + " ";
+                }
+
+                return IPsAsString.TrimEnd();
+            }
+
+            return "N/A";
         }
     }
 }

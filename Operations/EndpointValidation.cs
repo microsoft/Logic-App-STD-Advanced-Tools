@@ -1,12 +1,5 @@
 ﻿using System;
-using System.Diagnostics.Tracing;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Net.NetworkInformation;
 using System.Net;
-using System.Text;
-using System.Security.Policy;
-using System.Net.Http;
 
 namespace LogicAppAdvancedTool.Operations
 {

@@ -1,4 +1,7 @@
-﻿using LogicAppAdvancedTool.Operations;
+﻿using Azure.Data.Tables;
+using Azure.Storage.Blobs;
+using Azure.Storage.Files.Shares;
+using Azure.Storage.Queues;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -138,6 +141,54 @@ namespace LogicAppAdvancedTool
                     base.OnEventWritten(eventData);
                 }
             }
+        }
+    }
+
+    public class StorageValidator
+    { 
+        public ValidationStatus Result { get; private set; }
+        public string StorageEndpoint { get; private set; }
+        public StorageType ServiceType { get; private set; }
+
+        public StorageValidator(string storageEndpoint, StorageType serviceType)
+        { 
+            this.StorageEndpoint = storageEndpoint;
+            this.ServiceType = serviceType;
+        }
+
+        public StorageValidator Validate() 
+        {
+            try
+            {
+                switch (ServiceType)
+                {
+                    case StorageType.Blob:
+                        BlobServiceClient blobClient = new BlobServiceClient(AppSettings.ConnectionString);
+                        blobClient.GetProperties();
+                        break;
+                    case StorageType.File:
+                        ShareServiceClient shareClient = new ShareServiceClient(AppSettings.ConnectionString);
+                        shareClient.GetProperties();
+                        break;
+                    case StorageType.Queue:
+                        QueueServiceClient queueClient = new QueueServiceClient(AppSettings.ConnectionString);
+                        queueClient.GetProperties();
+                        break;
+                    case StorageType.Table:
+                        TableServiceClient tableClient = new TableServiceClient(AppSettings.ConnectionString);
+                        tableClient.GetProperties();
+                        break;
+                    default: break;
+                }
+
+                Result = ValidationStatus.Succeeded;
+            }
+            catch
+            {
+                Result = ValidationStatus.Failed;
+            }
+
+            return this;
         }
     }
 }

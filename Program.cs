@@ -752,12 +752,12 @@ namespace LogicAppAdvancedTool
                 #endregion
 
                 #region Event Listener
-                app.Command("HttpsValidation", c => {
+                app.Command("EndpointValidation", c => {
 
-                    CommandOption urlCO = c.Option("-url|--url", "(Mandatory) The Url which need to be validated, only Https protocol supported.", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption urlCO = c.Option("-url|--url", "(Mandatory) The Url which need to be validated. Do not include relative path.", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
-                    c.Description = "Validate DNS resolution, tcp connection and SSL handshake of a Https url.";
+                    c.Description = "Validate DNS resolution, tcp connection and SSL handshake of Https endpoint.";
 
                     c.OnExecute(() =>
                     {
@@ -853,10 +853,7 @@ namespace LogicAppAdvancedTool
                 #endregion
 
                 //TODO:
-                //httpsvalidation
-                //tracert
-
-
+                //PVE detect in Storage connection test
 
                 app.Execute(args);
             }
