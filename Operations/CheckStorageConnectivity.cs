@@ -34,7 +34,7 @@ namespace LogicAppAdvancedTool.Operations
 
                 foreach (BackendStorageValidator result in results)
                 {
-                    consoleTable.AddRow(connectionInfo.AccountName, result.ServiceType.ToString(), result.NameResolutionStatus.ToString(), result.GetIPsAsString(), "YES", result.SocketConnectionStatus.ToString(), result.AuthenticationStatus.ToString());
+                    consoleTable.AddRow(connectionInfo.AccountName, result.ServiceType.ToString(), result.NameResolutionStatus.ToString(), result.GetIPsAsString(), result.SocketConnectionStatus.ToString(), result.AuthenticationStatus.ToString());
                 }
 
                 consoleTable.Print();

@@ -11,7 +11,8 @@ namespace LogicAppAdvancedTool
         Succeeded,
         Failed,
         NotApplicable,
-        Skipped
+        Skipped,
+        EmptyEndpoint
     }
 
     public enum StorageType

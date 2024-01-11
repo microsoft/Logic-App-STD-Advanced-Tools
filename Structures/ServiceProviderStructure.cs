@@ -15,8 +15,8 @@ namespace LogicAppAdvancedTool.Structures
         public bool IsIPAddress { get; private set; }
         public bool IsEndpointEmpty { get; private set; }
 
-        public string NameResolutionResult { get; private set; }
-        public string TcpConnectionResult { get; private set; }
+        public ValidationStatus NameResolutionResult { get; private set; }
+        public ValidationStatus TcpConnectionResult { get; private set; }
 
         public ServiceProviderValidator(string Name, string DisplayName, ServiceProviderType ServiceProvider, string Endpoint, int Port)
         {
@@ -31,7 +31,7 @@ namespace LogicAppAdvancedTool.Structures
 
             if (IsIPAddress)
             {
-                this.IP = ip;
+                IP = ip;
             }
 
             IsEndpointEmpty = String.IsNullOrEmpty(Endpoint);
@@ -41,8 +41,8 @@ namespace LogicAppAdvancedTool.Structures
         {
             if (IsEndpointEmpty)
             {
-                NameResolutionResult = "No Endpoint found";
-                TcpConnectionResult = "No Endpoint found";
+                NameResolutionResult = ValidationStatus.EmptyEndpoint;
+                TcpConnectionResult = ValidationStatus.EmptyEndpoint;
 
                 return;
             }
@@ -55,19 +55,19 @@ namespace LogicAppAdvancedTool.Structures
 
                     IP = ipAddresses[0];   //assume only 1 IP will return
 
-                    NameResolutionResult = "Passed";
+                    NameResolutionResult = ValidationStatus.Succeeded;
                 }
                 catch
                 {
-                    NameResolutionResult = "Failed";
-                    TcpConnectionResult = "N/A (DNS test failed)";
+                    NameResolutionResult = ValidationStatus.Failed;
+                    TcpConnectionResult = ValidationStatus.Skipped;
 
                     return;
                 }
             }
             else
             {
-                NameResolutionResult = "N/A (Only IP)";
+                NameResolutionResult = ValidationStatus.Skipped;
             }
 
 
@@ -76,18 +76,17 @@ namespace LogicAppAdvancedTool.Structures
                 TcpClient tcpClient = new TcpClient();
                 if (tcpClient.ConnectAsync(IP.ToString(), Port).Wait(1000))
                 {
-                    TcpConnectionResult = "Passed";
+                    TcpConnectionResult = ValidationStatus.Succeeded;
                 }
                 else
                 {
-                    TcpConnectionResult = "Failed";
+                    TcpConnectionResult = ValidationStatus.Failed;
                 }
             }
             catch (Exception ex)
             {
-                TcpConnectionResult = "Failed";
+                TcpConnectionResult = ValidationStatus.Failed;
             }
-
         }
     }
 }

@@ -99,7 +99,7 @@ namespace LogicAppAdvancedTool.Operations
             {
                 string ip = spv.IP == null ? "N/A" : spv.IP.ToString();
 
-                consoleTable.AddRow(spv.Name, spv.DisplayName, spv.NameResolutionResult, ip, spv.Port.ToString(), spv.TcpConnectionResult);
+                consoleTable.AddRow(spv.Name, spv.DisplayName, spv.NameResolutionResult.ToString(), ip, spv.Port.ToString(), spv.TcpConnectionResult.ToString());
             }
 
             consoleTable.Print();

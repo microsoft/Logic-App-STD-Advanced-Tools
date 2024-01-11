@@ -58,10 +58,22 @@ namespace LogicAppAdvancedTool
 
         public SocketValidator Validate()
         {
+            Result = ValidationStatus.Failed;
+
             try
             {
-                using (TcpClient client = new TcpClient(IP, Port)) { };
-                Result = ValidationStatus.Succeeded;
+                using (TcpClient client = new TcpClient()) 
+                {
+                    if (client.ConnectAsync(IP, Port).Wait(1000))
+                    {
+                        Result = ValidationStatus.Succeeded;
+                    }
+                    else
+                    { 
+                        Result = ValidationStatus.Failed;
+                    }
+                };
+                
             }
             catch
             {
