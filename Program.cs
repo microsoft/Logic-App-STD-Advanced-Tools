@@ -364,14 +364,14 @@ namespace LogicAppAdvancedTool
                 #endregion
 
                 #region Check Connectivity
-                app.Command("CheckStorageConnectivity", c =>
+                app.Command("ValidateStorageConnectivity", c =>
                 {
                     c.HelpOption("-?");
                     c.Description = "Check the connectivity between Logic App STD and it's backend Storage Account.";
 
                     c.OnExecute(() =>
                     {
-                        CheckStorageConnectivity.Run();
+                        ValidateStorageConnectivity.Run();
 
                         return 0;
                     });

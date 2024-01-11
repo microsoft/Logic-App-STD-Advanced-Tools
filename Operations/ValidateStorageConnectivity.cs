@@ -6,13 +6,16 @@ using Azure.Storage.Queues;
 using Azure.Storage.Files.Shares;
 using Azure.Storage.Blobs;
 using LogicAppAdvancedTool.Structures;
+using System;
 
 namespace LogicAppAdvancedTool.Operations
 {
-    public static class CheckStorageConnectivity
+    public static class ValidateStorageConnectivity
     {
         public static void Run()
         {
+            Console.WriteLine("Validating...");
+
             StorageConnectionInfo connectionInfo = new StorageConnectionInfo(AppSettings.ConnectionString);
 
             List<BackendStorageValidator> results = new List<BackendStorageValidator>
@@ -30,7 +33,7 @@ namespace LogicAppAdvancedTool.Operations
 
             if (results != null)
             {
-                ConsoleTable consoleTable = new ConsoleTable("Storage Name", "Type", "DNS Resolution", "Endpoint IP", "Is PE", "TCP Conn", "Authentication");
+                ConsoleTable consoleTable = new ConsoleTable("Storage Name", "Type", "DNS Resolution", "Endpoint IP", "TCP Conn", "Authentication");
 
                 foreach (BackendStorageValidator result in results)
                 {
