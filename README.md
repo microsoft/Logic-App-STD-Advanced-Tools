@@ -29,7 +29,7 @@ If you would like to compile the binary yourself, please always use "Publish" in
 | RetrieveFailures | Retrieve all the detail failure information of a workflow for a specific day/run.|
 | Revert | Revert a workflow to a speicfic version.|
 | SyncToLocal | Sync remote wwwroot folder of Logic App Standard to local project. This command must run in local computer. There are 3 subcommands for different usage, please use -? for more information.|
-| CheckStorageConnectivity | Check the connection between Logic App and Storage Account via DNS resolution and tcp ping of 443 port. This command need Kudu site is available. |
+| ValidateStorageConnectivity | Check the connection between Logic App and Storage Account via DNS resolution and tcp ping of 443 port. This command need Kudu site is available. |
 | GenerateRunHistoryUrl | Generate run history of failure runs of a specific workflow on a specific day. The url can directly open the run history page |
 | CleanUpContainers | Delete all the Logic App auto-generated blob containers for run history before a specific date. |
 | CleanUpTables | Delete all the Logic App auto-generated storage tables for run history before a specific date. |
