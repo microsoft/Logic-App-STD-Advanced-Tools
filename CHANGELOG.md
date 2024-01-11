@@ -1,3 +1,8 @@
+2024-01-11
+1. Code improvement for DNS and socket validation.
+2. Rename command "CheckStorageConnectivity" to "ValidateStorageConnectivity".
+3. Minor bug fix
+
 2023-12-26
 1. Change command "CheckConnectivity" to "CheckStorageConnectivity" to avoid confusion.
 2. Added a new command "EndpointValidation" which can validate http(s) endpoint name resolution, connectivity, SSL certifcate issue.
