@@ -15,6 +15,7 @@ using System.Drawing;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Reflection;
 
@@ -224,6 +225,35 @@ namespace LogicAppAdvancedTool
                                         .ToList();
 
             return ipPrefixes;
+        }
+
+        public static bool VerifyIPInSubnet(string ip, string subnet)
+        {
+            long subnetStartIP = ConvertIPFromString(subnet.Split('/')[0]);
+            long subnetEndIP = subnetStartIP;
+            long ipNum = ConvertIPFromString(ip);
+
+            int prefixSize = 32;
+
+            if (subnet.Split('/').Length > 1)
+            {
+                prefixSize = int.Parse(subnet.Split('/')[1]);
+
+                subnetEndIP += (int)Math.Pow(2, (32 - prefixSize)) - 1;
+            }
+
+            return (ipNum >= subnetStartIP && ipNum <= subnetEndIP);
+        }
+
+        public static long ConvertIPFromString(string IP)
+        {
+            byte[] IPBytes = IPAddress.Parse(IP).GetAddressBytes();
+            long IPNumber = (long)IPBytes[0] << 24;
+            IPNumber += (long)IPBytes[1] << 16;
+            IPNumber += (long)IPBytes[2] << 8;
+            IPNumber += (long)IPBytes[3];
+
+            return IPNumber;
         }
     }
 }

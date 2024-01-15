@@ -26,18 +26,35 @@ namespace LogicAppAdvancedTool.Operations
                     new BackendStorageValidator(connectionInfo.TableEndpoint, StorageType.Table)
                 };
 
+            List<string> storagePublicIPs = null;
+            try
+            {
+                storagePublicIPs = CommonOperations.RetrieveServiceTagIPs("Storage");
+
+                Console.WriteLine("IP list of Storage Account service tag has been retrieved successfully.");
+            }
+            catch
+            {
+                Console.WriteLine("Failed to retrieve Storage Service Tag IP lists, please review whether your Logic App MI has been assign \"Reader\" role on subscription level.\r\nStorage Account private endpoint validation will be skipped.");
+            }
+
             foreach (BackendStorageValidator validator in results)
             {
                 validator.Validate();
+
+                if (storagePublicIPs != null && validator.NameResolutionStatus == ValidationStatus.Succeeded)
+                {
+                    validator.CheckForPE(storagePublicIPs);
+                }
             }
 
             if (results != null)
             {
-                ConsoleTable consoleTable = new ConsoleTable("Storage Name", "Type", "DNS Resolution", "Endpoint IP", "TCP Conn", "Authentication");
+                ConsoleTable consoleTable = new ConsoleTable("Storage Name", "Type", "DNS Resolution", "Endpoint IP", "Is PE", "TCP Conn", "Authentication");
 
                 foreach (BackendStorageValidator result in results)
                 {
-                    consoleTable.AddRow(connectionInfo.AccountName, result.ServiceType.ToString(), result.NameResolutionStatus.ToString(), result.GetIPsAsString(), result.SocketConnectionStatus.ToString(), result.AuthenticationStatus.ToString());
+                    consoleTable.AddRow(connectionInfo.AccountName, result.ServiceType.ToString(), result.NameResolutionStatus.ToString(), result.GetIPsAsString(), result.IsPrivateEndpoint, result.SocketConnectionStatus.ToString(), result.AuthenticationStatus.ToString());
                 }
 
                 consoleTable.Print();
@@ -52,9 +69,10 @@ namespace LogicAppAdvancedTool.Operations
         public int Port;
         public IPAddress[] IPs;
 
-        public ValidationStatus AuthenticationStatus;
-        public ValidationStatus NameResolutionStatus;
-        public ValidationStatus SocketConnectionStatus;
+        public ValidationStatus AuthenticationStatus { get; private set; }
+        public ValidationStatus NameResolutionStatus { get; private set; }
+        public ValidationStatus SocketConnectionStatus { get; private set; }
+        public string IsPrivateEndpoint { get; private set; }
 
         public BackendStorageValidator(string endpoint, StorageType serviceType)
         {
@@ -62,6 +80,7 @@ namespace LogicAppAdvancedTool.Operations
             Port = 443;
             ServiceType = serviceType;
             AuthenticationStatus = ValidationStatus.NotApplicable;
+            IsPrivateEndpoint = "Skipped";
         }
 
         public void Validate()
@@ -83,6 +102,21 @@ namespace LogicAppAdvancedTool.Operations
             {
                 AuthenticationStatus = new StorageValidator(Endpoint, ServiceType).Validate().Result;
             }
+        }
+
+        public void CheckForPE(List<string> serviceSubnets)
+        {
+            foreach (string subnet in serviceSubnets)
+            {
+                if (CommonOperations.VerifyIPInSubnet(IPs[0].ToString(), subnet))
+                {
+                    IsPrivateEndpoint = "Yes";
+
+                    break;
+                }
+            }
+
+            IsPrivateEndpoint = "No";
         }
 
         public string GetIPsAsString()
