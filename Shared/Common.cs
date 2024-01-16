@@ -142,7 +142,7 @@ namespace LogicAppAdvancedTool
         public static string GetBlobContent(string blobUri, int contentSize = -1)
         {
             Uri uri = new Uri(blobUri);
-            StorageConnectionInfo info = new StorageConnectionInfo(AppSettings.ConnectionString, StorageType.Blob);
+            StorageConnectionInfo info = new StorageConnectionInfo(AppSettings.ConnectionString, StorageServiceType.Blob);
             StorageSharedKeyCredential cred = new StorageSharedKeyCredential(info.AccountName, info.AccountKey);
 
             BlobClient client = new BlobClient(uri, cred);

@@ -16,14 +16,14 @@ namespace LogicAppAdvancedTool.Operations
         {
             List<BackendStorageValidator> validators = new List<BackendStorageValidator>
                 {
-                    new BackendStorageValidator(new StorageConnectionInfo(AppSettings.ConnectionString, StorageType.Blob)),
-                    new BackendStorageValidator(new StorageConnectionInfo(AppSettings.ConnectionString, StorageType.Queue)),
-                    new BackendStorageValidator(new StorageConnectionInfo(AppSettings.ConnectionString, StorageType.Table))
+                    new BackendStorageValidator(new StorageConnectionInfo(AppSettings.ConnectionString, StorageServiceType.Blob)),
+                    new BackendStorageValidator(new StorageConnectionInfo(AppSettings.ConnectionString, StorageServiceType.Queue)),
+                    new BackendStorageValidator(new StorageConnectionInfo(AppSettings.ConnectionString, StorageServiceType.Table))
                 };
 
             if (AppSettings.FileShareConnectionString != null)
             {
-                validators.Add(new BackendStorageValidator(new StorageConnectionInfo(AppSettings.FileShareConnectionString, StorageType.File)));
+                validators.Add(new BackendStorageValidator(new StorageConnectionInfo(AppSettings.FileShareConnectionString, StorageServiceType.File)));
                 Console.WriteLine($"Successfully retrieved Storage Account information from environment variables.");
             }
             else
@@ -70,11 +70,10 @@ namespace LogicAppAdvancedTool.Operations
     public class BackendStorageValidator
     {
         public string Endpoint { get; private set; }
-        public StorageType ServiceType { get; private set; }
+        public StorageServiceType ServiceType { get; private set; }
         public int Port { get; private set; }
         public IPAddress[] IPs { get; private set; }
         public StorageConnectionInfo connectionInfo { get; private set; }
-
         public ValidationStatus AuthenticationStatus { get; private set; }
         public ValidationStatus NameResolutionStatus { get; private set; }
         public ValidationStatus SocketConnectionStatus { get; private set; }

@@ -22,7 +22,7 @@ namespace LogicAppAdvancedTool
         EmptyEndpoint
     }
 
-    public enum StorageType
+    public enum StorageServiceType
     {
         Blob = 1,
         File = 2,

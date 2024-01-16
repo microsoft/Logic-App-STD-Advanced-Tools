@@ -92,6 +92,11 @@ namespace LogicAppAdvancedTool.Structures
     }
 
     public class StreamHistoryBlob
+    { 
+        public StreamHistoryInner content { get; set; }
+    }
+
+    public class StreamHistoryInner
     {
         [JsonProperty(PropertyName = "$content-type")]
         public string ContentType { get; set; }

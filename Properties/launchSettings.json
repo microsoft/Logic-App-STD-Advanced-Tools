@@ -2,7 +2,7 @@
   "profiles": {
     "LogicAppAdvancedTool": {
       "commandName": "Project",
-      "commandLineArgs": "ValidateStorageConnectivity"
+      "commandLineArgs": "SearchInHistory -wf DracTest -d 20240116 -k assistant -b true"
     }
   }
 }

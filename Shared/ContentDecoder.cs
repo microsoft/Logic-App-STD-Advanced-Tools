@@ -23,6 +23,7 @@ namespace LogicAppAdvancedTool
                 return String.IsNullOrEmpty(InlinedContent) ? BlobUri : InlinedContent;
             }
         }
+
         public ContentDecoder(byte[] binaryContent)
         {
             string rawContent = CommonOperations.DecompressContent(binaryContent) ?? string.Empty;
@@ -83,12 +84,12 @@ namespace LogicAppAdvancedTool
                 if (contentInBlob.Contains("$content-type") && contentInBlob.Contains("application/octet-stream"))  //quick and dirty implementation
                 {
                     StreamHistoryBlob streamContent = JsonConvert.DeserializeObject<StreamHistoryBlob>(contentInBlob);
-                    if (String.IsNullOrEmpty(streamContent.Content))
+                    if (String.IsNullOrEmpty(streamContent.content.Content))
                     {
                         return false;
                     }
 
-                    contentInBlob = Encoding.UTF8.GetString(Convert.FromBase64String(streamContent.Content));
+                    contentInBlob = Encoding.UTF8.GetString(Convert.FromBase64String(streamContent.content.Content));
                 }
 
                 if (contentInBlob.Contains(keyword))

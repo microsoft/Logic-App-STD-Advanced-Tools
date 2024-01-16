@@ -160,9 +160,9 @@ namespace LogicAppAdvancedTool
     { 
         public ValidationStatus Result { get; private set; }
         public string StorageEndpoint { get; private set; }
-        public StorageType ServiceType { get; private set; }
+        public StorageServiceType ServiceType { get; private set; }
 
-        public StorageValidator(string storageEndpoint, StorageType serviceType)
+        public StorageValidator(string storageEndpoint, StorageServiceType serviceType)
         { 
             this.StorageEndpoint = storageEndpoint;
             this.ServiceType = serviceType;
@@ -174,19 +174,19 @@ namespace LogicAppAdvancedTool
             {
                 switch (ServiceType)
                 {
-                    case StorageType.Blob:
+                    case StorageServiceType.Blob:
                         BlobServiceClient blobClient = new BlobServiceClient(AppSettings.ConnectionString);
                         blobClient.GetProperties();
                         break;
-                    case StorageType.File:
+                    case StorageServiceType.File:
                         ShareServiceClient shareClient = new ShareServiceClient(AppSettings.ConnectionString);
                         shareClient.GetProperties();
                         break;
-                    case StorageType.Queue:
+                    case StorageServiceType.Queue:
                         QueueServiceClient queueClient = new QueueServiceClient(AppSettings.ConnectionString);
                         queueClient.GetProperties();
                         break;
-                    case StorageType.Table:
+                    case StorageServiceType.Table:
                         TableServiceClient tableClient = new TableServiceClient(AppSettings.ConnectionString);
                         tableClient.GetProperties();
                         break;
