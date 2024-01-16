@@ -14,17 +14,22 @@ namespace LogicAppAdvancedTool.Operations
     {
         public static void Run()
         {
-            StorageConnectionInfo connectionInfo = new StorageConnectionInfo(AppSettings.ConnectionString);
-
-            List<BackendStorageValidator> results = new List<BackendStorageValidator>
+            List<BackendStorageValidator> validators = new List<BackendStorageValidator>
                 {
-                    new BackendStorageValidator(connectionInfo.BlobEndpoint, StorageType.Blob),
-                    new BackendStorageValidator(connectionInfo.FileEndpoint, StorageType.File),
-                    new BackendStorageValidator(connectionInfo.QueueEndpoint, StorageType.Queue),
-                    new BackendStorageValidator(connectionInfo.TableEndpoint, StorageType.Table)
+                    new BackendStorageValidator(new StorageConnectionInfo(AppSettings.ConnectionString, StorageType.Blob)),
+                    new BackendStorageValidator(new StorageConnectionInfo(AppSettings.ConnectionString, StorageType.Queue)),
+                    new BackendStorageValidator(new StorageConnectionInfo(AppSettings.ConnectionString, StorageType.Table))
                 };
 
-            Console.WriteLine($"Successfully retrieved Storage Account information from environment variables.");
+            if (AppSettings.FileShareConnectionString != null)
+            {
+                validators.Add(new BackendStorageValidator(new StorageConnectionInfo(AppSettings.FileShareConnectionString, StorageType.File)));
+                Console.WriteLine($"Successfully retrieved Storage Account information from environment variables.");
+            }
+            else
+            {
+                Console.WriteLine($"Cannot retrieve connection string of Storage - File Share, validation will be skipped for file share service.\r\nIf you are not using ASEv3, please verify WEBSITE_CONTENTAZUREFILECONNECTIONSTRING in your appsettings.");
+            }
 
             List<string> storagePublicIPs = null;
             try
@@ -38,7 +43,7 @@ namespace LogicAppAdvancedTool.Operations
                 Console.WriteLine("Failed to retrieve Storage Service Tag IP lists, please review whether your Logic App MI has been assign \"Reader\" role on subscription level.\r\nStorage Account private endpoint validation will be skipped.");
             }
 
-            foreach (BackendStorageValidator validator in results)
+            foreach (BackendStorageValidator validator in validators)
             {
                 validator.Validate();
 
@@ -48,13 +53,13 @@ namespace LogicAppAdvancedTool.Operations
                 }
             }
 
-            if (results != null)
+            if (validators != null)
             {
                 ConsoleTable consoleTable = new ConsoleTable("Storage Name", "Type", "DNS Resolution", "Endpoint IP", "Is PE", "TCP Conn", "Authentication");
 
-                foreach (BackendStorageValidator result in results)
+                foreach (BackendStorageValidator result in validators)
                 {
-                    consoleTable.AddRow(connectionInfo.AccountName, result.ServiceType.ToString(), result.NameResolutionStatus.ToString(), result.GetIPsAsString(), result.IsPrivateEndpoint, result.SocketConnectionStatus.ToString(), result.AuthenticationStatus.ToString());
+                    consoleTable.AddRow(result.connectionInfo.AccountName, result.ServiceType.ToString(), result.NameResolutionStatus.ToString(), result.GetIPsAsString(), result.IsPrivateEndpoint.ToString(), result.SocketConnectionStatus.ToString(), result.AuthenticationStatus.ToString());
                 }
 
                 consoleTable.Print();
@@ -64,23 +69,25 @@ namespace LogicAppAdvancedTool.Operations
 
     public class BackendStorageValidator
     {
-        public string Endpoint;
-        public StorageType ServiceType;
-        public int Port;
-        public IPAddress[] IPs;
+        public string Endpoint { get; private set; }
+        public StorageType ServiceType { get; private set; }
+        public int Port { get; private set; }
+        public IPAddress[] IPs { get; private set; }
+        public StorageConnectionInfo connectionInfo { get; private set; }
 
         public ValidationStatus AuthenticationStatus { get; private set; }
         public ValidationStatus NameResolutionStatus { get; private set; }
         public ValidationStatus SocketConnectionStatus { get; private set; }
-        public string IsPrivateEndpoint { get; private set; }
+        public PrivateEndpointStatus IsPrivateEndpoint { get; private set; }
 
-        public BackendStorageValidator(string endpoint, StorageType serviceType)
+        public BackendStorageValidator(StorageConnectionInfo connectionInfo)
         {
-            Endpoint = endpoint;
+            Endpoint = connectionInfo.Endpoint;
             Port = 443;
-            ServiceType = serviceType;
+            ServiceType = connectionInfo.storageType;
             AuthenticationStatus = ValidationStatus.NotApplicable;
-            IsPrivateEndpoint = "Skipped";
+            IsPrivateEndpoint = PrivateEndpointStatus.Skipped;
+            this.connectionInfo = connectionInfo;
         }
 
         public void Validate()
@@ -110,13 +117,13 @@ namespace LogicAppAdvancedTool.Operations
             {
                 if (CommonOperations.IsIpInSubnet(IPs[0].ToString(), subnet))       //assume for each Storage Account endpoint, only 1 IP
                 {
-                    IsPrivateEndpoint = "Yes";
+                    IsPrivateEndpoint = PrivateEndpointStatus.Yes;
 
                     break;
                 }
             }
 
-            IsPrivateEndpoint = "No";
+            IsPrivateEndpoint = PrivateEndpointStatus.No;
         }
 
         public string GetIPsAsString()

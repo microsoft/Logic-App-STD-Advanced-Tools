@@ -16,6 +16,14 @@ namespace LogicAppAdvancedTool
             }
         }
 
+        public static string FileShareConnectionString
+        {
+            get
+            {
+                return Environment.GetEnvironmentVariable("WEBSITE_CONTENTAZUREFILECONNECTIONSTRING");
+            }
+        }
+
         public static string SubscriptionID
         {
             get 

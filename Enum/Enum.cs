@@ -6,6 +6,13 @@ using System.Threading.Tasks;
 
 namespace LogicAppAdvancedTool
 {
+    public enum PrivateEndpointStatus
+    { 
+        Yes,
+        No,
+        Skipped
+    }
+
     public enum ValidationStatus
     {
         Succeeded,
