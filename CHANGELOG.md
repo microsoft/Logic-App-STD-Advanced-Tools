@@ -1,3 +1,6 @@
+2024-01-15
+1. "CheckStorageConnectivity" now can detect whether the Storage Account is using private endpoint or not. Request subscription level "Reader" role on Logic App MI.
+
 2024-01-11
 1. Code improvement for DNS and socket validation.
 2. Rename command "CheckStorageConnectivity" to "ValidateStorageConnectivity".
