@@ -14,8 +14,6 @@ namespace LogicAppAdvancedTool.Operations
     {
         public static void Run()
         {
-            Console.WriteLine("Validating...");
-
             StorageConnectionInfo connectionInfo = new StorageConnectionInfo(AppSettings.ConnectionString);
 
             List<BackendStorageValidator> results = new List<BackendStorageValidator>
@@ -25,6 +23,8 @@ namespace LogicAppAdvancedTool.Operations
                     new BackendStorageValidator(connectionInfo.QueueEndpoint, StorageType.Queue),
                     new BackendStorageValidator(connectionInfo.TableEndpoint, StorageType.Table)
                 };
+
+            Console.WriteLine($"Successfully retrieved Storage Account information from environment variables.");
 
             List<string> storagePublicIPs = null;
             try
@@ -108,7 +108,7 @@ namespace LogicAppAdvancedTool.Operations
         {
             foreach (string subnet in serviceSubnets)
             {
-                if (CommonOperations.VerifyIPInSubnet(IPs[0].ToString(), subnet))
+                if (CommonOperations.IsIpInSubnet(IPs[0].ToString(), subnet))       //assume for each Storage Account endpoint, only 1 IP
                 {
                     IsPrivateEndpoint = "Yes";
 

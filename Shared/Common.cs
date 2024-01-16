@@ -31,6 +31,7 @@ namespace LogicAppAdvancedTool
                 throw new UserCanceledException("Operation Cancelled");
             }
         }
+
         private static string GetMainTableName()
         {
             string tableName = $"flow{StoragePrefixGenerator.Generate(AppSettings.LogicAppName.ToLower())}flows";
@@ -221,37 +222,36 @@ namespace LogicAppAdvancedTool
 
             List<string> ipPrefixes = serviceTagInfo["properties"]?["addressPrefixes"].ToList()
                                         .Select(s => s.ToString())
-                                        .Where( s=> !s.Contains(":"))   //we don't need IPv6
+                                        .Where(s => !s.Contains(":"))   //we don't need IPv6
                                         .ToList();
 
             return ipPrefixes;
         }
 
-        public static bool VerifyIPInSubnet(string ip, string subnet)
+        public static bool IsIpInSubnet(string ip, string subnet)
         {
-            long subnetStartIP = ConvertIPFromString(subnet.Split('/')[0]);
-            long subnetEndIP = subnetStartIP;
-            long ipNum = ConvertIPFromString(ip);
+            string[] subnetInfo = subnet.Split('/');
 
-            int prefixSize = 32;
+            uint subnetStartIP = ConvertIPFromString(subnetInfo[0]);
+            uint subnetEndIP = subnetStartIP;
+            uint ipNum = ConvertIPFromString(ip);
 
-            if (subnet.Split('/').Length > 1)
-            {
-                prefixSize = int.Parse(subnet.Split('/')[1]);
+            int subnetMask = int.Parse(subnetInfo.ElementAtOrDefault(1) ?? "32");
 
-                subnetEndIP += (int)Math.Pow(2, (32 - prefixSize)) - 1;
-            }
+            //we don't need to consider for maximum value overflow
+            //for subnet mask, the maximum value is 32, so uint value will be Pow(2, 32) which is 0 in Uint, but we have -1 which can revert back to Uint.Max
+            subnetEndIP += (uint)Math.Pow(2, (32 - subnetMask)) - 1;    
 
             return (ipNum >= subnetStartIP && ipNum <= subnetEndIP);
         }
 
-        public static long ConvertIPFromString(string IP)
+        public static uint ConvertIPFromString(string IP)
         {
             byte[] IPBytes = IPAddress.Parse(IP).GetAddressBytes();
-            long IPNumber = (long)IPBytes[0] << 24;
-            IPNumber += (long)IPBytes[1] << 16;
-            IPNumber += (long)IPBytes[2] << 8;
-            IPNumber += (long)IPBytes[3];
+            uint IPNumber = (uint)IPBytes[0] << 24;
+            IPNumber += (uint)IPBytes[1] << 16;
+            IPNumber += (uint)IPBytes[2] << 8;
+            IPNumber += IPBytes[3];
 
             return IPNumber;
         }

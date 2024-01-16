@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 
 namespace LogicAppAdvancedTool
 {
@@ -853,7 +854,6 @@ namespace LogicAppAdvancedTool
                 #endregion
 
                 //TODO:
-                //PVE detect in Storage connection test
 
                 app.Execute(args);
             }
