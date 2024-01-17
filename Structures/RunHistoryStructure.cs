@@ -91,12 +91,12 @@ namespace LogicAppAdvancedTool.Structures
         }
     }
 
-    public class StreamHistoryBlob
+    public class RunHistoryInBlob
     { 
-        public StreamHistoryInner content { get; set; }
+        public RunHistoryInBlobInner content { get; set; }
     }
 
-    public class StreamHistoryInner
+    public class RunHistoryInBlobInner
     {
         [JsonProperty(PropertyName = "$content-type")]
         public string ContentType { get; set; }

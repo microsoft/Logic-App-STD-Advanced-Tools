@@ -3,6 +3,9 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Text;
 using LogicAppAdvancedTool.Structures;
+using Microsoft.WindowsAzure.ResourceStack.Common.Extensions;
+using System.Linq;
+using Microsoft.WindowsAzure.ResourceStack.Common.Json;
 
 namespace LogicAppAdvancedTool
 {
@@ -83,13 +86,13 @@ namespace LogicAppAdvancedTool
 
                 if (contentInBlob.Contains("$content-type") && contentInBlob.Contains("application/octet-stream"))  //quick and dirty implementation
                 {
-                    StreamHistoryBlob streamContent = JsonConvert.DeserializeObject<StreamHistoryBlob>(contentInBlob);
-                    if (String.IsNullOrEmpty(streamContent.content.Content))
+                    JToken streamContent = JToken.Parse(contentInBlob);
+                    contentInBlob = DecodeStreamToString(streamContent);
+
+                    if (String.IsNullOrEmpty(contentInBlob))
                     {
                         return false;
                     }
-
-                    contentInBlob = Encoding.UTF8.GetString(Convert.FromBase64String(streamContent.content.Content));
                 }
 
                 if (contentInBlob.Contains(keyword))
@@ -99,6 +102,37 @@ namespace LogicAppAdvancedTool
             }
 
             return false;
+        }
+
+        public string DecodeStreamToString(JToken token)
+        {
+            string streamContent = string.Empty;
+
+            int i = token.Count();
+             
+            foreach (JToken t in token.Children())
+            {
+                if (t is JProperty && ((JProperty)t).Name == "$content")
+                {
+                    string content = ((JProperty)t).Value.ToString();
+
+                    return Encoding.UTF8.GetString(Convert.FromBase64String(content));
+                }
+                else
+                {
+                    if (t.Count() != 0)
+                    {
+                        streamContent = DecodeStreamToString(t);
+
+                        if (!string.IsNullOrEmpty(streamContent))
+                        {
+                            return streamContent;
+                        }
+                    }
+                }
+            }
+
+            return streamContent;
         }
     }
 }

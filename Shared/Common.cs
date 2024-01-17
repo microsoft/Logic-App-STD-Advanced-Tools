@@ -153,7 +153,7 @@ namespace LogicAppAdvancedTool
             {
                 string blobName = blobUri.Split("/").Last();
 
-                Console.WriteLine($"{blobName} content size is larger than 1MB, skip content check for this blob due to memory saving.");
+                //Console.WriteLine($"{blobName} content size is larger than 1MB, skip content check for this blob due to memory saving.");
 
                 return String.Empty;
             }
