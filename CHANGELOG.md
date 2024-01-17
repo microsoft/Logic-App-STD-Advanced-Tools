@@ -1,3 +1,6 @@
+2024-01-16
+1. Modified code for retrieving run history from blob due to the json schema changed by logic App developer.
+
 2024-01-15
 1. "CheckStorageConnectivity" now can detect whether the Storage Account is using private endpoint or not. Request subscription level "Reader" role on Logic App MI.
 
