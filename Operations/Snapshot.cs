@@ -32,7 +32,7 @@ namespace LogicAppAdvancedTool.Operations
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Failed to retrieve appsettings, please review your Logic App Managed Identity role (Website Controbutor or Logic App Standard Contributor required).");
+                Console.WriteLine("Failed to retrieve appsettings, please review your Logic App Managed Identity role (Website Contributor or Logic App Standard Contributor required).");
             }
 
             Console.WriteLine($"Snapshot created, you can review all files in folder {backupPath}");
