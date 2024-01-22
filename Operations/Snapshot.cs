@@ -18,8 +18,8 @@ namespace LogicAppAdvancedTool.Operations
             Directory.CreateDirectory(backupPath);
 
             Console.WriteLine("Backing up workflow related files (definition, artifacts, host.json, etc.)");
-
             CommonOperations.CopyDirectory(AppSettings.RootFolder, backupPath, true);
+            Console.WriteLine("Backup for wwwroot folder succeeded.");
 
             Console.WriteLine("Retrieving appsettings..");
 
@@ -32,7 +32,7 @@ namespace LogicAppAdvancedTool.Operations
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Failed to retrieve appsettings, only wwwroot folder will be backup.");
+                Console.WriteLine("Failed to retrieve appsettings, please review your Logic App Managed Identity role (Website Controbutor or Logic App Standard Contributor required).");
             }
 
             Console.WriteLine($"Snapshot created, you can review all files in folder {backupPath}");

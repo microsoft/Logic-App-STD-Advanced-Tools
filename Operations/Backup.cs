@@ -27,7 +27,7 @@ namespace LogicAppAdvancedTool.Operations
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Failed to retrieve appsettings, it will not be backup.\r\nException message: {ex.Message}");
+                Console.WriteLine($"Failed to retrieve appsettings, it will not be backup.\r\nPlease review your Logic App Managed Identity role (Website Controbutor or Logic App Standard Contributor required).");
             }
 
             string formattedDate = DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture).ToString("yyyy-MM-ddT00:00:00Z");
