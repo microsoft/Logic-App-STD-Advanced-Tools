@@ -14,14 +14,14 @@ If you would like to compile the binary yourself, please always use "Publish" in
 ## Commands
 | Commands | Description |
 | --- | --- |
-| Backup | Retrieve all the definitions which can be found in Storage Table and save as Json files. The storage table saves the definition for past 90 days by default even they have been deleted.|
+| Backup | Retrieve all the definitions which can be found in Storage Table and save as Json files. For retrieving appsettings, Logic App Managed Identity either need Website Contributor or Logic App Contributor role be assigned. The storage table saves the definition for past 90 days by default even they have been deleted.|
 | CancelRuns | Cancel all the running/waiting instances of a workflow, **be aware of this command will cause data lossing**.|
 | ClearJobQueue | (Deprecated) Clear Logic App storage queue, this action could casue data lossing.|
 | Clone | Clone a workflow to a new workflow, only support for same Logic App and same kind (stateful or stateless).|
 | ConvertToStateful | Clone a stateless workflow and create a new stateful workflow.|
 | Decode | Decode a workflow based on provided version to human readable content.|
 | GenerateTablePrefix | Generate Logic App/Workflow's storage table prefix.|
-| IngestWorkflow | **This is an experimental feature.  NOT fully tested, DON'T use in PROD environment!!!** Ingest a workflow into Storage Table directly to bypass workflow definition validation.|
+| IngestWorkflow | **Experimental feature.  NOT fully tested, DON'T use in PROD environment!!!** Ingest a workflow into Storage Table directly to bypass workflow definition validation.|
 | ListVersions | List all the exisiting versions of a workflow.|
 | ListWorkflows | List all the exisiting workflows which can be found in storage table.|
 | RestoreAll | Restore all the workflows which be deleted accidentally. **This operation may cause unexpected behavior on Logic App runtime if you have any invalid workflows in storage table**.|
@@ -35,10 +35,10 @@ If you would like to compile the binary yourself, please always use "Publish" in
 | CleanUpTables | Delete all the Logic App auto-generated storage tables for run history before a specific date. |
 | CleanUpRunHistory | Combined command of **CleanUpContainers** and **CleanUpTables** |
 | SearchInHistory | Search a keyword in workflow run history based on date. |
-| RestoreRunHistory | Restore run history of a deleted/overwritten workflow. |
+| RestoreRunHistory | **Experimental feature. DON'T use in PROD environment!!!** Restore run history of a deleted/overwritten workflow. |
 | ValidateSPConnectivity | Validate all Service Providers which defined in connections.json. |
 | BatchResubmit | Resubmit all failed runs of a specific workflow within provided time peroid. |
-| WhitelistConnectorIP | Whitelist Logic App connector ip range in other Azure services ( recently only support for Storage Account, Key Vault and Event Hub) |
+| WhitelistConnectorIP | Whitelist Logic App connector ip range in other Azure services (Only support for Storage Account, Key Vault and Event Hub). It uses Logic App MI for adding/modifying Firewall of other services, so MI need to have the permission to do so.  |
 | RetrieveActionPayload | Retrieve all the payload(input/output) of an action within a specific day. |
 | Snapshot | Create a snapshot or restore from a snapshot based on provided sub-command. All the files under wwwroot folder and appsettings can be restored. This command need Website Contributor role on Logic App MI to retrieve appsettings. |
 | ScanConnections | Retrieve all connections (API connections and Service Providers) in all workflows and compare with connections.json and list all unused connections. |
