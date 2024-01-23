@@ -14,7 +14,7 @@ If you would like to compile the binary yourself, please always use "Publish" in
 ## Commands
 | Commands | Description |
 | --- | --- |
-| Backup | Retrieve all the definitions which can be found in Storage Table and save as Json files. For retrieving appsettings, Logic App Managed Identity either need Website Contributor or Logic App Contributor role be assigned. The storage table saves the definition for past 90 days by default even they have been deleted.|
+| Backup | Retrieve all the definitions which can be found in Storage Table and save as Json files.<br/>For retrieving appsettings, Logic App Managed Identity either need Website Contributor or Logic App Contributor role be assigned.<br/>The storage table saves the definition for past 90 days by default even they have been deleted.|
 | CancelRuns | Cancel all the running/waiting instances of a workflow, **be aware of this command will cause data lossing**.|
 | ClearJobQueue | (Deprecated) Clear Logic App storage queue, this action could casue data lossing.|
 | Clone | Clone a workflow to a new workflow, only support for same Logic App and same kind (stateful or stateless).|
