@@ -66,3 +66,4 @@ If you would like to compile the binary yourself, please always use "Publish" in
 ## Limitation
 1. This tool only modify workflow.json, if the API connection metadata get lost in connections.json, the reverted workflow will not work.
 2. By default, if the definition not be used in 90 days, the backend service will remove it from storage table which means the tool will not be able to find the definition.
+3. When using "SearchInHistory" and set "includeBlob" to true, it will also search run history which saved as blob, but if blob larger than 1MB, it will be skipped due to memory saving consideration.
