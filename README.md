@@ -60,7 +60,7 @@ If you would like to compile the binary yourself, please always use "Publish" in
 
 
 ## Common Issues
-1. For "Backup" and "Snapshot" command, it need to retrieve appsettings. The implementation is using Logic App API via Logic App Managed Identity which means MI need to have the permission to read appsettings. If there's any exception related to "Failed to retrieve appsettings", you need to verify whether MI has proper permission (Website Contributor or Logic App Standard Contributor role could be a good choice).
+1. "Backup" and "Snapshot" need to retrieve appsettings. The implementation is using Logic App API via Logic App Managed Identity which means MI need to have the permission to read appsettings. If there's any exception related to "Failed to retrieve appsettings", you need to verify whether MI has proper permission (Website Contributor or Logic App Standard Contributor role could be a good choice).
 2. "WhitelistConnectorIP" request to modify other services, so Logic App MI need to have the permission to edit other services firewall rule. For example, MI need Storage Account Contributor role if you need to update Storage Account firewall.
 
 ## Limitation
