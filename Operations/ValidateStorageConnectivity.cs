@@ -28,7 +28,7 @@ namespace LogicAppAdvancedTool.Operations
             }
             else
             {
-                Console.WriteLine($"Cannot retrieve connection string of Storage - File Share, validation will be skipped for file share service.\r\nIf you are not using ASEv3, please verify WEBSITE_CONTENTAZUREFILECONNECTIONSTRING in your appsettings.");
+                Console.WriteLine($"Cannot retrieve connection string of Storage - File Share, validation will be skipped for file share service.\r\nIf you are NOT using ASEv3, please verify WEBSITE_CONTENTAZUREFILECONNECTIONSTRING in your appsettings.");
             }
 
             List<string> storagePublicIPs = null;

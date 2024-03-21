@@ -214,7 +214,7 @@ namespace LogicAppAdvancedTool
         {
             MSIToken token = MSITokenService.RetrieveToken("https://management.azure.com");
             string serviceTagUrl = $"https://management.azure.com/subscriptions/{AppSettings.SubscriptionID}/providers/Microsoft.Network/locations/{AppSettings.Region.ToLower()}/serviceTags?api-version=2023-06-01";
-            string serviceTagResponse = HttpOperations.ValidatedHttpRequestWithToken(serviceTagUrl, HttpMethod.Get, null, token.access_token, "Cannot grab Azure Connector IP range from Internet");
+            string serviceTagResponse = HttpOperations.ValidatedHttpRequestWithToken(serviceTagUrl, HttpMethod.Get, null, token.access_token, "Cannot retrieve Azure Connector IP range from Internet.");
 
             JToken serviceTagInfo = JObject.Parse(serviceTagResponse)["values"].ToList()
                                     .Where(s => s["name"].ToString() == $"{serviceTag}")

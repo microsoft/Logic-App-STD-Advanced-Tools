@@ -3,6 +3,7 @@ using McMaster.Extensions.CommandLineUtils;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 
@@ -19,6 +20,12 @@ namespace LogicAppAdvancedTool
 
             try
             {
+                #region For feature testing ONLY run when debug
+#if DEBUG
+                Tools.FeatureTesting();           
+#endif
+                #endregion
+
                 #region Backup
                 app.Command("Backup", c =>
                 {
@@ -604,7 +611,7 @@ namespace LogicAppAdvancedTool
                         string endTime = et.ToString("yyyy-MM-ddTHH:mm:ssZ");
                         bool ignoreProcessed = bool.Parse(ignoreProcessedCO.Value() ?? "true");
 
-                        string status = statusCO.Value().ToLower() ?? "failed";
+                        string status = (statusCO.Value()?? "failed").ToLower();
 
                         if (status != "failed" && status != "succeeded" && status != "cancelled")
                         {
