@@ -45,6 +45,7 @@ If you would like to compile the binary yourself, please always use "Publish" in
 | FilterHostLogs | Grab all error and warning logs from \LogFiles\Application\Functions\Host\ |
 | ValidateWorkflows | Validate existing workflows definition. |
 | EndpointValidation | Validate an Http(s) endpoint via name resolution, tcp connectivity, SSL certificate (if http, then SSL validation will be skipped) |
+| MergeRunHistory | When a workflow be deleted and create a new one with same name, we will lost run history. This command is to merge the run history from deleted workflow to existing one. |
 
 ## How to use (Demo of restore a workflow)
 1. Open Kudu (Advanced Tools) of Logic App Standard and upload this tool into a folder
