@@ -1,6 +1,7 @@
 ﻿using Azure;
 using Azure.Data.Tables;
 using Azure.Data.Tables.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -40,7 +41,7 @@ namespace LogicAppAdvancedTool
             return tableEntities;
         }
 
-        public static List<TableEntity> QueryHistoryTable(string workflowName, string filter, string[] select = null)
+        public static List<TableEntity> QueryHistoryTable(string workflowName, string filter = null, string[] select = null)
         {
             string historyTableName = $"flow{CommonOperations.GenerateWorkflowTablePrefix(workflowName)}histories";
 
@@ -71,6 +72,13 @@ namespace LogicAppAdvancedTool
         public static List<TableEntity> QueryMainTable(string filter, string[] select = null)
         {
             return QueryTable(DefinitionTableName, filter, select);
+        }
+
+        public static List<TableEntity> QueryCurrentWorkflowByName(string workflowName, string[] select = null)
+        {
+            string rowKey = $"MYEDGEENVIRONMENT_FLOWLOOKUP-MYEDGERESOURCEGROUP-{workflowName.ToUpper()}";
+
+            return QueryMainTable($"RowKey eq '{rowKey}'", select);
         }
     }
 }

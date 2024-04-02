@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 
 namespace LogicAppAdvancedTool
@@ -17,6 +18,16 @@ namespace LogicAppAdvancedTool
 			return TrimStorageKeyPrefix(hashResult, 32).ToLower();
 		}
 
+		public static string GeneratePartitionKey(string rowKey)
+		{
+			string key = rowKey.Split('_')[0];
+
+			byte[] data = Encoding.UTF8.GetBytes(key);
+
+			uint result = MurmurHash32(data, 0U) % 1048576;
+
+			return result.ToString("X5");
+		}
 
 		private static string TrimStorageKeyPrefix(string storageKeyPrefix, int limit)
 		{
@@ -31,8 +42,41 @@ namespace LogicAppAdvancedTool
 			return storageKeyPrefix.Substring(0, limit - 17);
 		}
 
-		#region Hash Algorithm for LA table
-		private static ulong MurmurHash64(byte[] data, uint seed = 0U)
+        #region Hash Algorithm for LA table
+        private static uint MurmurHash32(byte[] data, uint seed = 0U)
+        {
+            int num = data.Length;
+            uint num2 = seed;
+            int num3 = 0;
+            while (num3 + 3 < num)
+            {
+                uint num4 = (uint)((int)data[num3] | (int)data[num3 + 1] << 8 | (int)data[num3 + 2] << 16 | (int)data[num3 + 3] << 24);
+                num4 *= 3432918353U;
+                num4 = num4.RotateLeft32(15);
+                num4 *= 461845907U;
+                num2 ^= num4;
+                num2 = num2.RotateLeft32(13);
+                num2 = num2 * 5U + 3864292196U;
+                num3 += 4;
+            }
+            int num5 = num - num3;
+            if (num5 > 0)
+            {
+                uint num6 = (uint)((num5 == 3) ? ((int)data[num3] | (int)data[num3 + 1] << 8 | (int)data[num3 + 2] << 16) : ((num5 == 2) ? ((int)data[num3] | (int)data[num3 + 1] << 8) : ((int)data[num3])));
+                num6 *= 3432918353U;
+                num6 = num6.RotateLeft32(15);
+                num6 *= 461845907U;
+                num2 ^= num6;
+            }
+            num2 ^= (uint)num;
+            num2 ^= num2 >> 16;
+            num2 *= 2246822507U;
+            num2 ^= num2 >> 13;
+            num2 *= 3266489909U;
+            return num2 ^ num2 >> 16;
+        }
+
+        private static ulong MurmurHash64(byte[] data, uint seed = 0U)
 		{
 			int num = data.Length;
 			uint num2 = seed;

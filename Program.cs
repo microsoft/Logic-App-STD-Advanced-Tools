@@ -759,7 +759,7 @@ namespace LogicAppAdvancedTool
                 });
                 #endregion
 
-                #region Event Listener
+                #region Endpoint Validator
                 app.Command("EndpointValidation", c => {
 
                     CommandOption urlCO = c.Option("-url|--url", "(Mandatory) The Url which need to be validated. Do not include relative path.", CommandOptionType.SingleValue).IsRequired();
@@ -772,6 +772,27 @@ namespace LogicAppAdvancedTool
                         string url = urlCO.Value();
 
                         EndpointValidation.Run(url);
+
+                        return 0;
+                    });
+                });
+                #endregion
+
+                #region MergeRunHistory
+                app.Command("MergeRunHistory", c => {
+
+                    CommandOption workflowCO = c.Option("-wf|--workflow", "(Mandatory) The workflow name.", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption dateCO = c.Option("-d|--date", "(Mandatory) The date of run history (format: \"yyyyMMdd\", UTC time), if there's any long running history across different date, you need to run this command multiple times.", CommandOptionType.SingleValue).IsRequired();
+
+                    c.HelpOption("-?");
+                    c.Description = "Merge deleted worklfow run history into current version, the existing workflow name must be the same as deleted one.";
+
+                    c.OnExecute(() =>
+                    {
+                        string workflow = workflowCO.Value();
+                        string date = dateCO.Value();
+
+                        MergeRunHistory.Run(workflow, date);
 
                         return 0;
                     });
@@ -861,6 +882,8 @@ namespace LogicAppAdvancedTool
                 #endregion
 
                 //TODO:
+                //Shared -> ServiceTagRetriever
+                //improve merge run history command
 
                 app.Execute(args);
             }
