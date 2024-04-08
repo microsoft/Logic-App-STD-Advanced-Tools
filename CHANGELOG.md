@@ -1,3 +1,6 @@
+2024-04-02
+1. Added a new command "MergeRunHistory". When you overwritten a workflow (delete and create a new workflow with same name), the run history will lost for deleted workflow. This command can restore the run histories into the existing one.
+
 2024-01-16
 1. Modified code for retrieving run history from blob due to the json schema changed by logic App developer.
 
