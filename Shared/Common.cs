@@ -59,7 +59,7 @@ namespace LogicAppAdvancedTool
             string mainTableName = GetMainTableName();
 
             TableClient tableClient = new TableClient(AppSettings.ConnectionString, mainTableName);
-            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{workflowName}'");
+            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"RowKey eq 'MYEDGEENVIRONMENT_FLOWLOOKUP-MYEDGERESOURCEGROUP-{workflowName.ToUpper()}'");
 
             if (tableEntities.Count() == 0)
             {

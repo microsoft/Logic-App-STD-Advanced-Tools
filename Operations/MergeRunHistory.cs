@@ -2,15 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.IO;
-using System.Threading;
 using Microsoft.WindowsAzure.ResourceStack.Common.Extensions;
-using System.Globalization;
 using Azure.Data.Tables.Models;
 using Azure;
-using System.Linq.Expressions;
 using McMaster.Extensions.CommandLineUtils;
-using System.Text;
 
 namespace LogicAppAdvancedTool.Operations
 {
