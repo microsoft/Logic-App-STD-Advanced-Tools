@@ -14,37 +14,47 @@ namespace LogicAppAdvancedTool.Operations
             int targetDate = Int32.Parse(date);
             string formattedDate = DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture).ToString("yyyy-MM-dd");
 
-            string tablePrefix;
+            List<string> tablePrefixs = new List<string>();
             if (string.IsNullOrEmpty(workflowName))
             {
-                tablePrefix = CommonOperations.GenerateLogicAppPrefix();
+                tablePrefixs.Add(CommonOperations.GenerateLogicAppPrefix());
             }
             else
             {
-                tablePrefix = CommonOperations.GenerateWorkflowTablePrefix(workflowName);
+                List<string> flowIDs = CommonOperations.ListFlowIDsByName(workflowName);
+                foreach (string flowID in flowIDs)
+                {
+                    tablePrefixs.Add(CommonOperations.GenerateWorkflowTablePrefixByFlowID(flowID));
+                }
             }
-
-            tablePrefix = $"flow{tablePrefix}";
 
             TableServiceClient client = new TableServiceClient(AppSettings.ConnectionString);
+            List<string> matchedTables = new List<string>();
 
-            //List all the actions, variable table befire specific date
-            List<string> tables = client.Query()
-                                    .Where(x => x.Name.StartsWith(tablePrefix) && (x.Name.EndsWith("actions") || x.Name.EndsWith("variables")) && Int32.Parse(x.Name.Substring(34,8)) < targetDate)
-                                    .Select(s => s.Name)
-                                    .ToList();
-
-            if (tables.Count == 0)
+            foreach (string prefix in tablePrefixs)
             {
-                Console.WriteLine($"No storage tables found.");
+                string tablePrefix = $"flow{prefix}";
+
+                //List all the actions, variable table befire specific date
+                List<string> tables = client.Query()
+                                        .Where(x => x.Name.StartsWith(tablePrefix) && (x.Name.EndsWith("actions") || x.Name.EndsWith("variables")) && Int32.Parse(x.Name.Substring(34, 8)) < targetDate)
+                                        .Select(s => s.Name)
+                                        .ToList();
+
+                matchedTables.AddRange(tables);
             }
 
-            Console.WriteLine($"There are {tables.Count} storage table found, please enter \"P\" to print the list or press any other key to continue without print");
+            if (matchedTables.Count == 0)
+            {
+                throw new UserInputException($"No storage tables found.");
+            }
+
+            Console.WriteLine($"There are {matchedTables.Count} storage table found, please enter \"P\" to print the list or press any other key to continue without print");
             if (Console.ReadLine().ToLower() == "p")
             {
                 ConsoleTable table = new ConsoleTable("Table Name");
 
-                foreach (string tableName in tables)
+                foreach (string tableName in matchedTables)
                 {
                     table.AddRow(tableName);
                 }
@@ -58,8 +68,8 @@ namespace LogicAppAdvancedTool.Operations
                 throw new UserCanceledException("Operation Cancelled");
             }
 
-            foreach (string tableName in tables) 
-            { 
+            foreach (string tableName in matchedTables)
+            {
                 client.DeleteTable(tableName);
             }
 

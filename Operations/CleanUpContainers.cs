@@ -15,37 +15,47 @@ namespace LogicAppAdvancedTool.Operations
             int targetDate = Int32.Parse(date);
             string formattedDate = DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture).ToString("yyyy-MM-dd");
 
-            string containerPrefix;
+            List<string> containerPrefixs = new List<string>();
             if (string.IsNullOrEmpty(workflowName))
             {
-                containerPrefix = CommonOperations.GenerateLogicAppPrefix();
+                containerPrefixs.Add(CommonOperations.GenerateLogicAppPrefix());
             }
             else
             {
-                containerPrefix = CommonOperations.GenerateWorkflowTablePrefix(workflowName);
+                List<string> flowIDs = CommonOperations.ListFlowIDsByName(workflowName);
+                foreach (string flowID in flowIDs)
+                {
+                    containerPrefixs.Add(CommonOperations.GenerateWorkflowTablePrefixByFlowID(flowID));
+                }
             }
 
-            containerPrefix = $"flow{containerPrefix}";
-
+            List<string> matchedContainers = new List<string>();
             BlobServiceClient client = new BlobServiceClient(AppSettings.ConnectionString);
-            List<BlobContainerItem> containers = client.GetBlobContainers(BlobContainerTraits.Metadata, BlobContainerStates.None, containerPrefix).ToList();
 
-            if (containers.Count == 0)
-            {
-                Console.WriteLine($"No blob containers found.");
+            foreach (string prefix in containerPrefixs)
+            { 
+                string containerPrefix = $"flow{prefix}";
+                List<BlobContainerItem> containers = client.GetBlobContainers(BlobContainerTraits.Metadata, BlobContainerStates.None, containerPrefix).ToList();
+
+                List<string> containerList = containers
+                                                .Where(x => int.Parse(x.Name.Substring(34, 8)) < targetDate)
+                                                .Select(s => s.Name)
+                                                .ToList();
+
+                matchedContainers.AddRange(containerList);
             }
 
-            List<string> containerList = containers
-                                            .Where(x => int.Parse(x.Name.Substring(34, 8)) < targetDate)
-                                            .Select(s => s.Name)
-                                            .ToList();
+            if (matchedContainers.Count == 0)
+            {
+                throw new UserInputException($"No blob containers found.");
+            }
 
-            Console.WriteLine($"There are {containerList.Count} containers found, please enter \"P\" to print the list or press any other key to continue without print list");
+            Console.WriteLine($"There are {matchedContainers.Count} containers found, please enter \"P\" to print the list or press any other key to continue without print list");
             if (Console.ReadLine().ToLower() == "p")
             {
                 ConsoleTable table = new ConsoleTable("Contianer Name");
 
-                foreach (string containerName in containerList)
+                foreach (string containerName in matchedContainers)
                 {
                     table.AddRow(containerName);
                 }
@@ -59,7 +69,7 @@ namespace LogicAppAdvancedTool.Operations
                 throw new UserCanceledException("Operation Cancelled");
             }
 
-            foreach (string containerName in containerList)
+            foreach (string containerName in matchedContainers)
             { 
                 client.DeleteBlobContainer(containerName);
             }

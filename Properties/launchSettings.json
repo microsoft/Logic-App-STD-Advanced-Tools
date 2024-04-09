@@ -2,7 +2,7 @@
   "profiles": {
     "LogicAppAdvancedTool": {
       "commandName": "Project",
-      "commandLineArgs": "MergeRunHistory -wf Test -d 20240401"
+      "commandLineArgs": "CleanUpTables -wf Test -d 20240410"
     }
   }
 }
