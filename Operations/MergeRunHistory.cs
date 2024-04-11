@@ -11,7 +11,7 @@ namespace LogicAppAdvancedTool.Operations
 {
     public static class MergeRunHistory
     {
-        public static void Run(string workflowName, string date)
+        public static void Run(string workflowName, int startTime, int endTime)
         {
             List<TableEntity> targetWorkflow = TableOperations.QueryCurrentWorkflowByName(workflowName);
 
@@ -72,7 +72,7 @@ namespace LogicAppAdvancedTool.Operations
             
             Console.WriteLine($"""
                 Merge information:
-                1. Workflow name: {workflowName}, source flow id: {sourceFlowID}, target flow id: {targetFlowID}, date: {date}.
+                1. Workflow name: {workflowName}, source flow id: {sourceFlowID}, target flow id: {targetFlowID}, start date: {startTime}, end date: {endTime}.
                 2. For the tables which contain huge mounts of records (eg: actions/variables), it will take a while for merging.
                 3. Make sure before you run the command, Logic App doesn't experience high CPU or memory issue. 
                 4. Merging process will consume ~120 MB memory and 10% CPU (CPU usage is based on WS1 ASP).
@@ -92,13 +92,14 @@ namespace LogicAppAdvancedTool.Operations
             string selectWorkflowPrefix = $"flow{workflowprefix}{StoragePrefixGenerator.Generate(sourceFlowID.ToLower())}";
             string currentWorkflowPrefix = $"flow{workflowprefix}{StoragePrefixGenerator.Generate(targetFlowID.ToLower())}";
 
-            List<string> tables = ListActionVarTables(selectWorkflowPrefix, date);
 
             MergeTable($"{selectWorkflowPrefix}runs", $"{currentWorkflowPrefix}runs", sourceFlowID, targetFlowID);
             MergeTable($"{selectWorkflowPrefix}flows", $"{currentWorkflowPrefix}flows", sourceFlowID, targetFlowID);
             MergeTable($"{selectWorkflowPrefix}histories", $"{currentWorkflowPrefix}histories", sourceFlowID, targetFlowID);
 
-            foreach (string table in tables)
+            List<string> actionAndVarTables = ListActionVarTables(selectWorkflowPrefix, startTime, endTime);
+
+            foreach (string table in actionAndVarTables)
             {
                 string targetTableName = table.Replace(selectWorkflowPrefix, currentWorkflowPrefix);
 
@@ -106,12 +107,12 @@ namespace LogicAppAdvancedTool.Operations
             }
         }
 
-        private static List<string> ListActionVarTables(string prefix, string date)
+        private static List<string> ListActionVarTables(string prefix, int startTime, int endTime)
         {
             TableServiceClient serviceClient = new TableServiceClient(AppSettings.ConnectionString);
 
             return serviceClient.Query().ToList()
-                    .Where(s => s.Name.StartsWith(prefix) && s.Name.Contains(date)  && (s.Name.EndsWith("actions") || s.Name.EndsWith("variables")))
+                    .Where(s => s.Name.StartsWith(prefix) && (s.Name.EndsWith("actions") || s.Name.EndsWith("variables")) && int.Parse(s.Name.Substring(34, 8)) >= startTime && int.Parse(s.Name.Substring(34, 8)) <= endTime)
                     .Select(t => t.Name)
                     .ToList();
         }

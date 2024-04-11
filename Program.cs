@@ -3,9 +3,7 @@ using McMaster.Extensions.CommandLineUtils;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Net;
 
 namespace LogicAppAdvancedTool
 {
@@ -782,7 +780,8 @@ namespace LogicAppAdvancedTool
                 app.Command("MergeRunHistory", c => {
 
                     CommandOption workflowCO = c.Option("-wf|--workflow", "(Mandatory) The workflow name.", CommandOptionType.SingleValue).IsRequired();
-                    CommandOption dateCO = c.Option("-d|--date", "(Mandatory) The date of run history (format: \"yyyyMMdd\", UTC time), if there's any long running history across different date, you need to run this command multiple times.", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption startTimeCO = c.Option("-st|--startTime", "(Mandatory) The start date of run history to be merged (format: \"yyyyMMdd\", UTC time)", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption endTimeCO = c.Option("-et|--endTime", "(Mandatory) The end date of run history to be merged (format: \"yyyyMMdd\", UTC time)", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
                     c.Description = "Merge deleted worklfow run history into current version, the existing workflow name must be the same as deleted one.";
@@ -790,9 +789,21 @@ namespace LogicAppAdvancedTool
                     c.OnExecute(() =>
                     {
                         string workflow = workflowCO.Value();
-                        string date = dateCO.Value();
 
-                        MergeRunHistory.Run(workflow, date);
+                        int st = 0;
+                        int et = 0;
+
+                        if (!int.TryParse(startTimeCO.Value(), out st))
+                        {
+                            throw new UserInputException($"Start time: {startTimeCO.Value()} cannot be parsed as Int, please review your input format whether match \"yyyyMMdd\"");
+                        }
+
+                        if (!int.TryParse(endTimeCO.Value(), out et))
+                        {
+                            throw new UserInputException($"End time: {endTimeCO.Value()} cannot be parsed as Int, please review your input format whether match \"yyyyMMdd\"");
+                        }
+
+                        MergeRunHistory.Run(workflow, st, et);
 
                         return 0;
                     });
