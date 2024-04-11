@@ -547,6 +547,7 @@ namespace LogicAppAdvancedTool
                 #endregion
 
                 #region Restore Run History
+                /*
                 app.Command("RestoreRunHistory", c => {
 
                     CommandOption workflowNameCO = c.Option("-wf|--workflow", "(Mandatory) Workflow Name", CommandOptionType.SingleValue).IsRequired();
@@ -563,6 +564,7 @@ namespace LogicAppAdvancedTool
                         return 0;
                     });
                 });
+                */
                 #endregion
 
                 #region Check Service Provider connection
@@ -894,7 +896,6 @@ namespace LogicAppAdvancedTool
 
                 //TODO:
                 //Shared -> ServiceTagRetriever
-                //improve merge run history command
 
                 app.Execute(args);
             }
