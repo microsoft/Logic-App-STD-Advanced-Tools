@@ -35,7 +35,6 @@ If you would like to compile the binary yourself, please always use "Publish" in
 | CleanUpTables | Delete all the Logic App auto-generated storage tables for run history before a specific date. |
 | CleanUpRunHistory | Combined command of **CleanUpContainers** and **CleanUpTables** |
 | SearchInHistory | Search a keyword in workflow run history based on date. |
-| RestoreRunHistory | **Experimental feature. DON'T use in PROD environment!!!** Restore run history of a deleted/overwritten workflow. |
 | ValidateSPConnectivity | Validate all Service Providers which defined in connections.json. |
 | BatchResubmit | Resubmit all failed runs of a specific workflow within provided time peroid. |
 | WhitelistConnectorIP | Whitelist Logic App connector ip range in other Azure services (Only support for Storage Account, Key Vault and Event Hub). It uses Logic App MI for adding/modifying Firewall of other services, so MI need to have the permission to do so.  |
