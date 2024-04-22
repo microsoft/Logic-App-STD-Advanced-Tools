@@ -59,20 +59,11 @@ namespace LogicAppAdvancedTool.Operations
             string region = AppSettings.Region.Replace(" ", "");
 
             Console.WriteLine($"Resource found in Azure, retrieving Azure Connector IP range in {region}");
-            string serviceTagUrl = $"https://management.azure.com/subscriptions/{subscriptionID}/providers/Microsoft.Network/locations/{region.ToLower()}/serviceTags?api-version=2023-02-01";
-
-            string serviceTagResponse = HttpOperations.ValidatedHttpRequestWithToken(serviceTagUrl, HttpMethod.Get, null, token.access_token, "Cannot grab Azure Connector IP range from Internet");
-
-            JToken regionalIPInfo = JObject.Parse(serviceTagResponse)["values"].ToList()
-                                    .Where(s => s["name"].ToString() == $"AzureConnectors.{region}")
-                                    .FirstOrDefault();
-
-            //storage account has a limitation which doesn't support /32 and /31.
-            //In Azure IP Range json, connector service doesn't have any prefix with /31, just ignore
-            List<string> IPs = regionalIPInfo["properties"]["addressPrefixes"].ToObject<List<string>>()
-                                .Where(s => !s.Contains(":"))
-                                .Select(s => s.Replace("/32", ""))      
-                                .ToList();
+            
+            ServiceTagRetriever serviceTagRetriever = new ServiceTagRetriever();
+            List<string> IPs = serviceTagRetriever.GetIPsV4ByName($"AzureConnectors.{region}")
+                                    .Select( s => s.Replace("/32", ""))
+                                    .ToList();
 
             List<IPRule> validIPs = IPs.Where(s => !resourceIPRules
                                             .Select(p => new IPRule(p.value.Replace("/32", "")))

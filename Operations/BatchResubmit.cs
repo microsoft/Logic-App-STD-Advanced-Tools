@@ -15,6 +15,12 @@ namespace LogicAppAdvancedTool.Operations
     {
         public static void Run(string workflowName, string startTime, string endTime, bool ignoreProcessed, string status)
         {
+            string premissionMessage = "Before execute the command, please make sure that the Logic App managed identity has following permission on resource group level:\r\nReader\r\nLogic App Standard Contributor";
+            if (!Prompt.GetYesNo(premissionMessage, false, ConsoleColor.Red))
+            {
+                throw new UserCanceledException("Operation Cancelled");
+            }
+
             string baseUrl = $"{AppSettings.ManagementBaseUrl}/hostruntime/runtime/webhooks/workflow/api/management/workflows/{workflowName}";
             string filter = $"$filter=status eq '{status}' and startTime gt {startTime} and startTime lt {endTime}";
 

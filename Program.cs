@@ -546,7 +546,7 @@ namespace LogicAppAdvancedTool
                 });
                 #endregion
 
-                #region Restore Run History
+                #region REMOVED -- Restore Run History
                 /*
                 app.Command("RestoreRunHistory", c => {
 

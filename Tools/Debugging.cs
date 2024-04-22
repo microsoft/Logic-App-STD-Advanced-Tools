@@ -13,7 +13,7 @@ namespace LogicAppAdvancedTool
     {
         public static void FeatureTesting()
         {
-            CommonOperations.ListFlowIDsByName("Test");
+            //ServiceTagRetriever serviceTagRetriever = new ServiceTagRetriever();
         }
     }
 }

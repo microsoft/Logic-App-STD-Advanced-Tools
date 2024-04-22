@@ -2,7 +2,7 @@
   "profiles": {
     "LogicAppAdvancedTool": {
       "commandName": "Project",
-      "commandLineArgs": "MergeRunHistory -wf ServiceBusTest -st 20240403 -et 20240408"
+      "commandLineArgs": "WhitelistConnectorIP -id /subscriptions/aafb27de-e728-4cb8-9e68-9afde1d1a849/resourceGroups/LogicApp/providers/Microsoft.Storage/storageAccounts/testforftpupload"
     }
   }
 }

@@ -31,17 +31,10 @@ namespace LogicAppAdvancedTool.Operations
                 Console.WriteLine($"Cannot retrieve connection string of Storage - File Share, validation will be skipped for file share service.\r\nIf you are NOT using ASEv3, please verify WEBSITE_CONTENTAZUREFILECONNECTIONSTRING in your appsettings.");
             }
 
-            List<string> storagePublicIPs = null;
-            try
-            {
-                storagePublicIPs = CommonOperations.RetrieveServiceTagIPs("Storage");
+            ServiceTagRetriever serviceTagRetriever = new ServiceTagRetriever();
+            List<string> storagePublicIPs = serviceTagRetriever.GetIPsV4ByName("Storage");
 
-                Console.WriteLine("IP list of Storage Account service tag has been retrieved successfully.");
-            }
-            catch
-            {
-                Console.WriteLine("Failed to retrieve Storage Service Tag IP lists, please review whether your Logic App MI has been assign \"Reader\" role on subscription level.\r\nStorage Account private endpoint validation will be skipped.");
-            }
+            Console.WriteLine("IP list of Storage Account service tag has been retrieved successfully.");
 
             foreach (BackendStorageValidator validator in validators)
             {
