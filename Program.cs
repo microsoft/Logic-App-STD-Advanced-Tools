@@ -895,7 +895,6 @@ namespace LogicAppAdvancedTool
                 #endregion
 
                 //TODO:
-                //Shared -> ServiceTagRetriever
 
                 app.Execute(args);
             }

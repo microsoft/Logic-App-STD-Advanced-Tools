@@ -59,16 +59,16 @@ namespace LogicAppAdvancedTool
     public class AzureServiceTag
     {
         [JsonProperty("name")]
-        public string Name { get; set; }
+        public string Name { get; private set; }
 
         [JsonProperty("id")]
-        public string ID { get; set; }
+        public string ID { get; private set; }
 
         [JsonProperty("serviceTagChangeNumber")]
-        public string ServiceTagChangeNumber { get; set; }
+        public string ServiceTagChangeNumber { get; private set; }
 
         [JsonProperty("properties")]
-        public AzureServiceTagProperties Properties { get; set; }
+        public AzureServiceTagProperties Properties { get; private set; }
 
         public AzureServiceTag() { }
     }
@@ -76,22 +76,22 @@ namespace LogicAppAdvancedTool
     public class AzureServiceTagProperties
     {
         [JsonProperty("changeNumber")]
-        public string ChangeNumber { get; set; }
+        public string ChangeNumber { get; private set; }
 
         [JsonProperty("region")]
-        public string Region { get; set; }
+        public string Region { get; private set; }
 
         [JsonProperty("state")]
-        public string State { get; set; }
+        public string State { get; private set; }
 
         [JsonProperty("networkFeatures")]
-        public List<string> NetworkFeatures { get; set; }
+        public List<string> NetworkFeatures { get; private set; }
 
         [JsonProperty("systemService")]
-        public string SystemService { get; set; }
+        public string SystemService { get; private set; }
 
         [JsonProperty("addressPrefixes")]
-        public List<string> AddressPrefixes { get; set; }
+        public List<string> AddressPrefixes { get; private set; }
 
         public List<string> IPv4Prefixes { get; set; }
         public List<string> IPv6Prefixes { get; set; }

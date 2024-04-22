@@ -2,7 +2,7 @@
   "profiles": {
     "LogicAppAdvancedTool": {
       "commandName": "Project",
-      "commandLineArgs": "WhitelistConnectorIP -id /subscriptions/aafb27de-e728-4cb8-9e68-9afde1d1a849/resourceGroups/LogicApp/providers/Microsoft.Storage/storageAccounts/testforftpupload"
+      "commandLineArgs": "validatestorageconnectivity"
     }
   }
 }
