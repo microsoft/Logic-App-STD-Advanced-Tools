@@ -1,3 +1,6 @@
+2024-04-22
+1. Implemented a new shared class for Azure service tag management.
+
 2024-04-11
 1. "CleanUpTables" and "CleanUpContainers" now can remove tables/containers belong to deleted workflows.
 2. "MergeRunHistory" now supports for merging run histories based on time range.
