@@ -33,9 +33,6 @@ namespace LogicAppAdvancedTool
             ServiceTags = new Dictionary<string, AzureServiceTagProperties>();
             foreach (AzureServiceTag tag in tags)
             {
-                tag.Properties.IPv4Prefixes = tag.Properties.AddressPrefixes.Where(p => p.Contains(".")).ToList();
-                tag.Properties.IPv6Prefixes = tag.Properties.AddressPrefixes.Where(p => p.Contains(":")).ToList();
-
                 ServiceTags.Add(tag.Name, tag.Properties);
             }
         }
@@ -91,9 +88,17 @@ namespace LogicAppAdvancedTool
         [JsonProperty("addressPrefixes")]
         public List<string> AddressPrefixes { get; private set; }
 
-        public List<string> IPv4Prefixes { get; set; }
-        public List<string> IPv6Prefixes { get; set; }
+        public List<string> IPv4Prefixes { get; private set; }
+        public List<string> IPv6Prefixes { get; private set; }
 
         public AzureServiceTagProperties() { }
+
+        [JsonConstructor]
+        public AzureServiceTagProperties(List<string> addressPrefixes)
+        {
+            AddressPrefixes = addressPrefixes;
+            IPv4Prefixes = addressPrefixes.Where(p => p.Contains(".")).ToList();
+            IPv6Prefixes = addressPrefixes.Where(p => p.Contains(":")).ToList();
+        }
     }
 }

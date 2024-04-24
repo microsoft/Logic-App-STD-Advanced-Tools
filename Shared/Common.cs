@@ -18,6 +18,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
+using System.Threading;
 
 namespace LogicAppAdvancedTool
 {
@@ -209,6 +210,41 @@ namespace LogicAppAdvancedTool
             using (StreamReader sr = new StreamReader(stream))
             {
                 return sr.ReadToEnd();
+            }
+        }
+        #endregion
+
+        #region Create new workflow
+        public static void CreateWorkflow(string workflowPath, string workflowName, string definition)
+        {
+            if (!Directory.Exists(workflowPath))
+            {
+                Directory.CreateDirectory(workflowPath);
+            }
+
+            File.WriteAllText($"{workflowPath}/workflow.json", definition);
+
+            Console.WriteLine($"Workflow {workflowName} has been created in File Share, retrieving data from Storage Table...");
+
+            List<TableEntity> workflowEntities = new List<TableEntity>();
+
+            //After create an empty workflow, it might take several seconds to update Storage Table
+            //try 10 times to retrieve newly create worklfow id
+            for (int i = 1; i <= 10; i++)
+            {
+                workflowEntities = TableOperations.QueryMainTable($"FlowName eq '{workflowName}'");
+                if (workflowEntities.Count != 0)
+                {
+                    break;
+                }
+
+                if (i == 10)
+                {
+                    throw new ExpectedException("Failed to retrieve records from Storage Table, please re-execute the command.");
+                }
+
+                Console.WriteLine($"Records not ingested into Storage Table yet, retry after 5 seconds, execution count {i}/10");
+                Thread.Sleep(5000);
             }
         }
         #endregion

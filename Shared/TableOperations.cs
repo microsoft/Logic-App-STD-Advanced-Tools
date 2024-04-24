@@ -76,9 +76,14 @@ namespace LogicAppAdvancedTool
 
         public static List<TableEntity> QueryCurrentWorkflowByName(string workflowName, string[] select = null)
         {
-            string rowKey = $"MYEDGEENVIRONMENT_FLOWLOOKUP-MYEDGERESOURCEGROUP-{workflowName.ToUpper()}";
+            string rowKey = $"MYEDGEENVIRONMENT_FLOWLOOKUP-MYEDGERESOURCEGROUP-{FormatRawKey(workflowName.ToUpper())}";
 
             return QueryMainTable($"RowKey eq '{rowKey}'", select);
+        }
+
+        public static string FormatRawKey(string rawKey)
+        {
+            return rawKey.Replace("_", ":5F").Replace("-", ":2D");
         }
     }
 }
