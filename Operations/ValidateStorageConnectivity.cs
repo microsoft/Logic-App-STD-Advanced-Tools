@@ -31,10 +31,21 @@ namespace LogicAppAdvancedTool.Operations
                 Console.WriteLine($"Cannot retrieve connection string of Storage - File Share, validation will be skipped for file share service.\r\nIf you are NOT using ASEv3, please verify WEBSITE_CONTENTAZUREFILECONNECTIONSTRING in your appsettings.");
             }
 
-            ServiceTagRetriever serviceTagRetriever = new ServiceTagRetriever();
-            List<string> storagePublicIPs = serviceTagRetriever.GetIPsV4ByName("Storage");
 
-            Console.WriteLine("IP list of Storage Account service tag has been retrieved successfully.");
+            List<string> storagePublicIPs = null;
+
+            try
+            {
+                ServiceTagRetriever serviceTagRetriever = new ServiceTagRetriever();
+                storagePublicIPs = serviceTagRetriever.GetIPsV4ByName("Storage");
+
+                Console.WriteLine("IP list of Storage Account service tag has been retrieved successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed to fetch service tag of Storage, ignore public/private IP validation");
+            }
+            
 
             foreach (BackendStorageValidator validator in validators)
             {
