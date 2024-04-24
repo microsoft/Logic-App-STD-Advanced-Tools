@@ -41,7 +41,7 @@ namespace LogicAppAdvancedTool.Operations
 
             string targetFlowID = targetWorkflows.FirstOrDefault().GetString("FlowId");
 
-            List<TableEntity> entities = TableOperations.QueryMainTable($"FlowName eq '{sourceWorkflow}'", select: new string[] { "FlowName", "FlowId", "ChangedTime" })
+            List<TableEntity> entities = TableOperations.QueryMainTable($"FlowName eq '{sourceWorkflow}' and FlowId ne '{targetFlowID}'", select: new string[] { "FlowName", "FlowId", "ChangedTime" })
                                 .GroupBy(t => t.GetString("FlowId"))
                                 .Select(g => g.OrderByDescending(
                                     x => x.GetDateTimeOffset("ChangedTime"))
