@@ -43,7 +43,7 @@ namespace LogicAppAdvancedTool.Operations
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Failed to fetch service tag of Storage, ignore public/private IP validation");
+                Console.WriteLine("Failed to fetch service tag of Storage, public/private IP validation will be skipped.");
             }
 
             foreach (BackendStorageValidator validator in validators)
