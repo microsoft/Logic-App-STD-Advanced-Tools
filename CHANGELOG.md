@@ -1,5 +1,6 @@
 2024-04-24
 1. Fixed a bug which cause storage validation failure when Logic App Managed Identity cannot retrieve service tags from Azure.
+2. MergeRunHistory command now can merge run histories into a different workflow or auto-create a new workflow for revewing logs.
 
 2024-04-22
 1. Implemented a new shared class for Azure service tag management.
