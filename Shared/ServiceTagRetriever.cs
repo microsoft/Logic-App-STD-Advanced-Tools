@@ -40,19 +40,17 @@ namespace LogicAppAdvancedTool
             }
         }
 
-        public List<string> GetIPsByName(string name)
+        public List<string> GetIPs(string name, ServiceTagIPType type)
         {
-            return ServiceTags[name].AddressPrefixes;
-        }
-
-        public List<string> GetIPsV4ByName(string name)
-        {
-            return ServiceTags[name].IPv4Prefixes;
-        }
-
-        public List<string> GetIPsV6ByName(string name)
-        {
-            return ServiceTags[name].IPv6Prefixes;
+            switch (type)
+            { 
+                case ServiceTagIPType.IPv4:
+                    return ServiceTags[name].IPv4Prefixes;
+                case ServiceTagIPType.IPv6:
+                    return ServiceTags[name].IPv6Prefixes;
+                default:
+                    return ServiceTags[name].AddressPrefixes;
+            }
         }
     }
 

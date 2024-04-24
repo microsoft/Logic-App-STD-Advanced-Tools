@@ -61,7 +61,7 @@ namespace LogicAppAdvancedTool.Operations
             Console.WriteLine($"Resource found in Azure, retrieving Azure Connector IP range in {region}");
             
             ServiceTagRetriever serviceTagRetriever = new ServiceTagRetriever();
-            List<string> IPs = serviceTagRetriever.GetIPsV4ByName($"AzureConnectors.{region}")
+            List<string> IPs = serviceTagRetriever.GetIPs($"AzureConnectors.{region}", ServiceTagIPType.IPv4)
                                     .Select( s => s.Replace("/32", ""))
                                     .ToList();
 

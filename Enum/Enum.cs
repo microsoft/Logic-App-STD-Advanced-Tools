@@ -58,4 +58,11 @@ namespace LogicAppAdvancedTool
         sql,
         NotSupported
     }
+
+    public enum ServiceTagIPType
+    { 
+        IPv4,
+        IPv6,
+        All
+    }
 }

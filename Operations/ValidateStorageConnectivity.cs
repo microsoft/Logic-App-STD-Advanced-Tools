@@ -37,7 +37,7 @@ namespace LogicAppAdvancedTool.Operations
             try
             {
                 ServiceTagRetriever serviceTagRetriever = new ServiceTagRetriever();
-                storagePublicIPs = serviceTagRetriever.GetIPsV4ByName("Storage");
+                storagePublicIPs = serviceTagRetriever.GetIPs("Storage", ServiceTagIPType.IPv4);
 
                 Console.WriteLine("IP list of Storage Account service tag has been retrieved successfully.");
             }
