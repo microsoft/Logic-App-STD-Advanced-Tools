@@ -1,3 +1,6 @@
+2024-04-24
+1. Fixed a bug which cause storage validation failure when Logic App MI cannot retrieve service tags from Azure.
+
 2024-04-22
 1. Implemented a new shared class for Azure service tag management.
 
