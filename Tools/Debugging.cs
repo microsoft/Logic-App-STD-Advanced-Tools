@@ -13,7 +13,7 @@ namespace LogicAppAdvancedTool
     {
         public static void FeatureTesting()
         {
-            //ServiceTagRetriever serviceTagRetriever = new ServiceTagRetriever();
+            
         }
     }
 }
