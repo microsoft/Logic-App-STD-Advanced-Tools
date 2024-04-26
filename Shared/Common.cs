@@ -68,10 +68,8 @@ namespace LogicAppAdvancedTool
         {
             string mainTableName = GetMainTableName();
 
-            TableClient tableClient = new TableClient(AppSettings.ConnectionString, mainTableName);
-
             //We may have multiple flow IDs with same workflow name, so use FLOWLOOKUP key to get current version of workflow
-            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"RowKey eq 'MYEDGEENVIRONMENT_FLOWLOOKUP-MYEDGERESOURCEGROUP-{workflowName.ToUpper()}'");
+            List<TableEntity> tableEntities = TableOperations.QueryCurrentWorkflowByName(workflowName, new string[] { "FlowId" });
 
             if (tableEntities.Count() == 0)
             {
@@ -97,7 +95,7 @@ namespace LogicAppAdvancedTool
                 throw new UserInputException($"{workflowName} cannot be found in storage table, please check whether workflow name is correct.");
             }
 
-            List<string> ids = tableEntities.Where( k=> k.GetString("RowKey").Contains("FLOWVERSION"))
+            List<string> ids = tableEntities.Where(k => k.GetString("RowKey").Contains("FLOWVERSION"))
                                             .Select(id => id.GetString("FlowId"))
                                             .Distinct()
                                             .ToList();
@@ -288,7 +286,7 @@ namespace LogicAppAdvancedTool
 
             //we don't need to consider for maximum value overflow
             //for subnet mask, the maximum value is 32, so uint value will be Pow(2, 32) which is 0 in Uint, but we have -1 which can revert back to Uint.Max
-            subnetEndIP += (uint)Math.Pow(2, (32 - subnetMask)) - 1;    
+            subnetEndIP += (uint)Math.Pow(2, (32 - subnetMask)) - 1;
 
             return (ipNum >= subnetStartIP && ipNum <= subnetEndIP);
         }

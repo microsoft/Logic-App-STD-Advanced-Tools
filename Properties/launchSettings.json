@@ -2,7 +2,7 @@
   "profiles": {
     "LogicAppAdvancedTool": {
       "commandName": "Project",
-      "commandLineArgs": "mergerunhistory -sw Test -st 20240424 -et 20240425"
+      "commandLineArgs": "ValidateSPConnectivity"
     }
   }
 }
