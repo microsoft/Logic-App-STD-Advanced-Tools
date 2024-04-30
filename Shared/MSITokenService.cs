@@ -36,7 +36,7 @@ namespace LogicAppAdvancedTool
             //for local debugging, during development, we cannot get MI of LA, so we have to generate MI token on Kudu and provide here as hardcode (via using Tools GetMIToken command).
             //MI token expiry every day, so no security issue to leave it in code
             Console.WriteLine("DEBUG mode, use pre-generated token.");
-            string result = "{\"access_token\":\"{Token}\",\"expires_on\":\"1694141276\",\"resource\":\"https://management.azure.com\",\"token_type\":\"Bearer\",\"client_id\":\"5D1FE1E8-B908-419B-9BAA-6D9BAEA11D75\"}";
+            string result = File.ReadAllText("Temp/MIToken.json");
             MSIToken token = JsonConvert.DeserializeObject<MSIToken>(result);
 #endif
             return token;
