@@ -1,3 +1,7 @@
+2024-04-30
+1. MI token for local enviornment has been moved to a seperated cache file and included in .gitignore for security consideration.
+2. Fixed a bug when workflows name contains "-" or "_" cause cannot find workflow in table due to character escape.
+
 2024-04-24
 1. Fixed a bug which cause storage validation failure when Logic App Managed Identity cannot retrieve service tags from Azure.
 2. MergeRunHistory command now can merge run histories into a different workflow.
