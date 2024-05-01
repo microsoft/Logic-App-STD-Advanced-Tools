@@ -33,23 +33,6 @@ namespace LogicAppAdvancedTool
             }
         }
 
-        private static string GetMainTableName()
-        {
-            string tableName = $"flow{StoragePrefixGenerator.Generate(AppSettings.LogicAppName.ToLower())}flows";
-
-            TableServiceClient serviceClient = new TableServiceClient(AppSettings.ConnectionString);
-
-            //Double check whether the table exists
-            Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{tableName}'");
-
-            if (results.Count() != 0)
-            {
-                return tableName;
-            }
-
-            throw new UserInputException("No table found in Azure Storage Account, please check whether the Logic App Name correct or not.");
-        }
-
         public static string GenerateLogicAppPrefix()
         {
             return StoragePrefixGenerator.Generate(AppSettings.LogicAppName.ToLower());
@@ -66,8 +49,6 @@ namespace LogicAppAdvancedTool
 
         public static string GenerateWorkflowTablePrefix(string workflowName)
         {
-            string mainTableName = GetMainTableName();
-
             //We may have multiple flow IDs with same workflow name, so use FLOWLOOKUP key to get current version of workflow
             List<TableEntity> tableEntities = TableOperations.QueryCurrentWorkflowByName(workflowName, new string[] { "FlowId" });
 
@@ -83,22 +64,15 @@ namespace LogicAppAdvancedTool
 
         public static List<string> ListFlowIDsByName(string workflowName)
         {
-            string mainTableName = GetMainTableName();
+            List<string> ids = TableOperations.QueryMainTable($"FlowName eq '{workflowName}'", new string[] { "FlowId"})
+                                            .Select(x => x.GetString("FlowId")) 
+                                            .Distinct()
+                                            .ToList();
 
-            TableClient tableClient = new TableClient(AppSettings.ConnectionString, mainTableName);
-
-            //We may have multiple flow IDs with same workflow name, so use FLOWLOOKUP key to get current version of workflow
-            Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"FlowName eq '{workflowName}'");
-
-            if (tableEntities.Count() == 0)
+            if (ids.Count() == 0)
             {
                 throw new UserInputException($"{workflowName} cannot be found in storage table, please check whether workflow name is correct.");
             }
-
-            List<string> ids = tableEntities.Where(k => k.GetString("RowKey").Contains("FLOWVERSION"))
-                                            .Select(id => id.GetString("FlowId"))
-                                            .Distinct()
-                                            .ToList();
 
             return ids;
         }

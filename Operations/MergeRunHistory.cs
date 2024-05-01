@@ -106,9 +106,9 @@ namespace LogicAppAdvancedTool.Operations
             //We need to create new records and change workflow id to existing one in main table
             OverwriteFlowId(sourceFlowID, targetFlowID);
 
-            string workflowprefix = CommonOperations.GenerateLogicAppPrefix();
-            string selectWorkflowPrefix = $"flow{workflowprefix}{StoragePrefixGenerator.Generate(sourceFlowID.ToLower())}";
-            string currentWorkflowPrefix = $"flow{workflowprefix}{StoragePrefixGenerator.Generate(targetFlowID.ToLower())}";
+            string workflowPrefix = CommonOperations.GenerateLogicAppPrefix();
+            string selectWorkflowPrefix = $"flow{workflowPrefix}{StoragePrefixGenerator.Generate(sourceFlowID.ToLower())}";
+            string currentWorkflowPrefix = $"flow{workflowPrefix}{StoragePrefixGenerator.Generate(targetFlowID.ToLower())}";
 
 
             MergeTable($"{selectWorkflowPrefix}runs", $"{currentWorkflowPrefix}runs", sourceFlowID, targetFlowID);

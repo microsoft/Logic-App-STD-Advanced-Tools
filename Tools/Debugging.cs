@@ -13,7 +13,7 @@ namespace LogicAppAdvancedTool
     {
         public static void FeatureTesting()
         {
-            
+            List<string> s = CommonOperations.ListFlowIDsByName("Test");
         }
     }
 }

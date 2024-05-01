@@ -117,9 +117,10 @@ namespace LogicAppAdvancedTool.Operations
                     }
                     catch (WebException ex)
                     {
+                        //Handle throttling limitation internally since it is expected when we need to resubmit large amount of runs
                         if (ex.Message.Contains("Too Many Requests"))
                         {
-                            int delayInterval = 120;
+                            int delayInterval = 60;
 
                             Console.WriteLine($"Hit throttling limitation of Azure management API, pause for {delayInterval} seconds and then continue. Still have {remainRuns.Count} runs need to be resubmitted");
 
