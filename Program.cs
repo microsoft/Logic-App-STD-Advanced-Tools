@@ -897,6 +897,7 @@ namespace LogicAppAdvancedTool
                 #endregion
 
                 //TODO:
+                //1. Restore API connection
 
                 app.Execute(args);
             }

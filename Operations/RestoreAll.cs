@@ -32,7 +32,7 @@ namespace LogicAppAdvancedTool.Operations
                 string flowName = entity.GetString("FlowName");
                 string workflowPath = $"{AppSettings.RootFolder}\\{flowName}";
                 
-                CommonOperations.SaveDefinition(workflowPath, "worklfow.json", entity);
+                CommonOperations.SaveDefinition(workflowPath, "workflow.json", entity);
 
                 Console.WriteLine($"Workflow: {flowName} restored successfully.");
             }
