@@ -787,7 +787,7 @@ namespace LogicAppAdvancedTool
                     CommandOption endTimeCO = c.Option("-et|--endTime", "(Mandatory) The end date of run history to be merged (format: \"yyyyMMdd\", UTC time)", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
-                    c.Description = "Merge deleted worklfow run history into current version, the existing workflow name must be the same as deleted one.";
+                    c.Description = "Merge deleted workflow run history into current version, the existing workflow name must be the same as deleted one.";
 
                     c.OnExecute(() =>
                     {

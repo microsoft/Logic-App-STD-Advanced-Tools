@@ -22,7 +22,7 @@ namespace LogicAppAdvancedTool.Operations
 
             if (entities.Count == 0)
             {
-                throw new UserInputException("No workflow found. Please review your input or use \"ListWorkflows\" command to retrieve all existing worklfows in Storage Table.");
+                throw new UserInputException("No workflow found. Please review your input or use \"ListWorkflows\" command to retrieve all existing workflows in Storage Table.");
             }
 
             ConsoleTable consoleTable = new ConsoleTable("Index", "Workflow Name", "Flow ID", "Last Updated (UTC)");
@@ -49,7 +49,7 @@ namespace LogicAppAdvancedTool.Operations
             }
             else
             {
-                Console.WriteLine($"There are {entities.Count} worklfows found in Storage Table, due to workflow overwritten (delete and create workflow with same name).");
+                Console.WriteLine($"There are {entities.Count} workflows found in Storage Table, due to workflow overwritten (delete and create workflow with same name).");
                 Console.WriteLine("Please enter the Index which you would like to restore the run history");
 
                 int rowID = Int32.Parse(Console.ReadLine());
@@ -74,7 +74,7 @@ namespace LogicAppAdvancedTool.Operations
             List<TableEntity> reviewerWorkflowEntities = new List<TableEntity>();
 
             //After create an empty workflow, it might take several seconds to update Storage Table
-            //try 10 times to retrieve newly create worklfow id
+            //try 10 times to retrieve newly create workflow id
             for (int i = 1; i <= 10; i++)
             {
                 reviewerWorkflowEntities = TableOperations.QueryMainTable($"FlowName eq '{reviewerWorkflowName}'");

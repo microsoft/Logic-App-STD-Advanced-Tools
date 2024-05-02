@@ -40,7 +40,7 @@ namespace LogicAppAdvancedTool.Operations
                                                             .Where(t => t.GetString("RowKey").StartsWith("MYEDGEENVIRONMENT_FLOWVERSION"))
                                                             .ToList();
 
-            Console.WriteLine($"Found {tableEntities.Count} worklfow definiitons, saving to folder...");
+            Console.WriteLine($"Found {tableEntities.Count} workflow definiitons, saving to folder...");
 
             foreach (TableEntity entity in tableEntities)
             {

@@ -86,7 +86,7 @@ namespace LogicAppAdvancedTool
             return filePath;
         }
 
-        #region Save worklfow definition from TableEntity
+        #region Save workflow definition from TableEntity
         public static void SaveDefinition(string path, string fileName, TableEntity entity)
         {
             byte[] definitionCompressed = entity.GetBinary("DefinitionCompressed");
@@ -201,7 +201,7 @@ namespace LogicAppAdvancedTool
             List<TableEntity> workflowEntities = new List<TableEntity>();
 
             //After create an empty workflow, it might take several seconds to update Storage Table
-            //try 10 times to retrieve newly create worklfow id
+            //try 10 times to retrieve newly create workflow id
             for (int i = 1; i <= 10; i++)
             {
                 workflowEntities = TableOperations.QueryMainTable($"FlowName eq '{workflowName}'");
