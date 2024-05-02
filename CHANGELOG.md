@@ -41,7 +41,7 @@
 
 2023-11-06
 1. "BatchResubmit" command now supports a new filter parameter (-s|--status) which can resubmit runs based on execution result (succeeded, failed and cancelled).
-2. Fix a bug in "ScanConnections" which could cause unused connections not be removed when there's no API connections and service providers in worklfows.
+2. Fix a bug in "ScanConnections" which could cause unused connections not be removed when there's no API connections and service providers in workflows.
 
 2023-10-25
 1. New command "ScanConnections" added which will list all unused connections (API connection and Service Providers) in connections.json.
@@ -141,7 +141,7 @@
 
 2023-03-02
 1. Added command description.
-2. Added an experimental command - "IngestWorkflow" which could bypass workflow validation and ingest workflow definition in Storage Table. In some situation, the worklfow definition could be failed, but the definiton still can work as expected (eg: using expression for dynamic assign API connection).
+2. Added an experimental command - "IngestWorkflow" which could bypass workflow validation and ingest workflow definition in Storage Table. In some situation, the workflow definition could be failed, but the definiton still can work as expected (eg: using expression for dynamic assign API connection).
 
 2023-02-24
 1. Rename the tool to "LogicAppAdvancedTool" since it contains more features not only workflow verison revert now.
