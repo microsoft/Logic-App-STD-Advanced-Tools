@@ -814,6 +814,25 @@ namespace LogicAppAdvancedTool
                 });
                 #endregion
 
+                #region Restore Specific Version of Deleted Workflow
+                app.Command("RestoreWorkflowWithVersion", c => {
+
+                    CommandOption workflowCO = c.Option("-wf|--workflow", "(Mandatory) The workflow name you need to restored.", CommandOptionType.SingleValue).IsRequired();
+
+                    c.HelpOption("-?");
+                    c.Description = "Restore a deleted workflow with specific version.";
+
+                    c.OnExecute(() =>
+                    {
+                        string workflowName = workflowCO.Value();
+
+                        RestoreWorkflowWithVersion.Run(workflowName);
+
+                        return 0;
+                    });
+                });
+                #endregion
+
                 #region Internal tools
                 app.Command("Tools", c => {
 

@@ -100,6 +100,15 @@ namespace LogicAppAdvancedTool
 
             string filePath = $"{path}\\{fileName}";
 
+            if (File.Exists(filePath))
+            {
+                string confirmationMessage = $"WARNING!!!\r\nWorkflow already existing are sure to overwrite?\r\nPlease input for confirmation:";
+                if (!Prompt.GetYesNo(confirmationMessage, false, ConsoleColor.Red))
+                {
+                    throw new UserCanceledException("Operation Cancelled");
+                }
+            }
+
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
