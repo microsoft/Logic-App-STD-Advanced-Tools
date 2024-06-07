@@ -1,3 +1,6 @@
+2024-05-16
+1. Added a new command "RestoreWorkflowWithVersion" which can restore deleted workflow by name even it has been overwritten. This new command will replace "RestoreSingleWorkflow" command in later version.
+
 2024-04-30
 1. MI token for local enviornment has been moved to a seperated cache file and included in .gitignore for security consideration.
 2. Fixed a bug when workflows name contains "-" or "_" cause cannot find workflow in table due to character escape.
