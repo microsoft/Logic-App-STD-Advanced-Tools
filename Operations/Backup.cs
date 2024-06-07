@@ -36,9 +36,15 @@ namespace LogicAppAdvancedTool.Operations
 
             //In Storage Table, all the in-used workflows have duplicate records which start with "MYEDGEENVIRONMENT_FLOWIDENTIFIER" and "MYEDGEENVIRONMENT_FLOWLOOKUP"
             //Filter only for "MYEDGEENVIRONMENT_FLOWVERSION" to exclude duplicate workflow definitions
-            List<TableEntity> tableEntities = TableOperations.QueryMainTable($"ChangedTime ge datetime'{formattedDate}'")
+            List<TableEntity> tableEntities = TableOperations.QueryMainTable($"ChangedTime ge datetime'{formattedDate}'", new string[] { "FlowName", "FlowSequenceId", "ChangedTime", "FlowId", "RowKey", "DefinitionCompressed", "Kind" })
                                                             .Where(t => t.GetString("RowKey").StartsWith("MYEDGEENVIRONMENT_FLOWVERSION"))
                                                             .ToList();
+
+            Dictionary<string, string> flowLastModifiedTime = tableEntities
+                                                            .GroupBy(t => t.GetString("FlowId"))
+                                                            .Select(g => g.OrderByDescending( t => t.GetDateTimeOffset("ChangedTime")).First())
+                                                            .ToDictionary(t => t.GetString("FlowId"), t => t.GetDateTimeOffset("ChangedTime")?.ToString("yyyyMMddHHmmss"));
+
 
             Console.WriteLine($"Found {tableEntities.Count} workflow definiitons, saving to folder...");
 
@@ -46,9 +52,10 @@ namespace LogicAppAdvancedTool.Operations
             {
                 string flowSequenceId = entity.GetString("FlowSequenceId");
                 string flowName = entity.GetString("FlowName");
-                string modifiedDate = ((DateTimeOffset)entity.GetDateTimeOffset("ChangedTime")).ToString("yyyy_MM_dd_HH_mm_ss");
+                string modifiedDate = ((DateTimeOffset)entity.GetDateTimeOffset("ChangedTime")).ToString("yyyyMMddHHmmss");
+                string flowId = entity.GetString("FlowId");
 
-                string backupFilePath = $"{backupFolder}\\{flowName}";
+                string backupFilePath = $"{backupFolder}\\{flowName}\\LastModified_{flowLastModifiedTime[flowId]}_{flowId}";
                 string backupFileName = $"{modifiedDate}_{flowSequenceId}.json";
 
                 //The definition has already been backup

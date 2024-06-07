@@ -252,6 +252,10 @@ namespace LogicAppAdvancedTool
                 #region Restore single workflow
                 app.Command("RestoreSingleWorkflow", c =>
                 {
+
+                    Console.WriteLine("This command has been deprecated, please use \"RestoreWorkflowWithVersion\" instead.");
+
+                    /*
                     CommandOption workflowNameCO = c.Option("-wf|--workflow", "(Mandatory) The name of the workflow", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
@@ -265,6 +269,7 @@ namespace LogicAppAdvancedTool
 
                         return 0;
                     });
+                    */
                 });
                 #endregion
 
@@ -917,6 +922,8 @@ namespace LogicAppAdvancedTool
 
                 //TODO:
                 //1. Restore API connection
+                //2. Differenaite worklfow id in backup command
+                //3. Improvement for list workflow command
 
                 app.Execute(args);
             }
