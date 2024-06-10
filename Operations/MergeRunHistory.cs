@@ -57,9 +57,7 @@ namespace LogicAppAdvancedTool.Operations
 
             Console.WriteLine($"{entities.Count} source workflow(s) named {sourceWorkflow} found.");
 
-            ConsoleTable consoleTable = new ConsoleTable("Index", "Workflow Name", "Flow ID", "Last Updated Time (UTC)");
-
-            int index = 0;
+            ConsoleTable consoleTable = new ConsoleTable(new List<string>() { "Flow ID", "Last Updated Time (UTC)" }, true);
 
             foreach (TableEntity entity in entities)
             {
@@ -67,7 +65,7 @@ namespace LogicAppAdvancedTool.Operations
                 string changedTime = entity.GetDateTimeOffset("ChangedTime")?.ToString("yyyy-MM-ddTHH:mm:ssZ");
                 string flowID = entity.GetString("FlowId");
 
-                consoleTable.AddRow((++index).ToString(), flowName, flowID, changedTime);
+                consoleTable.AddRow(new List<string>() { flowName, flowID, changedTime });
             }
 
             consoleTable.Print();

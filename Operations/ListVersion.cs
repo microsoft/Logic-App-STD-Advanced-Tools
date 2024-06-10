@@ -18,7 +18,7 @@ namespace LogicAppAdvancedTool.Operations
                 throw new UserInputException($"{workflowName} cannot be found in storage table, please check whether workflow is correct.");
             }
 
-            ConsoleTable consoleTable = new ConsoleTable("Workflow ID", "Version ID", "Updated Time (UTC)");
+            ConsoleTable consoleTable = new ConsoleTable(new List<string>() { "Workflow ID", "Version ID", "Updated Time (UTC)" });
 
             foreach (TableEntity entity in tableEntities)
             {
@@ -26,7 +26,7 @@ namespace LogicAppAdvancedTool.Operations
                 string version = entity.GetString("FlowSequenceId");
                 string updateTime = entity.GetDateTimeOffset("FlowUpdatedTime")?.ToString("yyyy-MM-ddTHH:mm:ssZ");
 
-                consoleTable.AddRow(flowID, version, updateTime);
+                consoleTable.AddRow(new List<string>() { flowID, version, updateTime });
             }
 
             consoleTable.Print();

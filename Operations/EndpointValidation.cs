@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 
 namespace LogicAppAdvancedTool.Operations
@@ -11,7 +12,7 @@ namespace LogicAppAdvancedTool.Operations
             int port = 443;
 
             if (endpoint.StartsWith("http://"))
-            { 
+            {
                 endpointType = "http";
                 port = 80;
 
@@ -22,26 +23,26 @@ namespace LogicAppAdvancedTool.Operations
 
             ValidationStatus sslValidationStatus = ValidationStatus.Skipped;
             if (endpointType == "https")
-            { 
+            {
                 sslValidationStatus = new SSLValidator($"https://{fixedUrl}").Validate().Result;
             }
 
             DNSValidator dnsValidator = new DNSValidator(fixedUrl).Validate();
-            
-            ConsoleTable consoleTable = new ConsoleTable("Name Resolution", "IP", "TCP connection", "SSL connection");
+
+            ConsoleTable consoleTable = new ConsoleTable(new List<string>() { "Name Resolution", "IP", "TCP connection", "SSL connection" });
 
             if (dnsValidator.Result == ValidationStatus.Succeeded)
             {
                 foreach (IPAddress ip in dnsValidator.IPs)
-                { 
+                {
                     SocketValidator socketValidator = new SocketValidator(ip, port).Validate();
 
-                    consoleTable.AddRow(ValidationStatus.Succeeded.ToString(), ip.ToString(), socketValidator.Result.ToString(), sslValidationStatus.ToString());
+                    consoleTable.AddRow(new List<string>() { ValidationStatus.Succeeded.ToString(), ip.ToString(), socketValidator.Result.ToString(), sslValidationStatus.ToString() });
                 }
             }
             else
             {
-                consoleTable.AddRow(ValidationStatus.Failed.ToString(), "N/A", ValidationStatus.NotApplicable.ToString(), ValidationStatus.NotApplicable.ToString());
+                consoleTable.AddRow(new List<string>() { ValidationStatus.Failed.ToString(), "N/A", ValidationStatus.NotApplicable.ToString(), ValidationStatus.NotApplicable.ToString() });
             }
 
             consoleTable.Print();

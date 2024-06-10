@@ -922,8 +922,7 @@ namespace LogicAppAdvancedTool
 
                 //TODO:
                 //1. Restore API connection
-                //2. Differenaite worklfow id in backup command
-                //3. Improvement for list workflow command
+                //2. Improvement for list workflow command
 
                 app.Execute(args);
             }

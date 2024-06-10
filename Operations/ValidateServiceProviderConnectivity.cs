@@ -62,11 +62,11 @@ namespace LogicAppAdvancedTool.Operations
             {
                 Console.WriteLine($"Cannot find Endpoint for following Service Provider(s), please verify appsettings or connections.json.");
 
-                ConsoleTable emptySPs = new ConsoleTable("Reference Name", "Display Name");
+                ConsoleTable emptySPs = new ConsoleTable(new List<string>() { "Reference Name", "Display Name" });
 
                 foreach (ServiceProviderValidator spv in emptyEndpoints)
                 {
-                    emptySPs.AddRow(spv.Name, spv.DisplayName);
+                    emptySPs.AddRow(new List<string>() { spv.Name, spv.DisplayName });
                 }
 
                 emptySPs.Print();
@@ -76,11 +76,11 @@ namespace LogicAppAdvancedTool.Operations
             {
                 Console.WriteLine($"Following service provider(s) not supported yet.");
 
-                ConsoleTable unsupportedSPs = new ConsoleTable("Reference Name", "Display Name");
+                ConsoleTable unsupportedSPs = new ConsoleTable(new List<string>() { "Reference Name", "Display Name" });
 
                 foreach (ServiceProviderValidator spv in unsupportedEndpoints)
                 {
-                    unsupportedSPs.AddRow(spv.Name, spv.DisplayName);
+                    unsupportedSPs.AddRow(new List<string>() { spv.Name, spv.DisplayName });
                 }
 
                 unsupportedSPs.Print();
@@ -89,17 +89,17 @@ namespace LogicAppAdvancedTool.Operations
             Console.WriteLine($"Found {spInfos.Count} validate Service Provider(s), testing DNS resolution and tcp connection.");
 
             foreach (ServiceProviderValidator spv in spInfos)
-            { 
+            {
                 spv.Validate();
             }
 
-            ConsoleTable consoleTable = new ConsoleTable("Name", "Display Name",  "DNS Status", "IP", "Port", "Connection Status");
+            ConsoleTable consoleTable = new ConsoleTable(new List<string>() { "Name", "Display Name", "DNS Status", "IP", "Port", "Connection Status" });
 
             foreach (ServiceProviderValidator spv in spInfos)
             {
                 string ip = spv.IP == null ? "N/A" : spv.IP.ToString();
 
-                consoleTable.AddRow(spv.Name, spv.DisplayName, spv.NameResolutionResult.ToString(), ip, spv.Port.ToString(), spv.TcpConnectionResult.ToString());
+                consoleTable.AddRow(new List<string>() { spv.Name, spv.DisplayName, spv.NameResolutionResult.ToString(), ip, spv.Port.ToString(), spv.TcpConnectionResult.ToString() });
             }
 
             consoleTable.Print();

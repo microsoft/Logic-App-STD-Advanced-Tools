@@ -58,11 +58,11 @@ namespace LogicAppAdvancedTool.Operations
 
             if (validators != null)
             {
-                ConsoleTable consoleTable = new ConsoleTable("Storage Name", "Type", "DNS Resolution", "Endpoint IP", "Is PE", "TCP Conn", "Authentication");
+                ConsoleTable consoleTable = new ConsoleTable(new List<string>() { "Storage Name", "Type", "DNS Resolution", "Endpoint IP", "Is PE", "TCP Conn", "Authentication" });
 
                 foreach (BackendStorageValidator result in validators)
                 {
-                    consoleTable.AddRow(result.connectionInfo.AccountName, result.ServiceType.ToString(), result.NameResolutionStatus.ToString(), result.GetIPsAsString(), result.IsPrivateEndpoint.ToString(), result.SocketConnectionStatus.ToString(), result.AuthenticationStatus.ToString());
+                    consoleTable.AddRow(new List<string>() { result.connectionInfo.AccountName, result.ServiceType.ToString(), result.NameResolutionStatus.ToString(), result.GetIPsAsString(), result.IsPrivateEndpoint.ToString(), result.SocketConnectionStatus.ToString(), result.AuthenticationStatus.ToString() });
                 }
 
                 consoleTable.Print();

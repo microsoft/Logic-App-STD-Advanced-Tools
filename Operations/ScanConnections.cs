@@ -29,10 +29,10 @@ namespace LogicAppAdvancedTool.Operations
 
             Console.WriteLine("Following connections are not used in your workflows");
 
-            ConsoleTable table = new ConsoleTable("Connection Type", "Connection Name");
+            ConsoleTable table = new ConsoleTable(new List<string>() { "Connection Type", "Connection Name" });
             foreach (WorkflowConnection wc in unusedConections)
             {
-                table.AddRow(wc.ConnectionType, wc.ConnectionName);
+                table.AddRow(new List<string>() { wc.ConnectionType, wc.ConnectionName });
             }
 
             table.Print();

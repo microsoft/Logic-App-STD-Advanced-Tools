@@ -20,14 +20,14 @@ namespace LogicAppAdvancedTool.Operations
                 throw new UserInputException("No workflow found.");
             }
 
-            ConsoleTable consoleTable = new ConsoleTable("Workflow Name", "Last Updated (UTC)");
+            ConsoleTable consoleTable = new ConsoleTable(new List<string>() { "Workflow Name", "Last Updated (UTC)" });
 
             foreach (TableEntity entity in entities)
             {
                 string flowName = entity.GetString("FlowName");
                 string changedTime = entity.GetDateTimeOffset("ChangedTime")?.ToString("yyyy-MM-ddTHH:mm:ssZ");
 
-                consoleTable.AddRow(flowName, changedTime);
+                consoleTable.AddRow(new List<string>() { flowName, changedTime });
             }
 
             consoleTable.Print();

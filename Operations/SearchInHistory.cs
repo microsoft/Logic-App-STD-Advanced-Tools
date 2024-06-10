@@ -68,10 +68,10 @@ namespace LogicAppAdvancedTool.Operations
 
             string fileName = $"{AppSettings.LogicAppName}_{workflowName}_{date}_SearchResults_{keyword}.json";
 
-            ConsoleTable runIdTable = new ConsoleTable("Run ID");
+            ConsoleTable runIdTable = new ConsoleTable(new List<string>() { "Run ID" });
             foreach (string id in runIDs)
-            { 
-                runIdTable.AddRow(id);
+            {
+                runIdTable.AddRow(new List<string>() { id });
             }
 
             runIdTable.Print();
@@ -82,7 +82,7 @@ namespace LogicAppAdvancedTool.Operations
         private static bool SearchForKeyword(string content, string keyword)
         {
             if (!String.IsNullOrEmpty(content))
-            { 
+            {
                 return content.Contains(keyword);
             }
 

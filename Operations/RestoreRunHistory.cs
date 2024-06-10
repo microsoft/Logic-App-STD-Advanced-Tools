@@ -25,9 +25,7 @@ namespace LogicAppAdvancedTool.Operations
                 throw new UserInputException("No workflow found. Please review your input or use \"ListWorkflows\" command to retrieve all existing workflows in Storage Table.");
             }
 
-            ConsoleTable consoleTable = new ConsoleTable("Index", "Workflow Name", "Flow ID", "Last Updated (UTC)");
-
-            int index = 0;
+            ConsoleTable consoleTable = new ConsoleTable(new List<string>() { "Flow ID", "Last Updated (UTC)" }, true);
 
             foreach (TableEntity entity in entities)
             {
@@ -36,7 +34,7 @@ namespace LogicAppAdvancedTool.Operations
                 string flowID = entity.GetString("FlowId");
                 string kind = entity.GetString("Kind");
 
-                consoleTable.AddRow((++index).ToString(), flowName, flowID, changedTime);
+                consoleTable.AddRow(new List<string>() { flowName, flowID, changedTime });
             }
 
             consoleTable.Print();
@@ -63,7 +61,7 @@ namespace LogicAppAdvancedTool.Operations
             string reviewerWorkflowDefinition = CommonOperations.GetEmbeddedResource("LogicAppAdvancedTool.Resources.EmptyDefinition.json");
 
             if (!Directory.Exists(reviewerWorkflowPath))
-            { 
+            {
                 Directory.CreateDirectory(reviewerWorkflowPath);
             }
 

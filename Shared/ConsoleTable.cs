@@ -7,15 +7,27 @@ namespace LogicAppAdvancedTool
     public class ConsoleTable
     {
         private int ColumnCount;
-        private List<string[]> Rows;
+        private List<List<string>> Rows;
         private List<int> ColumnWidth;
+        
+        private bool EnableIndex = false;
+        private int CurrentIndex = 1;
 
-        public ConsoleTable(params string[] headers)
+        public ConsoleTable(List<string> headers, bool enableIndex = false)
         {
-            ColumnCount = headers.Length;
+            EnableIndex = enableIndex;
 
-            Rows = new List<string[]>();
-            Rows.Add(headers);
+            if (EnableIndex)
+            {
+                headers.Insert(0, "Index");
+            }
+
+            ColumnCount = headers.Count;
+
+            Rows = new List<List<string>>
+            {
+                headers
+            };
 
             ColumnWidth = new List<int>();
             foreach (string header in headers)
@@ -24,16 +36,21 @@ namespace LogicAppAdvancedTool
             }
         }
 
-        public void AddRow(params string[] contents)
+        public void AddRow(List<string> contents)
         {
-            if (contents.Length != ColumnCount)
+            if (EnableIndex)
+            { 
+                contents.Insert(0, CurrentIndex.ToString());
+            }
+
+            if (contents.Count != ColumnCount)
             {
                 throw new Exception("Column count mismatch");
             }
 
             Rows.Add(contents);
 
-            for (int i = 0; i < contents.Length; i++)
+            for (int i = 0; i < contents.Count; i++)
             {
                 if (String.IsNullOrEmpty(contents[i]))
                 {
@@ -45,6 +62,8 @@ namespace LogicAppAdvancedTool
                     ColumnWidth[i] = contents[i].Length + 2;
                 }
             }
+
+            CurrentIndex++;
         }
 
         public void Print()
@@ -60,11 +79,11 @@ namespace LogicAppAdvancedTool
 
             Console.WriteLine(new string('-', rowLength));
 
-            foreach (string[] row in Rows)
+            foreach (List<string> row in Rows)
             {
                 StringBuilder rowContent = new StringBuilder();
 
-                for (int i = 0; i < row.Length; i++)
+                for (int i = 0; i < row.Count; i++)
                 {
                     rowContent.Append("|");
                     rowContent.Append(string.Format($" {row[i]}".PadRight(ColumnWidth[i])));

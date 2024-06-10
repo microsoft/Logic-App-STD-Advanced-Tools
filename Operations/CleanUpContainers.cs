@@ -33,7 +33,7 @@ namespace LogicAppAdvancedTool.Operations
             BlobServiceClient client = new BlobServiceClient(AppSettings.ConnectionString);
 
             foreach (string prefix in containerPrefixs)
-            { 
+            {
                 string containerPrefix = $"flow{prefix}";
                 List<BlobContainerItem> containers = client.GetBlobContainers(BlobContainerTraits.Metadata, BlobContainerStates.None, containerPrefix).ToList();
 
@@ -53,11 +53,11 @@ namespace LogicAppAdvancedTool.Operations
             Console.WriteLine($"There are {matchedContainers.Count} containers found, please enter \"P\" to print the list or press any other key to continue without print list");
             if (Console.ReadLine().ToLower() == "p")
             {
-                ConsoleTable table = new ConsoleTable("Contianer Name");
+                ConsoleTable table = new ConsoleTable(new List<string>() { "Contianer Name" });
 
                 foreach (string containerName in matchedContainers)
                 {
-                    table.AddRow(containerName);
+                    table.AddRow(new List<string> { containerName });
                 }
 
                 table.Print();
@@ -70,7 +70,7 @@ namespace LogicAppAdvancedTool.Operations
             }
 
             foreach (string containerName in matchedContainers)
-            { 
+            {
                 client.DeleteBlobContainer(containerName);
             }
 

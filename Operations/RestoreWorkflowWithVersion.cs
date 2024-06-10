@@ -36,17 +36,16 @@ namespace LogicAppAdvancedTool.Operations
                 TableEntity currentWorkflow = TableOperations.QueryMainTable($"RowKey eq 'MYEDGEENVIRONMENT_FLOWLOOKUP-MYEDGERESOURCEGROUP-{workflowName.ToUpper()}'", select: new string[] { "FlowId" }).FirstOrDefault();
 
                 string currentFlowID = string.Empty;
-                if (currentWorkflow != null) 
-                { 
+                if (currentWorkflow != null)
+                {
                     currentFlowID = currentWorkflow.GetString("FlowId");
                 }
 
-                ConsoleTable workflowTable = new ConsoleTable("Index", "Flow ID", "Created Time", "Kind", "Status");
+                ConsoleTable workflowTable = new ConsoleTable(new List<string>() { "Flow ID", "Created Time", "Kind", "Status" }, true);
 
-                int index = 1;
                 foreach (TableEntity entity in entitiesOfWorkflow)
                 {
-                    workflowTable.AddRow((index++).ToString(), entity.GetString("FlowId"), entity.GetDateTimeOffset("FlowUpdatedTime")?.ToString("yyyy-MM-ddTHH:mm:ssZ"), entity.GetString("Kind"), currentFlowID == entity.GetString("FlowId") ? "In Use" : "Deleted");
+                    workflowTable.AddRow(new List<string>() { entity.GetString("FlowId"), entity.GetDateTimeOffset("FlowUpdatedTime")?.ToString("yyyy-MM-ddTHH:mm:ssZ"), entity.GetString("Kind"), currentFlowID == entity.GetString("FlowId") ? "In Use" : "Deleted" });
                 }
 
                 workflowTable.Print();
@@ -67,7 +66,7 @@ namespace LogicAppAdvancedTool.Operations
                                 .FirstOrDefault())
                             .ToList();
 
-            if (entitiesOfVersion.Count == 0) 
+            if (entitiesOfVersion.Count == 0)
             {
                 throw new UserInputException($"{workflowName} with id: {selectedWorkflowId} cannot be found in storage table.");    //This should never happen
             }
@@ -80,13 +79,12 @@ namespace LogicAppAdvancedTool.Operations
                 Console.WriteLine($"Only one version found in {selectedWorkflowId}, auto select id {selectedVersionID}.");
             }
             else
-            { 
-                ConsoleTable consoleTable = new ConsoleTable("Index", "Version ID", "Updated Time");
-                int index = 1;
+            {
+                ConsoleTable consoleTable = new ConsoleTable(new List<string>() { "Version ID", "Updated Time" }, true);
 
                 foreach (TableEntity entity in entitiesOfVersion)
                 {
-                    consoleTable.AddRow(index++.ToString(), entity.GetString("FlowSequenceId"), entity.GetDateTimeOffset("FlowUpdatedTime")?.ToString("yyyy-MM-ddTHH:mm:ssZ"));
+                    consoleTable.AddRow(new List<string> { entity.GetString("FlowSequenceId"), entity.GetDateTimeOffset("FlowUpdatedTime")?.ToString("yyyy-MM-ddTHH:mm:ssZ") });
                 }
 
                 consoleTable.Print();

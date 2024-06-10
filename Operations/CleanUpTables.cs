@@ -52,11 +52,11 @@ namespace LogicAppAdvancedTool.Operations
             Console.WriteLine($"There are {matchedTables.Count} storage table found, please enter \"P\" to print the list or press any other key to continue without print");
             if (Console.ReadLine().ToLower() == "p")
             {
-                ConsoleTable table = new ConsoleTable("Table Name");
+                ConsoleTable table = new ConsoleTable(new List<string>() { "Table Name" });
 
                 foreach (string tableName in matchedTables)
                 {
-                    table.AddRow(tableName);
+                    table.AddRow(new List<string>() { tableName });
                 }
 
                 table.Print();
