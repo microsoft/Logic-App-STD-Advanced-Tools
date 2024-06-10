@@ -252,10 +252,6 @@ namespace LogicAppAdvancedTool
                 #region Restore single workflow
                 app.Command("RestoreSingleWorkflow", c =>
                 {
-
-                    Console.WriteLine("This command has been deprecated, please use \"RestoreWorkflowWithVersion\" instead.");
-
-                    /*
                     CommandOption workflowNameCO = c.Option("-wf|--workflow", "(Mandatory) The name of the workflow", CommandOptionType.SingleValue).IsRequired();
 
                     c.HelpOption("-?");
@@ -263,13 +259,15 @@ namespace LogicAppAdvancedTool
 
                     c.OnExecute(() =>
                     {
+                        Console.WriteLine("This command has been deprecated, please use \"RestoreWorkflowWithVersion\" instead.");
+                        /*
                         string workflowName = workflowNameCO.Value();
 
                         RestoreSingleWorkflow.Run(workflowName);
 
                         return 0;
+                        */
                     });
-                    */
                 });
                 #endregion
 

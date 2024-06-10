@@ -8,7 +8,7 @@ namespace LogicAppAdvancedTool.Operations
     {
         public static void Run()
         {
-            List<TableEntity> entities = TableOperations.QueryMainTable(null, select: new string[] { "FlowName", "ChangedTime", "Kind" })
+            List<TableEntity> entities = TableOperations.QueryMainTable(null, select: new string[] { "FlowName", "ChangedTime", "Kind", "FlowId" })
                                 .GroupBy(t => t.GetString("FlowName"))
                                 .Select(g => g.OrderByDescending(
                                     x => x.GetDateTimeOffset("ChangedTime"))
@@ -26,8 +26,9 @@ namespace LogicAppAdvancedTool.Operations
             {
                 string flowName = entity.GetString("FlowName");
                 string changedTime = entity.GetDateTimeOffset("ChangedTime")?.ToString("yyyy-MM-ddTHH:mm:ssZ");
+                string flowId = entity.GetString("FlowId");
 
-                consoleTable.AddRow(new List<string>() { flowName, changedTime });
+                consoleTable.AddRow(new List<string>() { flowName, flowId, changedTime });
             }
 
             consoleTable.Print();
