@@ -1,3 +1,6 @@
+2024-06-10
+1. Improved ConsoleTable component for auto-generated index feature. 
+
 2024-06-07
 1. "RestoreSingleWorkflow" has been deprecated and please use "RestoreWorkflowWithVersion" instead.
 2. Improved "Backup" command, for it now will create separate folders based on flow id and provide last modified time for reference.
