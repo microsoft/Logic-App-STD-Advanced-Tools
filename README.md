@@ -25,7 +25,7 @@ If you would like to compile the binary yourself, please always use "Publish" in
 | ListVersions | List all the exisiting versions of a workflow.|
 | ListWorkflows | List all the exisiting workflows which can be found in storage table.|
 | RestoreAll | Restore all the workflows which be deleted accidentally. **This operation may cause unexpected behavior on Logic App runtime if you have any invalid workflows in storage table**.|
-| RestoreSingleWorkflow | Restore a workflows which has been deleted accidentally.|
+| RestoreSingleWorkflow | Deprecated. Use "RestoreWorkflowWithVersion" instead.|
 | RetrieveFailures | Retrieve all the detail failure information of a workflow for a specific day/run.|
 | Revert | Revert a workflow to a speicfic version.|
 | SyncToLocal | Sync remote wwwroot folder of Logic App Standard to local project. This command must run in local computer. There are 3 subcommands for different usage, please use -? for more information.|
