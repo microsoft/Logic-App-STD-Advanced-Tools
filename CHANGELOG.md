@@ -1,5 +1,6 @@
 2024-06-10
-1. Improved ConsoleTable component for auto-generated index feature. 
+1. Improved ConsoleTable component for auto-generated index feature.
+2. "ListWorkflows" command now provide deeper level list which can list workflow with same name but different flow id, all versions of a specific workflow id.
 
 2024-06-07
 1. "RestoreSingleWorkflow" has been deprecated and please use "RestoreWorkflowWithVersion" instead.
