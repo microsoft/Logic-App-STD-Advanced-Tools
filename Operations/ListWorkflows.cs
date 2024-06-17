@@ -1,4 +1,5 @@
 ﻿using Azure.Data.Tables;
+using LogicAppAdvancedTool.Shared;
 using Microsoft.WindowsAzure.ResourceStack.Common.Extensions;
 using System;
 using System.Collections.Generic;
@@ -10,17 +11,7 @@ namespace LogicAppAdvancedTool.Operations
     {
         public static void Run()
         {
-            List<TableEntity> entities = TableOperations.QueryMainTable(null, select: new string[] { "FlowName", "ChangedTime", "Kind" })
-                                .GroupBy(t => t.GetString("FlowName"))
-                                .Select(g => g.OrderByDescending(
-                                    x => x.GetDateTimeOffset("ChangedTime"))
-                                    .FirstOrDefault())
-                                .ToList();
-
-            if (entities.Count == 0)
-            {
-                throw new UserInputException("No workflow found.");
-            }
+            List<TableEntity> entities = WorkflowsInfo.ListAllWorkflows("FlowName");
 
             ConsoleTable consoleTable = new ConsoleTable(new List<string>() { "Workflow Name", "Last Updated (UTC)", "Workflow Count" }, true);
 
@@ -29,71 +20,41 @@ namespace LogicAppAdvancedTool.Operations
                 string flowName = entity.GetString("FlowName");
                 string changedTime = entity.GetDateTimeOffset("ChangedTime")?.ToString("yyyy-MM-ddTHH:mm:ssZ");
 
-                List<TableEntity> flowsWithSameName = TableOperations.QueryMainTable($"FlowName eq '{flowName}'", select: new string[] { "FlowId" })
-                                                        .DistinctBy( t => t.GetString("FlowId"))
-                                                        .ToList();
+                List<TableEntity> flowsWithSameName = WorkflowsInfo.ListWorkflowsByName(flowName);
 
                 consoleTable.AddRow(new List<string>() { flowName, changedTime, flowsWithSameName.Count.ToString() });
             }
 
             consoleTable.Print();
 
-            Console.WriteLine("Please note that the workflow count is the total workflows detected with same workflow name based on FlowId which also include deleted workflows.");
+            Console.WriteLine("The workflow count is the total workflows detected with same workflow name but different FlowId which includes deleted workflows.");
+            int index = CommonOperations.PromptInput(entities.Count, "Enter index to list all workflows with same name.");
 
-            Console.WriteLine("If you would like to list all workflows with same name, please enter Index. Press Ctrl + C to stop.");
-            string cmd = Console.ReadLine();
+            string selectedWorkflowName = entities[index].GetString("FlowName");
 
-            int index = 0;
-            if (!int.TryParse(cmd, out index))
-            {
-                Console.WriteLine("Operation canceled");
-
-                return;
-            }
-
-            string selectedWorkflowName = entities[index - 1].GetString("FlowName");
-
-            List<TableEntity> entitiesOfWorkflow = TableOperations.QueryMainTable($"FlowName eq '{selectedWorkflowName}'", select: new string[] { "RowKey", "ChangedTime", "FlowId", "Kind" })
-                                        .GroupBy(t => t.GetString("FlowId"))
-                                        .Select(g => g.OrderByDescending(x => x.GetDateTimeOffset("ChangedTime"))
-                                                .FirstOrDefault()
-                                                )
-                                        .ToList();
+            List<TableEntity> entitiesOfWorkflow = WorkflowsInfo.ListWorkflowsByName(selectedWorkflowName);
 
             Console.WriteLine($"All workflows named {selectedWorkflowName} based on workflow ID:");
+            
             ConsoleTable workflowTable = new ConsoleTable(new List<string>() { "Flow ID", "Last Updated (UTC)", "Kind", "Status" }, true);
-
             string currentFlowID = TableOperations.QueryCurrentWorkflowByName(selectedWorkflowName).FirstOrDefault()?.GetString("FlowId");
 
             foreach (TableEntity entity in entitiesOfWorkflow)
             {
                 string flowId = entity.GetString("FlowId");
 
-                workflowTable.AddRow(new List<string>() { flowId, entity.GetDateTimeOffset("ChangedTime")?.ToString("yyyy-MM-ddTHH:mm:ssZ"), entity.GetString("Kind"), currentFlowID==flowId?"In Use" : "Deleted" });
+                workflowTable.AddRow(new List<string>() { flowId, entity.GetDateTimeOffset("ChangedTime")?.ToString("yyyy-MM-ddTHH:mm:ssZ"), entity.GetString("Kind"), currentFlowID == flowId ? "In Use" : "Deleted" });
             }
 
             workflowTable.Print();
 
-            Console.WriteLine("If you would like to list all versions of a specific workflow id, please enter Index. Press Ctrl + C to stop.");
-            cmd = Console.ReadLine();
+            index = CommonOperations.PromptInput(entitiesOfWorkflow.Count, "Enter index to list all versions of selected workflow id.");
+            string selectedWorkflowId = entitiesOfWorkflow[index].GetString("FlowId");
 
-            if (!int.TryParse(cmd, out index))
-            {
-                Console.WriteLine("Operation canceled");
-
-                return;
-            }
-            
-            string selectedWorkflowId = entitiesOfWorkflow[index - 1].GetString("FlowId");
-
-            List<TableEntity> entitiesOfVersions = TableOperations.QueryMainTable($"FlowId eq '{selectedWorkflowId}'", select: new string[] { "RowKey", "ChangedTime", "FlowSequenceId" })
-                            .Where( t => t.GetString("RowKey").StartsWith("MYEDGEENVIRONMENT_FLOWVERSION"))
-                            .OrderByDescending(t => t.GetDateTimeOffset("ChangedTime"))
-                            .ToList();
-
+            List<TableEntity> entitiesOfVersions = WorkflowsInfo.ListVersionsByID(selectedWorkflowId);
             ConsoleTable versionTable = new ConsoleTable(new List<string>() { "Version ID", "Last Updated (UTC)" });
 
-            foreach(TableEntity entity in entitiesOfVersions)
+            foreach (TableEntity entity in entitiesOfVersions)
             {
                 versionTable.AddRow(new List<string>() { entity.GetString("FlowSequenceId"), entity.GetDateTimeOffset("ChangedTime")?.ToString("yyyy-MM-ddTHH:mm:ssZ") });
             }

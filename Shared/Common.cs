@@ -284,5 +284,28 @@ namespace LogicAppAdvancedTool
 
             return IPNumber;
         }
+
+        public static int PromptInput(int maximumIndex, string promptMessage)
+        {
+            Console.WriteLine($"{promptMessage} Press ENTER to stop.");
+            while (true)
+            {
+                string cmd = Console.ReadLine();
+
+                if (string.IsNullOrEmpty(cmd))
+                { 
+                    throw new UserCanceledException("Operation canceled");
+                }
+
+                int index = 0;
+                if (!int.TryParse(cmd, out index) || index < 1 || index > maximumIndex)
+                {
+                    Console.WriteLine("Invalid input, please enter again.");
+                    continue;
+                }
+
+                return index - 1;
+            }
+        }
     }
 }

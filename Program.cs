@@ -920,7 +920,7 @@ namespace LogicAppAdvancedTool
 
                 //TODO:
                 //1. Restore API connection
-                //2. Improvement for list workflow command
+                //2. Improvement for generic used Storage Table query
 
                 app.Execute(args);
             }
