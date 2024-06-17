@@ -11,7 +11,7 @@ namespace LogicAppAdvancedTool.Operations
     {
         public static void Run()
         {
-            List<TableEntity> entities = WorkflowsInfo.ListAllWorkflows("FlowName");
+            List<TableEntity> entities = WorkflowsInfoQuery.ListAllWorkflows("FlowName");
 
             ConsoleTable consoleTable = new ConsoleTable(new List<string>() { "Workflow Name", "Last Updated (UTC)", "Workflow Count" }, true);
 
@@ -20,7 +20,7 @@ namespace LogicAppAdvancedTool.Operations
                 string flowName = entity.GetString("FlowName");
                 string changedTime = entity.GetDateTimeOffset("ChangedTime")?.ToString("yyyy-MM-ddTHH:mm:ssZ");
 
-                List<TableEntity> flowsWithSameName = WorkflowsInfo.ListWorkflowsByName(flowName);
+                List<TableEntity> flowsWithSameName = WorkflowsInfoQuery.ListWorkflowsByName(flowName);
 
                 consoleTable.AddRow(new List<string>() { flowName, changedTime, flowsWithSameName.Count.ToString() });
             }
@@ -32,7 +32,7 @@ namespace LogicAppAdvancedTool.Operations
 
             string selectedWorkflowName = entities[index].GetString("FlowName");
 
-            List<TableEntity> entitiesOfWorkflow = WorkflowsInfo.ListWorkflowsByName(selectedWorkflowName);
+            List<TableEntity> entitiesOfWorkflow = WorkflowsInfoQuery.ListWorkflowsByName(selectedWorkflowName);
 
             Console.WriteLine($"All workflows named {selectedWorkflowName} based on workflow ID:");
             
@@ -51,7 +51,7 @@ namespace LogicAppAdvancedTool.Operations
             index = CommonOperations.PromptInput(entitiesOfWorkflow.Count, "Enter index to list all versions of selected workflow id.");
             string selectedWorkflowId = entitiesOfWorkflow[index].GetString("FlowId");
 
-            List<TableEntity> entitiesOfVersions = WorkflowsInfo.ListVersionsByID(selectedWorkflowId);
+            List<TableEntity> entitiesOfVersions = WorkflowsInfoQuery.ListVersionsByID(selectedWorkflowId);
             ConsoleTable versionTable = new ConsoleTable(new List<string>() { "Version ID", "Last Updated (UTC)" });
 
             foreach (TableEntity entity in entitiesOfVersions)

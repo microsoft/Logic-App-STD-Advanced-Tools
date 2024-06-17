@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace LogicAppAdvancedTool.Shared
 {
-    public class WorkflowsInfo
+    public class WorkflowsInfoQuery
     {
         public static List<TableEntity> ListAllWorkflows(params string[] select)
         {
