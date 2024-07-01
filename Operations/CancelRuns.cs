@@ -21,11 +21,7 @@ namespace LogicAppAdvancedTool.Operations
 
             Console.WriteLine($"Found {inprocessRuns.Count} run(s) in run table.");
 
-            string confirmationMessage = "WARNING!!!\r\n1. Cancel all the running instances will cause data lossing for any running/waiting instances.\r\n2. Run history and resubmit feature will be unavailable for all waiting runs.\r\ninput for confirmation:";
-            if (!Prompt.GetYesNo(confirmationMessage, false, ConsoleColor.Red))
-            {
-                throw new UserCanceledException("Operation Cancelled");
-            }
+            CommonOperations.PromptConfirmation("1. Cancel all the running instances will cause data lossing for any running/waiting instances.\r\n2. Run history and resubmit feature will be unavailable for all waiting runs.");
 
             string prefix = CommonOperations.GenerateWorkflowTablePrefix(workflowName);
             string runTableName = $"flow{prefix}runs";
@@ -62,7 +58,7 @@ namespace LogicAppAdvancedTool.Operations
 
             if (FailedCount != 0)
             { 
-                Console.WriteLine($"{FailedCount} runs cancelled failed due to running instances status changed, please run command again to verify whether still have running instance or not.");
+                Console.WriteLine($"{FailedCount} runs cancelled failed due to status changed (it is an expected behavior while runs finished during canceling), please run command again to verify whether still have running instance or not.");
             }
         }
     }

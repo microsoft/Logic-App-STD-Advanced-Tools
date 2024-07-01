@@ -37,11 +37,7 @@ namespace LogicAppAdvancedTool.Operations
 
             table.Print();
 
-            string confirmationMessage = $"Whether you would like to remove those data in connections.json and appsettings?\r\nPlease input for confirmation:";
-            if (!Prompt.GetYesNo(confirmationMessage, false, ConsoleColor.Red))
-            {
-                throw new UserCanceledException("Operation Cancelled");
-            }
+            CommonOperations.PromptConfirmation("Whether you would like to remove those data in connections.json and appsettings?");
 
             Console.WriteLine("Start to clean up...");
 

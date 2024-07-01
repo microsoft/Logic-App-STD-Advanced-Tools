@@ -307,5 +307,15 @@ namespace LogicAppAdvancedTool
                 return index - 1;
             }
         }
+
+        public static void PromptConfirmation(string message)
+        {
+            string confirmationMessage = $"WARNING!!!\r\n{message}\r\nPlease input for confirmation:";
+
+            if (!Prompt.GetYesNo(confirmationMessage, false, ConsoleColor.Red))
+            {
+                throw new UserCanceledException("Operation Cancelled");
+            }
+        }
     }
 }

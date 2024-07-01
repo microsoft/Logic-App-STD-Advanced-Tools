@@ -46,7 +46,7 @@ namespace LogicAppAdvancedTool.Operations
                                                             .ToDictionary(t => t.GetString("FlowId"), t => t.GetDateTimeOffset("ChangedTime")?.ToString("yyyyMMddHHmmss"));
 
 
-            Console.WriteLine($"Found {tableEntities.Count} workflow definiitons, saving to folder...");
+            Console.WriteLine($"Found {tableEntities.Count} workflow definitions, saving to folder...");
 
             foreach (TableEntity entity in tableEntities)
             {

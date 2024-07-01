@@ -21,11 +21,7 @@ namespace LogicAppAdvancedTool
 
             Console.WriteLine("This command need to run with Administrator mode");
 
-            string confirmationMessage = "WARNING!!!\r\nAll environment variables in appsettings file will be deleted.\r\ninput for confirmation:";
-            if (!Prompt.GetYesNo(confirmationMessage, false, ConsoleColor.Red))
-            {
-                throw new UserCanceledException("Operation Cancelled");
-            }
+            CommonOperations.PromptConfirmation("All environment variables in appsettings file will be deleted.");
 
             string fileContent = File.ReadAllText(filePath);
 

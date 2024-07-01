@@ -21,11 +21,7 @@ namespace LogicAppAdvancedTool
 
             Console.WriteLine("This command need to be executed in Administrator mode");
 
-            string confirmationMessage = "WARNING!!!\r\nAll existing environment variables will be overwritten.\r\ninput for confirmation:";
-            if (!Prompt.GetYesNo(confirmationMessage, false, ConsoleColor.Red))
-            {
-                throw new UserCanceledException("Operation Cancelled");
-            }
+            CommonOperations.PromptConfirmation("All existing environment variables will be overwritten.");
 
             string fileContent = File.ReadAllText(filePath);
 

@@ -11,11 +11,7 @@ namespace LogicAppAdvancedTool.Operations
     {
         public static void Run()
         {
-            string confirmationMessage = "WARNING!!!\r\nThis operation will restore all the deleted workflows, if there's any invalid workflows, it might cause unexpected behavior on Logic App runtime.\r\nBe cautuion if you are running this command in PROD environment\r\nPlease input for confirmation:";
-            if (!Prompt.GetYesNo(confirmationMessage, false, ConsoleColor.Red))
-            {
-                throw new UserCanceledException("Operation Cancelled");
-            }
+            CommonOperations.PromptConfirmation("This operation will restore all the deleted workflows, if there's any invalid workflows, it might cause unexpected behavior on Logic App runtime.\r\nBe cautuion if you are running this command in PROD environment");
 
             string backupPath = CommonOperations.BackupCurrentSite();
             Console.WriteLine($"Backup current workflows, you can find in path: {backupPath}");

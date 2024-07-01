@@ -18,11 +18,7 @@ namespace LogicAppAdvancedTool.Operations
                 throw new UserInputException($"No workflow definition found with version: {version}");
             }
 
-            string confirmationMessage = $"WARNING!!!\r\nThe current workflow: {workflowName} will be overwrite!\r\nPlease input for confirmation:";
-            if (!Prompt.GetYesNo(confirmationMessage, false, ConsoleColor.Red))
-            {
-                throw new UserCanceledException("Operation Cancelled");
-            }
+            CommonOperations.PromptConfirmation($"The current workflow: {workflowName} will be overwrite!");
 
             CommonOperations.SaveDefinition($"{AppSettings.RootFolder}\\{workflowName}", "workflow.json", entity);
 

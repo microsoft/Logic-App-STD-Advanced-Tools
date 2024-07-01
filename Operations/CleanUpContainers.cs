@@ -5,6 +5,10 @@ using McMaster.Extensions.CommandLineUtils;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using System.Globalization;
+using Microsoft.Extensions.Hosting;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.ComponentModel;
+using System.Reflection;
 
 namespace LogicAppAdvancedTool.Operations
 {
@@ -59,15 +63,10 @@ namespace LogicAppAdvancedTool.Operations
                 {
                     table.AddRow(new List<string> { containerName });
                 }
-
                 table.Print();
             }
 
-            string confirmationMessage = $"WARNING!!!\r\nDeleted those container will cause run history data lossing which executed before {formattedDate} \r\nPlease input for confirmation:";
-            if (!Prompt.GetYesNo(confirmationMessage, false, ConsoleColor.Red))
-            {
-                throw new UserCanceledException("Operation Cancelled");
-            }
+            CommonOperations.PromptConfirmation($"Deleted those container will cause run history data lossing which executed before {formattedDate}");
 
             foreach (string containerName in matchedContainers)
             {

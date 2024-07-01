@@ -15,11 +15,7 @@ namespace LogicAppAdvancedTool.Operations
     {
         public static void Run(string workflowName, string startTime, string endTime, bool ignoreProcessed, string status)
         {
-            string premissionMessage = "Before execute the command, please make sure that the Logic App managed identity has following permission on resource group level:\r\nReader\r\nLogic App Standard Contributor";
-            if (!Prompt.GetYesNo(premissionMessage, false, ConsoleColor.Red))
-            {
-                throw new UserCanceledException("Operation Cancelled");
-            }
+            CommonOperations.PromptConfirmation("Before execute the command, please make sure that the Logic App managed identity has following permission on resource group level:\r\n\tReader\r\n\tLogic App Standard Contributor");
 
             string baseUrl = $"{AppSettings.ManagementBaseUrl}/hostruntime/runtime/webhooks/workflow/api/management/workflows/{workflowName}";
             string filter = $"$filter=status eq '{status}' and startTime gt {startTime} and startTime lt {endTime}";
@@ -86,11 +82,7 @@ namespace LogicAppAdvancedTool.Operations
 
             Console.WriteLine($"Detected {remainRuns.Count} {status} runs.");
 
-            string confirmationMessage = "WARNING!!!\r\nAre you sure to resubmit all detected failed runs?\r\nPlease input for confirmation:";
-            if (!Prompt.GetYesNo(confirmationMessage, false, ConsoleColor.Red))
-            {
-                throw new UserCanceledException("Operation Cancelled");
-            }
+            CommonOperations.PromptConfirmation("Are you sure to resubmit all detected failed runs?");
 
             while (remainRuns.Count != 0)
             {
@@ -105,6 +97,8 @@ namespace LogicAppAdvancedTool.Operations
                     try
                     {
                         MSITokenService.VerifyToken(ref token);
+
+                        //HttpOperations.HttpRequestWithToken(resubmitUrl, HttpMethod.Post, null, token.access_token);
 
                         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(resubmitUrl);
                         request.Method = "POST";

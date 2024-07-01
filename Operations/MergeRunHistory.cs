@@ -94,12 +94,8 @@ namespace LogicAppAdvancedTool.Operations
                 4. Merging process will consume ~120 MB memory and 10% CPU (CPU usage is based on WS1 ASP).
                 5. IMPORTENT!!! This operation cannot be reverted!!!
                 """);
-            
-            string confirmationMessage = "WARNING!!! Please review above information and input for confirmation to merge run history:";
-            if (!Prompt.GetYesNo(confirmationMessage, false, ConsoleColor.Red))
-            {
-                throw new UserCanceledException("Operation Cancelled");
-            }
+
+            CommonOperations.PromptConfirmation("Please review above information and input for confirmation to merge run history");
 
             //We need to create new records and change workflow id to existing one in main table
             OverwriteFlowId(sourceFlowID, targetFlowID);

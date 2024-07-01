@@ -54,7 +54,7 @@ namespace LogicAppAdvancedTool.Shared
             List<string> querySelect = new List<string> { "RowKey", "ChangedTime", "FlowSequenceId" };
             querySelect.AddRange(select);
 
-            List<TableEntity> entities = TableOperations.QueryMainTable($"FlowId eq '{flowID}'", select: new string[] { "RowKey", "ChangedTime", "FlowSequenceId" })
+            List<TableEntity> entities = TableOperations.QueryMainTable($"FlowId eq '{flowID}'", select: querySelect.Distinct().ToArray())
                             .Where(t => t.GetString("RowKey").StartsWith("MYEDGEENVIRONMENT_FLOWVERSION"))
                             .OrderByDescending(t => t.GetDateTimeOffset("ChangedTime"))
                             .ToList();

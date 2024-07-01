@@ -62,11 +62,7 @@ namespace LogicAppAdvancedTool.Operations
                 table.Print();
             }
 
-            string confirmationMessage = $"WARNING!!!\r\nDeleted those storage tables will cause run history data lossing which executed before {formattedDate} \r\nPlease input for confirmation:";
-            if (!Prompt.GetYesNo(confirmationMessage, false, ConsoleColor.Red))
-            {
-                throw new UserCanceledException("Operation Cancelled");
-            }
+            CommonOperations.PromptConfirmation($"Deleted those storage tables will cause run history data lossing which executed before {formattedDate}");
 
             foreach (string tableName in matchedTables)
             {
