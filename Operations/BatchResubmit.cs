@@ -100,11 +100,19 @@ namespace LogicAppAdvancedTool.Operations
 
                         HttpResponseMessage response = HttpOperations.HttpRequestWithToken(resubmitUrl, HttpMethod.Post, null, token.access_token);
 
-                        //HttpClient handle the exception internally, need to check response to see whether request succeeded or not 
                         if (!response.IsSuccessStatusCode)
                         {
                             throw new Exception(response.ReasonPhrase);
                         }
+
+                        /*
+                        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(resubmitUrl);
+                        request.Method = "POST";
+                        request.Headers.Clear();
+                        request.Headers.Add("Authorization", $"Bearer {token.access_token}");
+
+                        HttpWebResponse response = (HttpWebResponse)request.GetResponse();\
+                        */
 
                         File.AppendAllText(logPath, $"{info.RunID}\n");
                         remainRuns.RemoveAt(i);
