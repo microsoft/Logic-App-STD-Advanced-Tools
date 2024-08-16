@@ -797,15 +797,12 @@ namespace LogicAppAdvancedTool
                         string sourceWorkflow = sourceWorkflowCO.Value();
                         string targetWorkflow = targetWorkflowCO.Value();
 
-                        int st = 0;
-                        int et = 0;
-
-                        if (!int.TryParse(startTimeCO.Value(), out st))
+                        if (!int.TryParse(startTimeCO.Value(), out int st))
                         {
                             throw new UserInputException($"Start time: {startTimeCO.Value()} cannot be parsed as Int, please review your input format whether match \"yyyyMMdd\"");
                         }
 
-                        if (!int.TryParse(endTimeCO.Value(), out et))
+                        if (!int.TryParse(endTimeCO.Value(), out int et))
                         {
                             throw new UserInputException($"End time: {endTimeCO.Value()} cannot be parsed as Int, please review your input format whether match \"yyyyMMdd\"");
                         }

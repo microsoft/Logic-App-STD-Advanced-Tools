@@ -98,18 +98,18 @@ namespace LogicAppAdvancedTool.Operations
                     {
                         MSITokenService.VerifyToken(ref token);
 
-                        //HttpOperations.HttpRequestWithToken(resubmitUrl, HttpMethod.Post, null, token.access_token);
+                        HttpResponseMessage response = HttpOperations.HttpRequestWithToken(resubmitUrl, HttpMethod.Post, null, token.access_token);
 
-                        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(resubmitUrl);
-                        request.Method = "POST";
-                        request.Headers.Clear();
-                        request.Headers.Add("Authorization", $"Bearer {token.access_token}");
+                        //HttpClient handle the exception internally, need to check response to see whether request succeeded or not 
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            throw new Exception(response.ReasonPhrase);
+                        }
 
-                        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                         File.AppendAllText(logPath, $"{info.RunID}\n");
                         remainRuns.RemoveAt(i);
                     }
-                    catch (WebException ex)
+                    catch (Exception ex)
                     {
                         //Handle throttling limitation internally since it is expected when we need to resubmit large amount of runs
                         if (ex.Message.Contains("Too Many Requests"))
@@ -124,7 +124,7 @@ namespace LogicAppAdvancedTool.Operations
                         }
                         else
                         {
-                            throw ex;
+                            throw;
                         }
                     }
                 }
