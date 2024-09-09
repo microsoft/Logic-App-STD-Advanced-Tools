@@ -1,3 +1,6 @@
+2024-09-09
+1. "SearchInHistory" command now supports for retrieving histories from a deleted workflow
+
 2024-06-10
 1. Improved ConsoleTable component for auto-generated index feature.
 2. "ListWorkflows" command now provide deeper level list which can list workflow with same name but different flow id, all versions of a specific workflow id.
