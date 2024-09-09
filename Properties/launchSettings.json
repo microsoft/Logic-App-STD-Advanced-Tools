@@ -2,7 +2,7 @@
   "profiles": {
     "LogicAppAdvancedTool": {
       "commandName": "Project",
-      "commandLineArgs": "tools generateprefix -la logicapp-s05-prod-cpmintegration-aae -wf f63c68814314435285f73530f437df2c"
+      "commandLineArgs": "searchinhistory -wf SearchTest -d 20240909 -k \"drac\""
     }
   }
 }

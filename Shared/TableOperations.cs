@@ -55,9 +55,23 @@ namespace LogicAppAdvancedTool
             return QueryTable(runTableName, filter, select);
         }
 
+        public static List<TableEntity> QueryRunTableByFlowID(string workflowID, string filter, string[] select = null)
+        {
+            string runTableName = $"flow{CommonOperations.GenerateWorkflowTablePrefixByFlowID(workflowID)}runs";
+
+            return QueryTable(runTableName, filter, select);
+        }
+
         public static List<TableEntity> QueryActionTable(string workflowName, string date, string filter, string[] select = null)
         { 
             string actionTableName = $"flow{CommonOperations.GenerateWorkflowTablePrefix(workflowName)}{date}t000000zactions";
+
+            return QueryTable(actionTableName, filter, select);
+        }
+
+        public static List<TableEntity> QueryActionTableByFlowID(string workflowID, string date, string filter, string[] select = null)
+        {
+            string actionTableName = $"flow{CommonOperations.GenerateWorkflowTablePrefixByFlowID(workflowID)}{date}t000000zactions";
 
             return QueryTable(actionTableName, filter, select);
         }
