@@ -1,5 +1,6 @@
 2024-09-09
-1. "SearchInHistory" command now supports for retrieving histories from a deleted workflow
+1. "SearchInHistory" command now supports for retrieving histories from a deleted workflow.
+2. Added a new sub-command "GeneratePrefix" in command "Tools" for generating prefix on local computer. 
 
 2024-06-10
 1. Improved ConsoleTable component for auto-generated index feature.
