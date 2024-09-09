@@ -2,7 +2,7 @@
   "profiles": {
     "LogicAppAdvancedTool": {
       "commandName": "Project",
-      "commandLineArgs": "batchresubmit -wf Test -st \"2024-08-15T00:00:00Z\" -et \"2024-08-16 23:59:50Z\" -ignore false -s Succeeded"
+      "commandLineArgs": "tools generateprefix -la logicapp-s05-prod-cpmintegration-aae -wf f63c68814314435285f73530f437df2c"
     }
   }
 }
