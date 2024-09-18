@@ -920,7 +920,7 @@ namespace LogicAppAdvancedTool
                         sub.Description = "Generate Logic App and workflow prefix.";
 
                         CommandOption logicAppCO = sub.Option("-la|--logicApp", "(Mandatory) Logic App name (case sensitive).", CommandOptionType.SingleValue).IsRequired();
-                        CommandOption workflowIDCO = sub.Option("-wf|--workflowID", "(Mandatory) The workflow ID.", CommandOptionType.SingleValue);
+                        CommandOption workflowIDCO = sub.Option("-wf|--workflowID", "(Optional) The workflow ID.", CommandOptionType.SingleValue);
 
                         sub.OnExecute(() =>
                         {
@@ -940,8 +940,7 @@ namespace LogicAppAdvancedTool
                 //1. Restore API connection
                 //2. Improvement for generic used Storage Table query
                 //3. Add custom connection information for validate storage connectivity when switch to slot
-                //4. Add support for deleted workflows of command SearchInHistory
-                //5. Add workflow prefix generation feature in tools
+                //4. Improvement for select specific version of workflow (a generic method needed)
 
                 app.Execute(args);
             }

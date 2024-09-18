@@ -2,7 +2,7 @@
   "profiles": {
     "LogicAppAdvancedTool": {
       "commandName": "Project",
-      "commandLineArgs": "searchinhistory -wf SearchTest -d 20240909 -k \"drac\""
+      "commandLineArgs": "RestoreWorkflowWithVersion -wf SearchTest"
     }
   }
 }
