@@ -913,7 +913,7 @@ namespace LogicAppAdvancedTool
                     });
                     #endregion
 
-                    #region Restart Logic App
+                    #region Generate Logic App and workflow prefix
                     c.Command("GeneratePrefix", sub =>
                     {
                         sub.HelpOption("-?");
@@ -933,6 +933,25 @@ namespace LogicAppAdvancedTool
                         });
                     });
                     #endregion
+
+                    #region Get workflow start time based on run id
+                    c.Command("RunIDToDateTime", sub =>
+                    {
+                        sub.HelpOption("-?");
+                        sub.Description = "Get workflow start time based on run id.";
+
+                        CommandOption runIDCO = sub.Option("-id|--runID", "(Mandatory) Run ID of Logic App workflow (eg: 08584737551867954143243946780CU57).", CommandOptionType.SingleValue).IsRequired();
+
+                        sub.OnExecute(() =>
+                        {
+                            string runID = runIDCO.Value();
+
+                            Tools.RunIDToDatetime(runID);
+
+                            return 0;
+                        });
+                    });
+                    #endregion
                 });
                 #endregion
 
@@ -941,6 +960,7 @@ namespace LogicAppAdvancedTool
                 //2. Improvement for generic used Storage Table query
                 //3. Add custom connection information for validate storage connectivity when switch to slot
                 //4. Improvement for select specific version of workflow (a generic method needed)
+                //5. RunID to execution datetime ref: long.MaxValue - DateTimeExtensions.PreciseUtcNow.Ticks).ToString("D20", CultureInfo.InvariantCulture)
 
                 app.Execute(args);
             }

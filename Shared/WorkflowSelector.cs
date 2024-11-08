@@ -49,7 +49,7 @@ namespace LogicAppAdvancedTool.Shared
 
                 Console.WriteLine("Please select the workflow you want to restore by entering the index.");
 
-                //just decide not verify user input, assume user is smart enough to input correct index
+                //no verification for users input, assume users are smart enough to provide correct index
                 int selectedIndex = int.Parse(Console.ReadLine());
                 selectedWorkflowId = entitiesOfWorkflow[selectedIndex - 1].GetString("FlowId");
             }

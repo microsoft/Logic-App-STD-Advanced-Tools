@@ -1,8 +1,7 @@
 {
   "profiles": {
     "LogicAppAdvancedTool": {
-      "commandName": "Project",
-      "commandLineArgs": "RestoreWorkflowWithVersion -wf SearchTest"
+      "commandName": "Project"
     }
   }
 }

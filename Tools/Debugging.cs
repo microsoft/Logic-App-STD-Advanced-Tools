@@ -13,6 +13,9 @@ namespace LogicAppAdvancedTool
     {
         public static void FeatureTesting()
         {
+            RunIDToDatetime("08584737551867954143243946780CU57");
+            RunIDToDatetime("08584737550808373605660359857CU62");
+            RunIDToDatetime("08584738342725975605125434365CU211");
         }
     }
 }

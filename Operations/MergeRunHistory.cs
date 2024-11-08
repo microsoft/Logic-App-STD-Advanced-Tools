@@ -6,6 +6,7 @@ using Microsoft.WindowsAzure.ResourceStack.Common.Extensions;
 using Azure.Data.Tables.Models;
 using Azure;
 using McMaster.Extensions.CommandLineUtils;
+using LogicAppAdvancedTool.Shared;
 
 namespace LogicAppAdvancedTool.Operations
 {
@@ -38,54 +39,15 @@ namespace LogicAppAdvancedTool.Operations
             }
 
             Console.WriteLine($"Existing workflow named {targetWorkflow} found.");
-
-            Console.WriteLine($"Retrieving source workflows named {sourceWorkflow}");
-
             string targetFlowID = targetWorkflows.FirstOrDefault().GetString("FlowId");
 
-            List<TableEntity> entities = TableOperations.QueryMainTable($"FlowName eq '{sourceWorkflow}' and FlowId ne '{targetFlowID}'", select: new string[] { "FlowName", "FlowId", "ChangedTime" })
-                                .GroupBy(t => t.GetString("FlowId"))
-                                .Select(g => g.OrderByDescending(
-                                    x => x.GetDateTimeOffset("ChangedTime"))
-                                    .FirstOrDefault())
-                                .ToList();
+            string sourceFlowID = WorkflowSelector.SelectFlowIDByName(sourceWorkflow);
 
-            if (entities.Count == 0)
+            if (sourceFlowID == targetFlowID)
             {
-                throw new UserInputException($"No source workflows found with name {sourceWorkflow}, please review your input or use 'ListVersions' command to list them.");
+                throw new UserInputException("source workflow id and target workflow id is the same, please select different workflows");
             }
 
-            Console.WriteLine($"{entities.Count} source workflow(s) named {sourceWorkflow} found.");
-
-            ConsoleTable consoleTable = new ConsoleTable(new List<string>() { "Flow ID", "Last Updated Time (UTC)" }, true);
-
-            foreach (TableEntity entity in entities)
-            {
-                string flowName = entity.GetString("FlowName");
-                string changedTime = entity.GetDateTimeOffset("ChangedTime")?.ToString("yyyy-MM-ddTHH:mm:ssZ");
-                string flowID = entity.GetString("FlowId");
-
-                consoleTable.AddRow(new List<string>() { flowName, flowID, changedTime });
-            }
-
-            consoleTable.Print();
-
-            string sourceFlowID;
-
-            if (entities.Count == 1)
-            {
-                sourceFlowID = entities[0].GetString("FlowId");
-                Console.WriteLine($"Only 1 workflow found, using default workflow id: {sourceFlowID}");
-            }
-            else
-            {
-                Console.WriteLine($"There are {entities.Count} workflows found in Storage Table, due to workflow overwritten (delete and create workflow with same name).");
-                Console.WriteLine("Please enter the Index which you would like to restore the run history");
-
-                int rowID = Int32.Parse(Console.ReadLine());
-                sourceFlowID = entities[rowID - 1].GetString("FlowId");
-            }
-            
             Console.WriteLine($"""
                 Merge information:
                 1. Source workflow name: {sourceWorkflow}, source flow id: {sourceFlowID}, target workflow name: {targetWorkflow} target flow id: {targetFlowID}, start date: {startTime}, end date: {endTime}.
@@ -98,7 +60,7 @@ namespace LogicAppAdvancedTool.Operations
             CommonOperations.PromptConfirmation("Please review above information and input for confirmation to merge run history");
 
             //We need to create new records and change workflow id to existing one in main table
-            OverwriteFlowId(sourceFlowID, targetFlowID);
+            OverwriteFlowId(sourceFlowID, targetFlowID, targetWorkflow);
 
             string workflowPrefix = CommonOperations.GenerateLogicAppPrefix();
             string selectWorkflowPrefix = $"flow{workflowPrefix}{StoragePrefixGenerator.Generate(sourceFlowID.ToLower())}";
@@ -151,7 +113,7 @@ namespace LogicAppAdvancedTool.Operations
             //Split records into pages for memory usage consideration
             Pageable<TableEntity> entities = sourceTableClient.Query<TableEntity>(maxPerPage: 1000);
 
-            int pageIndex = 0;           
+            int pageIndex = 0;
 
             foreach (Page<TableEntity> page in entities.AsPages())
             {
@@ -159,10 +121,8 @@ namespace LogicAppAdvancedTool.Operations
 
                 pageIndex++;
 
-                //provide some infomation in console for long running jobs
-                //just in case there's no infomation for to long time and isers believe the process stuck
-                if (page.Values.Count == 1000 || pageIndex != 1)    
-                { 
+                if (page.Values.Count == 1000 || pageIndex != 1)
+                {
                     Console.WriteLine($"Merging page {pageIndex} with {page.Values.Count} records.");
                 }
 
@@ -176,7 +136,7 @@ namespace LogicAppAdvancedTool.Operations
 
                     if (!actions.ContainsKey(partitionKey))
                     {
-                        actions.Add(partitionKey, new List<TableTransactionAction>());    
+                        actions.Add(partitionKey, new List<TableTransactionAction>());
                     }
 
                     actions[partitionKey].Add(new TableTransactionAction(TableTransactionActionType.UpsertReplace, te));
@@ -190,16 +150,16 @@ namespace LogicAppAdvancedTool.Operations
                 }
 
                 foreach (List<TableTransactionAction> action in actions.Values)
-                { 
+                {
                     targetTableClient.SubmitTransaction(action);
                 }
             }
         }
 
-        public static void OverwriteFlowId(string sourceID, string targetID)
+        public static void OverwriteFlowId(string sourceID, string targetID, string targetWorkflow)
         {
             string filter = $"FlowId eq '{sourceID}'";
-            List<TableEntity> deletedWorkflowRecords =  TableOperations.QueryMainTable(filter);
+            List<TableEntity> deletedWorkflowRecords = TableOperations.QueryMainTable(filter);
 
             TableClient tableClient = new TableClient(AppSettings.ConnectionString, TableOperations.DefinitionTableName);
 
@@ -212,9 +172,10 @@ namespace LogicAppAdvancedTool.Operations
 
                 updatedEntity = te;
                 updatedEntity["FlowId"] = targetID;
+                updatedEntity["FlowName"] = targetWorkflow;
                 updatedEntity.PartitionKey = te.PartitionKey;
                 updatedEntity.RowKey = te.RowKey.Replace(sourceID.ToUpper(), targetID.ToUpper());
- 
+
                 tableClient.UpsertEntity<TableEntity>(updatedEntity);
             }
         }
