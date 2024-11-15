@@ -126,7 +126,7 @@ namespace LogicAppAdvancedTool
                 return null;
             }
 
-            string result = DeflateCompressionUtility.Instance.InflateString(new MemoryStream(content));
+            string result = CompressUtility.DecompressContent(content);
 
             return result;
         }

@@ -6,6 +6,9 @@ using Microsoft.DiaSymReader;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
+using Azure.Storage.Blobs;
+using LogicAppAdvancedTool.Operations;
+using Microsoft.WindowsAzure.ResourceStack.Common.Utilities;
 
 namespace LogicAppAdvancedTool
 {
@@ -13,9 +16,7 @@ namespace LogicAppAdvancedTool
     {
         public static void FeatureTesting()
         {
-            RunIDToDatetime("08584737551867954143243946780CU57");
-            RunIDToDatetime("08584737550808373605660359857CU62");
-            RunIDToDatetime("08584738342725975605125434365CU211");
+            Decode.Run("Test", "08584702998773857900");
         }
     }
 }

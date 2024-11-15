@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
@@ -77,6 +77,9 @@
     </Reference>
     <Reference Include="System.Configuration.ConfigurationManager">
       <HintPath>DLLs\System.Configuration.ConfigurationManager.dll</HintPath>
+    </Reference>
+    <Reference Include="ZstdSharp">
+      <HintPath>DLLs\ZstdSharp.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

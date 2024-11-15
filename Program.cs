@@ -960,7 +960,6 @@ namespace LogicAppAdvancedTool
                 //2. Improvement for generic used Storage Table query
                 //3. Add custom connection information for validate storage connectivity when switch to slot
                 //4. Improvement for select specific version of workflow (a generic method needed)
-                //5. RunID to execution datetime ref: long.MaxValue - DateTimeExtensions.PreciseUtcNow.Ticks).ToString("D20", CultureInfo.InvariantCulture)
 
                 app.Execute(args);
             }
