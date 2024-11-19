@@ -954,10 +954,8 @@ namespace LogicAppAdvancedTool
                 #endregion
 
                 //TODO:
-                //1. Restore API connection
-                //2. Improvement for generic used Storage Table query
-                //3. Add custom connection information for validate storage connectivity when switch to slot
-                //4. Improvement for select specific version of workflow (a generic method needed)
+                //1. Improvement for generic used Storage Table query
+                //2. Add custom connection information for validate storage connectivity when switch to slot
 
                 app.Execute(args);
             }

@@ -1,13 +1,10 @@
 ﻿using Azure.Data.Tables;
+using LogicAppAdvancedTool.Shared;
+using LogicAppAdvancedTool.Structures;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Newtonsoft.Json;
-using System.Globalization;
-using LogicAppAdvancedTool.Structures;
-using System.Linq;
-using Microsoft.WindowsAzure.ResourceStack.Common.Extensions;
-using LogicAppAdvancedTool.Shared;
 
 namespace LogicAppAdvancedTool.Operations
 {

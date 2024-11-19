@@ -2,7 +2,6 @@
 using Microsoft.WindowsAzure.ResourceStack.Common.Extensions;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace LogicAppAdvancedTool.Operations
@@ -11,7 +10,7 @@ namespace LogicAppAdvancedTool.Operations
     {
         public static void Run(string workflowName, string version)
         {
-            TableEntity entity = TableOperations.QueryMainTable($"FlowName eq '{workflowName}' and FlowSequenceId eq '{version}'", new string[] { "DefinitionCompressed", "Kind" }).FirstOrDefault();
+            TableEntity entity = TableOperations.QueryMainTable($"FlowName eq '{workflowName}' and FlowSequenceId eq '{version}'", new string[] { "DefinitionCompressed", "Kind", "RuntimeContext" }).FirstOrDefault();
 
             if (entity == null)
             {

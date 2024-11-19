@@ -18,6 +18,14 @@ namespace LogicAppAdvancedTool
         {
             HasNextPage = true;
 
+            TableServiceClient serviceClient = new TableServiceClient(AppSettings.ConnectionString);
+            Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{tableName}'");
+
+            if (results.Count() == 0)
+            {
+                throw new UserInputException($"Cannot find table named {tableName}, please review your input");
+            }
+
             TableClient tableClient = new TableClient(connectionString, tableName);
             pageableEntities = tableClient.Query<TableEntity>(filter: query, select: select, maxPerPage:1000);
         }

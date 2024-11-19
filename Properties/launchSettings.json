@@ -1,8 +1,7 @@
 {
   "profiles": {
     "LogicAppAdvancedTool": {
-      "commandName": "Project",
-      "commandLineArgs": "searchinhistory -wf HistoryTest -d 20241119 -k \"2024-11-19T05:23:08.7802221Z\""
+      "commandName": "Project"
     }
   }
 }

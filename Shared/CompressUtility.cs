@@ -1,5 +1,4 @@
-﻿using Microsoft.WindowsAzure.ResourceStack.Common.Services;
-using Microsoft.WindowsAzure.ResourceStack.Common.Utilities;
+﻿using Microsoft.WindowsAzure.ResourceStack.Common.Utilities;
 using System;
 using System.IO;
 using System.Text;
