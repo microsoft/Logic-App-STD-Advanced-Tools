@@ -9,6 +9,8 @@ using System.Linq;
 using Azure.Storage.Blobs;
 using LogicAppAdvancedTool.Operations;
 using Microsoft.WindowsAzure.ResourceStack.Common.Utilities;
+using Azure.Data.Tables;
+using Microsoft.WindowsAzure.ResourceStack.Common.Storage.Exceptions;
 
 namespace LogicAppAdvancedTool
 {
@@ -16,7 +18,6 @@ namespace LogicAppAdvancedTool
     {
         public static void FeatureTesting()
         {
-            Decode.Run("Test", "08584702998773857900");
         }
     }
 }

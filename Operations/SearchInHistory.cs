@@ -13,55 +13,41 @@ namespace LogicAppAdvancedTool.Operations
 {
     public static class SearchInHistory
     {
-        public static void Run(string workflowName, string date, string keyword, bool includeBlob = false, bool onlyFailures = false)
+        public static void Run(string workflowName, string date, string keyword, bool includeBlob = false)
         {
             string selectedWorkflowId = WorkflowSelector.SelectFlowIDByName(workflowName);
 
             List<TableEntity> tableEntities = new List<TableEntity>();
 
-            if (onlyFailures)
-            {
-                DateTime minTimeStamp = DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture);
-                DateTime maxTimeStamp = minTimeStamp.AddDays(1);
-
-                string query = $"Status eq 'Failed' and CreatedTime ge datetime'{minTimeStamp.ToString("yyyy-MM-ddTHH:mm:ssZ")}' and EndTime le datetime'{maxTimeStamp.ToString("yyyy-MM-ddTHH:mm:ssZ")}'";
-                List<TableEntity> failedRuns = TableOperations.QueryRunTableByFlowID(selectedWorkflowId, query, new string[] { "FlowRunSequenceId" });
-
-                if (failedRuns.Count == 0)
-                {
-                    throw new UserInputException($"There's no failed run found of {workflowName} with flow id {selectedWorkflowId} on {date}");
-                }
-
-                Console.WriteLine($"Found {failedRuns.Count} failed run(s) in run table.");
-
-                foreach (TableEntity te in failedRuns)
-                {
-                    string runID = te.GetString("FlowRunSequenceId");
-
-                    tableEntities.AddRange(TableOperations.QueryActionTableByFlowID(selectedWorkflowId, date, $"(InputsLinkCompressed ne '' or OutputsLinkCompressed ne '') and FlowRunSequenceId eq '{runID}'"));
-                }
-            }
-            else
-            {
-                tableEntities = TableOperations.QueryActionTableByFlowID(selectedWorkflowId, date, "InputsLinkCompressed ne '' or OutputsLinkCompressed ne ''");
-            }
-
             List<TableEntity> filteredEntities = new List<TableEntity>();
             List<string> runIDs = new List<string>();
 
-            foreach (TableEntity tableEntity in tableEntities)
+            int index = 0;
+
+            string tableName = $"flow{CommonOperations.GenerateWorkflowTablePrefixByFlowID(selectedWorkflowId)}{date}t000000zactions";
+            string query = "InputsLinkCompressed ne '' or OutputsLinkCompressed ne ''";
+
+            PageableTableQuery pageableTableQuery = new PageableTableQuery(AppSettings.ConnectionString, tableName, query);
+            while (pageableTableQuery.HasNextPage)
             {
-                ContentDecoder inputDecoder = new ContentDecoder(tableEntity.GetBinary("InputsLinkCompressed"));
-                ContentDecoder outputDecoder = new ContentDecoder(tableEntity.GetBinary("OutputsLinkCompressed"));
+                Console.WriteLine($"Processing page {++index}");
 
-                if (inputDecoder.SearchKeyword(keyword, includeBlob) || outputDecoder.SearchKeyword(keyword, includeBlob))
+                tableEntities = pageableTableQuery.GetNextPage();
+
+                foreach (TableEntity tableEntity in tableEntities)
                 {
-                    filteredEntities.Add(tableEntity);
+                    ContentDecoder inputDecoder = new ContentDecoder(tableEntity.GetBinary("InputsLinkCompressed"));
+                    ContentDecoder outputDecoder = new ContentDecoder(tableEntity.GetBinary("OutputsLinkCompressed"));
 
-                    string runID = tableEntity.GetString("FlowRunSequenceId");
-                    if (!runIDs.Contains(runID))
+                    if (inputDecoder.SearchKeyword(keyword, includeBlob) || outputDecoder.SearchKeyword(keyword, includeBlob))
                     {
-                        runIDs.Add(runID);
+                        filteredEntities.Add(tableEntity);
+
+                        string runID = tableEntity.GetString("FlowRunSequenceId");
+                        if (!runIDs.Contains(runID))
+                        {
+                            runIDs.Add(runID);
+                        }
                     }
                 }
             }
@@ -71,7 +57,7 @@ namespace LogicAppAdvancedTool.Operations
                 throw new UserInputException($"No run hisotry input/output found with keyword {keyword}");
             }
 
-            string fileName = $"{AppSettings.LogicAppName}_{workflowName}_{date}_SearchResults_{keyword}.json";
+            string fileName = $"{AppSettings.LogicAppName}_{workflowName}_{date}_SearchResults.json";
 
             ConsoleTable runIdTable = new ConsoleTable(new List<string>() { "Run ID" });
             foreach (string id in runIDs)

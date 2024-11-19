@@ -156,12 +156,9 @@ namespace LogicAppAdvancedTool
 
             long blobSize = client.GetProperties().Value.ContentLength;
 
+            //If content size is specified and blob size is larger than content size, return empty string
             if (contentSize != -1 && blobSize > contentSize)
             {
-                string blobName = blobUri.Split("/").Last();
-
-                //Console.WriteLine($"{blobName} content size is larger than 1MB, skip content check for this blob due to memory saving.");
-
                 return String.Empty;
             }
 
