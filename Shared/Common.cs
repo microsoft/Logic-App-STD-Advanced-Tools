@@ -126,9 +126,7 @@ namespace LogicAppAdvancedTool
                 return null;
             }
 
-            string result = CompressUtility.DecompressContent(content);
-
-            return result;
+            return CompressUtility.DecompressContent(content);
         }
 
         /// <summary>
@@ -143,10 +141,7 @@ namespace LogicAppAdvancedTool
                 return null;
             }
 
-            MemoryStream compressedStream = DeflateCompressionUtility.Instance.DeflateString(content);
-            byte[] compressedBytes = compressedStream.ToArray();
-
-            return compressedBytes;
+            return CompressUtility.CompressContent(content);
         }
         #endregion
 
