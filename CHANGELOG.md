@@ -1,3 +1,6 @@
+2024-11-15
+1. Update decompress method for ZSTD compatiablity which used by Azure Logic App as ModernCompressionUtility.
+
 2024-09-09
 1. "SearchInHistory" command now supports for retrieving histories from a deleted workflow.
 2. Added a new sub-command "GeneratePrefix" in command "Tools" for generating prefix on local computer. 
