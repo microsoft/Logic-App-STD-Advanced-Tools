@@ -1,3 +1,7 @@
+2024-11-19
+1. Added new method for Storage Table query with pagination for memory saving consideration.
+2. Remove "onlyFailures" parameter in "SearchInHistory" command since new query mechanism is faster enough to retrieve all items.
+
 2024-11-15
 1. Update decompress method for ZSTD compatiablity which used by Azure Logic App as ModernCompressionUtility.
 
