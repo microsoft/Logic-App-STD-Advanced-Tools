@@ -1,5 +1,6 @@
 2024-11-21
 1. Removed "RestoreAll" command
+2. Added sub command "DecodeZSTD" in "Tools" command for decode binary content which compressed via zstd
 
 2024-11-19
 1. Added new method for Storage Table query with pagination for memory saving consideration.
