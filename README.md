@@ -24,7 +24,6 @@ If you would like to compile the binary yourself, please always use "Publish" in
 | IngestWorkflow | **Experimental feature.  NOT fully tested, DON'T use in PROD environment!!!** Ingest a workflow into Storage Table directly to bypass workflow definition validation.|
 | ListVersions | List all the exisiting versions of a workflow.|
 | ListWorkflows | List all the exisiting workflows which can be found in storage table.|
-| RestoreAll | Restore all the workflows which be deleted accidentally. **This operation may cause unexpected behavior on Logic App runtime if you have any invalid workflows in storage table**.|
 | RestoreSingleWorkflow | Deprecated. Use "RestoreWorkflowWithVersion" instead.|
 | RetrieveFailures | Retrieve all the detail failure information of a workflow for a specific day/run.|
 | Revert | Revert a workflow to a speicfic version.|
