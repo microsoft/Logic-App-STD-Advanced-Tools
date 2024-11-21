@@ -27,14 +27,13 @@ namespace LogicAppAdvancedTool.Operations
             CommonOperations.SaveDefinition(workflowPath, "workflow.json", entitiesOfSelectedItem);
             Console.WriteLine($"Workflow: {flowName} restored successfully, please refresh your workflow page.");
 
-
             byte[] runtimeContextBinary = entitiesOfSelectedItem.GetBinary("RuntimeContext");
             string runtimeContext = CommonOperations.DecompressContent(runtimeContextBinary);
             string formattedContent = JsonConvert.SerializeObject(JsonConvert.DeserializeObject(runtimeContext), Formatting.Indented);
 
             string path = $"RuntimeContext_{workflowName}_{selectedVersionID}.json";
             File.WriteAllText(path, formattedContent);
-            Console.WriteLine($"Runtime context for {workflowName} with version ID {selectedVersionID} saved to {path}. This file contains API connections related information which may need to be added in connections.json.");
+            Console.WriteLine($"Runtime context (API connection related information) for {workflowName} with version ID {selectedVersionID} saved to {path}. Please review and decide whether need to be manually added in connections.json.");
         }
     }
 }
