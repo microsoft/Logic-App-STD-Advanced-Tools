@@ -952,6 +952,25 @@ namespace LogicAppAdvancedTool
                         });
                     });
                     #endregion
+
+                    #region Decode ZSTD content
+                    c.Command("DecodeZSTD", sub =>
+                    {
+                        sub.HelpOption("-?");
+                        sub.Description = "Decode ZSTD content such as DefinitionCompressed, InputsLinkCompressed, OutputsLinkCompressed, etc.";
+
+                        CommandOption contentCO = sub.Option("-c|--content", "(Mandatory) The content need to be decoded.", CommandOptionType.SingleValue).IsRequired();
+
+                        sub.OnExecute(() =>
+                        {
+                            string content = contentCO.Value();
+
+                            Console.WriteLine($"\r\nDecoded content:\r\n{CompressUtility.DecompressContent(Convert.FromBase64String(content))}");
+
+                            return 0;
+                        });
+                    });
+                    #endregion
                 });
                 #endregion
 
