@@ -127,7 +127,8 @@ namespace LogicAppAdvancedTool
                 });
                 #endregion
 
-                #region Restore All workflows
+                #region REMOVED - Restore All workflows
+                /*
                 app.Command("RestoreAll", c =>
                 {
                     c.HelpOption("-?");
@@ -140,6 +141,7 @@ namespace LogicAppAdvancedTool
                         return 0;
                     });
                 });
+                */
                 #endregion
 
                 #region Convert Logic App Name and Workflow Name to it's Storage Table prefix
@@ -954,8 +956,6 @@ namespace LogicAppAdvancedTool
                 #endregion
 
                 //TODO:
-                //1. Improvement for generic used Storage Table query
-                //2. Add custom connection information for validate storage connectivity when switch to slot
 
                 app.Execute(args);
             }
