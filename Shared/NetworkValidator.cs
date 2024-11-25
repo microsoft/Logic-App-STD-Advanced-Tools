@@ -62,18 +62,18 @@ namespace LogicAppAdvancedTool
 
             try
             {
-                using (TcpClient client = new TcpClient()) 
+                using (TcpClient client = new TcpClient())
                 {
                     if (client.ConnectAsync(IP, Port).Wait(1000))
                     {
                         Result = ValidationStatus.Succeeded;
                     }
                     else
-                    { 
+                    {
                         Result = ValidationStatus.Failed;
                     }
                 };
-                
+
             }
             catch
             {
@@ -89,13 +89,13 @@ namespace LogicAppAdvancedTool
         public string Endpoint { get; private set; }
         public ValidationStatus Result { get; private set; }
 
-        private List<EventWrittenEventArgs> es;
+        private List<EventWrittenEventArgs> EventWrittenEvents;
 
         public SSLValidator(string endpoint)
         {
             Result = ValidationStatus.NotApplicable;
             this.Endpoint = endpoint;
-            es= new List<EventWrittenEventArgs>();
+            EventWrittenEvents = new List<EventWrittenEventArgs>();
         }
 
         public SSLValidator Validate()
@@ -120,8 +120,6 @@ namespace LogicAppAdvancedTool
                 sslListener.Dispose();
             }
 
-            string s = JsonConvert.SerializeObject(es, Formatting.Indented);
-
             return this;
         }
 
@@ -131,7 +129,7 @@ namespace LogicAppAdvancedTool
             {
                 if (payload.Contains("RemoteCertificateNameMismatch"))
                 {
-                    Result = ValidationStatus.Failed;    
+                    Result = ValidationStatus.Failed;
                 }
             }
         }
@@ -157,18 +155,18 @@ namespace LogicAppAdvancedTool
     }
 
     public class StorageValidator
-    { 
+    {
         public ValidationStatus Result { get; private set; }
         public string StorageEndpoint { get; private set; }
         public StorageServiceType ServiceType { get; private set; }
 
         public StorageValidator(string storageEndpoint, StorageServiceType serviceType)
-        { 
+        {
             this.StorageEndpoint = storageEndpoint;
             this.ServiceType = serviceType;
         }
 
-        public StorageValidator Validate() 
+        public StorageValidator Validate()
         {
             try
             {
