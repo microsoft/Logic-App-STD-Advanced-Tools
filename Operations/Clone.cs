@@ -29,7 +29,6 @@ namespace LogicAppAdvancedTool.Operations
 
             CommonOperations.SaveDefinition(clonePath, "workflow.json", entity);
 
-
             Console.WriteLine("Clone finished, please refresh workflow page");
         }
     }

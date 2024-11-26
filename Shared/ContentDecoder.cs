@@ -5,7 +5,6 @@ using System.Text;
 using LogicAppAdvancedTool.Structures;
 using Microsoft.WindowsAzure.ResourceStack.Common.Extensions;
 using System.Linq;
-using Microsoft.WindowsAzure.ResourceStack.Common.Json;
 
 namespace LogicAppAdvancedTool
 {

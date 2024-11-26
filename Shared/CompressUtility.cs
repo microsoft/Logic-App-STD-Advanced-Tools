@@ -21,10 +21,8 @@ namespace LogicAppAdvancedTool
                     memoryStream.Position--;
                     return ZSTDDecompress(memoryStream);
                 default:
-                    break;
+                    return DeflateDecompress(compressedContent);
             }
-
-            return null;
         }
 
         public static byte[] CompressContent(string uncompressedContent)
