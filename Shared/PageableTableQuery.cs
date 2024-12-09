@@ -17,6 +17,11 @@ namespace LogicAppAdvancedTool
 
         public PageableTableQuery(string connectionString, string tableName, string query, string[] select = null, int pageSize = 1000)
         {
+            if (pageSize > 1000)
+            {
+                Console.WriteLine($"Page size cannot be larger than 1000, change to 1000");
+            }
+
             HasNextPage = true;
             PageSize = pageSize;
 
