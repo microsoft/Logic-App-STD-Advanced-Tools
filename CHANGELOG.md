@@ -1,3 +1,6 @@
+2024-11-26
+1. Fixed a bug which CompressUtility missed method to decompress deflate content.
+
 2024-11-21
 1. Removed "RestoreAll" command
 2. Added sub command "DecodeZSTD" in "Tools" command for decode binary content which compressed via zstd
