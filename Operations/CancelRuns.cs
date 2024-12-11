@@ -11,26 +11,41 @@ namespace LogicAppAdvancedTool.Operations
         {
             CommonOperations.AlertExperimentalFeature();
 
-            CommonOperations.PromptConfirmation("1. Cancel all the running instances will cause data lossing for any running/waiting instances.\r\n2. Run history and resubmit feature will be unavailable for all waiting runs.");
-
             string prefix = CommonOperations.GenerateWorkflowTablePrefix(workflowName);
             string runTableName = $"flow{prefix}runs";
 
             TableClient runTableClient = new TableClient(AppSettings.ConnectionString, runTableName);
 
-            int CancelledCount = 0;
-            int FailedCount = 0;
             string query = $"Status eq 'Running' or Status eq 'Waiting'";
+
+            int totalCount = 0;
+            PageableTableQuery queryForCount = new PageableTableQuery(AppSettings.ConnectionString, $"flow{CommonOperations.GenerateWorkflowTablePrefix(workflowName)}runs", query, new string[] { "Status", "PartitionKey", "RowKey" }, 1000);
+            while (queryForCount.HasNextPage)
+            { 
+                totalCount += queryForCount.GetNextPage().Count;
+            }
+
+            if (totalCount == 0)
+            {
+                throw new UserInputException($"There's no running/waiting runs of workflow {workflowName}");
+            }
+
+            Console.WriteLine($"Total {totalCount} running/waiting run(s) found. The final cancelled count might be slightly different due to workflow runs finished during cancellation.");
+
+            CommonOperations.PromptConfirmation("1. Cancel all the running instances will cause data lossing for any running/waiting instances.\r\n2. Run history and resubmit feature will be unavailable for all waiting runs.");
+
+            int cancelledCount = 0;
+            int failedCount = 0;
 
             PageableTableQuery pageableTableQuery = new PageableTableQuery(AppSettings.ConnectionString, $"flow{CommonOperations.GenerateWorkflowTablePrefix(workflowName)}runs", query, new string[] { "Status", "PartitionKey", "RowKey" }, 1000);
             while (pageableTableQuery.HasNextPage)
             {
                 List<TableEntity> entities = pageableTableQuery.GetNextPage();
 
-                //The count only can be 0 when query the first page which means there's no running/waiting runs of workflow
+                //throw expected exception if no running/waiting instances found on the first page
                 if (entities.Count == 0)
                 {
-                    throw new UserInputException($"There's no running/waiting runs of workflow {workflowName}");
+                    
                 }
 
                 foreach (TableEntity te in entities)
@@ -48,26 +63,26 @@ namespace LogicAppAdvancedTool.Operations
                     try
                     {
                         runTableClient.UpdateEntity<TableEntity>(updatedEntity, te.ETag);
-                        CancelledCount++;
+                        cancelledCount++;
 
                         //no accurate count for the total count of running/waiting instances, so just print the count to show the progress
-                        if (CancelledCount % 1000 == 0)
+                        if (cancelledCount % 1000 == 0)
                         {
-                            Console.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}: {CancelledCount} runs has been cancelled, still processing");
+                            Console.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}: {cancelledCount} runs has been cancelled, still processing");
                         }
                     }
                     catch (Exception ex)
                     {
-                        FailedCount++;
+                        failedCount++;
                     }
                 }
             }
 
-            Console.WriteLine($"Cancellation has finished, total {CancelledCount} runs cancelled sucessfully");
+            Console.WriteLine($"Cancellation has finished, total {cancelledCount} runs cancelled sucessfully");
 
-            if (FailedCount != 0)
+            if (failedCount != 0)
             {
-                Console.WriteLine($"{FailedCount} runs cancelled failed due to status changed (it is an expected behavior while runs finished during canceling), please run command again to verify whether still have running instance or not.");
+                Console.WriteLine($"{failedCount} runs cancelled failed due to status changed (it is an expected behavior while runs finished during canceling), please run command again to verify whether still have running instance or not.");
             }
         }
     }
