@@ -1,3 +1,6 @@
+2024-12-09
+1. "CancelRuns" command now lists running/waiting instances via pageable table query for memory consideration.
+
 2024-11-26
 1. Fixed a bug which CompressUtility missed method to decompress deflate content.
 
