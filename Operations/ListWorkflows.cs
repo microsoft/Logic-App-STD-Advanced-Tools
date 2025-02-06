@@ -34,7 +34,7 @@ namespace LogicAppAdvancedTool.Operations
 
             List<TableEntity> entitiesOfWorkflow = WorkflowsInfoQuery.ListWorkflowsByName(selectedWorkflowName);
 
-            Console.WriteLine($"All workflows named {selectedWorkflowName} based on workflow ID:");
+            Console.WriteLine($"All workflow(s) named {selectedWorkflowName} based on workflow ID:");
             
             ConsoleTable workflowTable = new ConsoleTable(new List<string>() { "Flow ID", "Last Updated (UTC)", "Kind", "Status" }, true);
             string currentFlowID = TableOperations.QueryCurrentWorkflowByName(selectedWorkflowName).FirstOrDefault()?.GetString("FlowId");

@@ -88,6 +88,11 @@ namespace LogicAppAdvancedTool
             }
         }
 
+        public static string GetValueByName(string name)
+        { 
+            return Environment.GetEnvironmentVariable(name);
+        }
+
         public static string GetRemoteAppsettings()
         {
             string Url = $"{ManagementBaseUrl}/config/appsettings/list?api-version=2022-03-01";
