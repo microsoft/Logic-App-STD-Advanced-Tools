@@ -23,7 +23,7 @@ namespace LogicAppAdvancedTool.Operations
 
             if (unusedConections.Count == 0)
             {
-                Console.WriteLine("There's no unsed connections.");
+                Console.WriteLine("There's no unused connections.");
                 return;
             }
 
