@@ -1,4 +1,5 @@
-﻿using LogicAppAdvancedTool.Structures;
+﻿using Azure.Core;
+using LogicAppAdvancedTool.Structures;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -69,6 +70,14 @@ namespace LogicAppAdvancedTool
             get
             {
                 return Environment.GetEnvironmentVariable("MSI_SECRET");
+            }
+        }
+
+        public static string Hostname
+        {
+            get
+            {
+                return Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME");
             }
         }
 

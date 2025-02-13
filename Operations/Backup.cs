@@ -25,7 +25,7 @@ namespace LogicAppAdvancedTool.Operations
 
                 Console.WriteLine("Backup for appsettings succeeded.");
             }
-            catch (Exception ex)
+            catch
             {
                 Console.WriteLine($"Failed to retrieve appsettings, it will not be backup.\r\nPlease review your Logic App Managed Identity role (Website Contributor or Logic App Standard Contributor required).");
             }

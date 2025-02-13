@@ -49,7 +49,6 @@ namespace LogicAppAdvancedTool
 
         public static string GenerateWorkflowTablePrefix(string workflowName)
         {
-            //We may have multiple flow IDs with same workflow name, so use FLOWLOOKUP key to get current version of workflow
             List<TableEntity> tableEntities = TableOperations.QueryCurrentWorkflowByName(workflowName, new string[] { "FlowId" });
 
             if (tableEntities.Count() == 0)

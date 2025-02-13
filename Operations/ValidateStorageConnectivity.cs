@@ -41,7 +41,7 @@ namespace LogicAppAdvancedTool.Operations
 
                 Console.WriteLine("IP list of Storage Account service tag has been retrieved successfully.");
             }
-            catch (Exception ex)
+            catch
             {
                 Console.WriteLine("Failed to fetch service tag of Storage, public/private IP validation will be skipped.");
             }

@@ -71,7 +71,7 @@ namespace LogicAppAdvancedTool.Operations
                             Console.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}: {cancelledCount} runs has been cancelled, still processing");
                         }
                     }
-                    catch (Exception ex)
+                    catch
                     {
                         failedCount++;
                     }

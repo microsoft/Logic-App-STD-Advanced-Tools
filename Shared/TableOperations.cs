@@ -36,6 +36,12 @@ namespace LogicAppAdvancedTool
             return tableEntities;
         }
 
+        public static List<TableEntity> QueryAccessKeyTable(string filter = null, string[] select = null)
+        {
+            string accessKeyTableName = $"flow{StoragePrefixGenerator.Generate(AppSettings.LogicAppName.ToLower())}flowaccesskeys";
+            return QueryTable(accessKeyTableName, filter, select);
+        }
+
         public static List<TableEntity> QueryHistoryTable(string workflowName, string filter = null, string[] select = null)
         {
             string historyTableName = $"flow{CommonOperations.GenerateWorkflowTablePrefix(workflowName)}histories";
@@ -85,6 +91,7 @@ namespace LogicAppAdvancedTool
 
         public static List<TableEntity> QueryCurrentWorkflowByName(string workflowName, string[] select = null)
         {
+            //Deleted workflows with same also saved in main table, so use FLOWLOOKUP to get current one
             string rowKey = $"MYEDGEENVIRONMENT_FLOWLOOKUP-MYEDGERESOURCEGROUP-{FormatRawKey(workflowName.ToUpper())}";
 
             return QueryMainTable($"RowKey eq '{rowKey}'", select);

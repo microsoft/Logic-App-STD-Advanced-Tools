@@ -83,7 +83,7 @@ namespace LogicAppAdvancedTool.Structures
                     TcpConnectionResult = ValidationStatus.Failed;
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 TcpConnectionResult = ValidationStatus.Failed;
             }

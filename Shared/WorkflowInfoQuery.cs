@@ -66,5 +66,30 @@ namespace LogicAppAdvancedTool.Shared
 
             return entities;
         }
+
+        public static string QueryWorkflowID(string workflowName)
+        {
+            List<TableEntity> tableEntities = TableOperations.QueryCurrentWorkflowByName(workflowName, new string[] { "FlowId" });
+
+            if (tableEntities.Count() == 0)
+            {
+                throw new UserInputException($"No existing workflow named {workflowName}, please review your input.");
+            }
+
+            return tableEntities.First<TableEntity>().GetString("FlowId");
+        }
+
+        public static string QueryDefinitionByFlowName(string workflowName)
+        {
+            List<TableEntity> tableEntities = TableOperations.QueryCurrentWorkflowByName(workflowName, new string[] { "DefinitionCompressed" });
+
+            if (tableEntities.Count() == 0)
+            {
+                throw new UserInputException($"No existing workflow named {workflowName}, please review your input.");
+            }
+
+            byte[] definitionCompressed = tableEntities.First<TableEntity>().GetBinary("DefinitionCompressed");
+            return CommonOperations.DecompressContent(definitionCompressed);
+        }
     }
 }

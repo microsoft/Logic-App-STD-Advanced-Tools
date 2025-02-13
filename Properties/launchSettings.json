@@ -2,7 +2,7 @@
   "profiles": {
     "LogicAppAdvancedTool": {
       "commandName": "Project",
-      "commandLineArgs": "cancelruns -wf Test"
+      "commandLineArgs": "GenerateUrlSAS -wf Url"
     }
   }
 }

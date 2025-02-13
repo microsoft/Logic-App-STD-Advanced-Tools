@@ -121,7 +121,7 @@ namespace LogicAppAdvancedTool.Operations
             {
                 serviceProviderType = (ServiceProviderType)Enum.Parse(typeof(ServiceProviderType), providerType);
             }
-            catch (Exception ex)
+            catch
             {
                 return new ServiceProviderValidator(name, displayName, serviceProviderType, string.Empty, 0);
             }

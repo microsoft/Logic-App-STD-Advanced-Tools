@@ -833,6 +833,25 @@ namespace LogicAppAdvancedTool
                 });
                 #endregion
 
+                #region Generate workflow callback Url SAS signature
+                app.Command("GenerateSAS", c => {
+
+                    CommandOption workflowCO = c.Option("-wf|--workflow", "(Mandatory) The workflow name you need to generate primary/secondary SAS signature.", CommandOptionType.SingleValue).IsRequired();
+
+                    c.HelpOption("-?");
+                    c.Description = "Restore a deleted workflow with specific version.";
+
+                    c.OnExecute(() =>
+                    {
+                        string workflowName = workflowCO.Value();
+
+                        GenerateSAS.Run(workflowName);
+
+                        return 0;
+                    });
+                });
+                #endregion
+
                 #region Internal tools
                 app.Command("Tools", c => {
 
@@ -975,6 +994,7 @@ namespace LogicAppAdvancedTool
                 #endregion
 
                 //TODO:
+                //1. Generate access key
 
                 app.Execute(args);
             }
