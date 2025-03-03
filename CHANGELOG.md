@@ -1,3 +1,6 @@
+2025-03-03
+1. Added a new command "DisableWorkflows".
+
 2025-02-13
 1. Added "GenerateSAS" command which can generate Http trigger's callback url with primary and secondary access signature.
 2. Fixed most of warning.
