@@ -49,5 +49,13 @@
             return (ConnectionType + ConnectionName).GetHashCode();
         }
     }
+
+    public class WorkflowInfo
+    { 
+        public string name { get; set; }
+        public string definition_href { get; set; }
+        public string kind { get; set; }
+        public bool isDisabled { get; set; }
+    }
 }
 

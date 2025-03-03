@@ -852,6 +852,27 @@ namespace LogicAppAdvancedTool
                 });
                 #endregion
 
+                #region Disable workflows
+                app.Command("DisableWorkflows", c => {
+
+                    CommandOption operationCO = c.Option("-op|--operation", "(Mandatory) The operation you would like to execute. Only can be \"Disable\" or \"Restore\".", CommandOptionType.SingleValue).IsRequired();
+
+                    c.HelpOption("-?");
+                    c.Description = "Disable all workflows in Logic App STD. Can be used when runtime keeps crashing and cannot disable via portal. After execute Disable command, it will generate a file named \"OriginalStatus.json\" for restoring.";
+
+                    c.OnExecute(() =>
+                    {
+                        CommonOperations.PromptConfirmation("This command requests Logic App System-Assigned MI assigned with \"Logic App Standard Contributor\" role");
+
+                        string operation = operationCO.Value().ToLower();
+                        WorkflowManagement.Run(operation);
+
+                        return 0;
+                    });
+
+                });
+                #endregion
+
                 #region Internal tools
                 app.Command("Tools", c => {
 
@@ -994,12 +1015,21 @@ namespace LogicAppAdvancedTool
                 #endregion
 
                 //TODO:
-                //1. Generate access key
+                //delete cleanup subfolders in workflow folder
+                //disable all workflow
+                //instance name conversion of Azure and kusto
 
                 app.Execute(args);
             }
             catch (Exception ex)
             {
+                if (ex.Message == "Enumeration already finished.")
+                {
+                    Console.WriteLine($"Cannot find command {args[0]}, please revew your input or create a Github issue if command is correct.");
+
+                    return;
+                }
+
                 Console.WriteLine(ex.Message);
 
                 if (!(ex is ExpectedException))     //Print stack trace if it is not related to user input
