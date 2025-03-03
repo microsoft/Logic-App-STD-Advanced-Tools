@@ -45,6 +45,7 @@ If you would like to compile the binary yourself, please always use "Publish" in
 | EndpointValidation | Validate an Http(s) endpoint via name resolution, tcp connectivity, SSL certificate (if http, then SSL validation will be skipped) |
 | MergeRunHistory | When a workflow be deleted and create a new one with same name, we will lost run history. This command is to merge the run history from deleted workflow to existing one. |
 | RestoreWorkflowWithVersion | Restore a deleted workflow by name. |
+| GenerateSAS | Generate primary/secondary SAS signature of Http trigger for a specific workflow. |
 
 ## How to use (Demo of restore a workflow)
 1. Open Kudu (Advanced Tools) of Logic App Standard and upload this tool into a folder

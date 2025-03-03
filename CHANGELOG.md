@@ -1,3 +1,7 @@
+2025-02-13
+1. Added "GenerateSAS" command which can generate Http trigger's callback url with primary and secondary access signature.
+2. Fixed most of warning.
+
 2024-12-09
 1. "CancelRuns" command now lists running/waiting instances via pageable table query for memory consideration.
 
