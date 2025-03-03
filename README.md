@@ -46,7 +46,7 @@ If you would like to compile the binary yourself, please always use "Publish" in
 | MergeRunHistory | When a workflow be deleted and create a new one with same name, we will lost run history. This command is to merge the run history from deleted workflow to existing one. |
 | RestoreWorkflowWithVersion | Restore a deleted workflow by name. |
 | GenerateSAS | Generate primary/secondary SAS signature of Http trigger for a specific workflow. |
-| DisableWorkflows | Disable/Restore all workflow status, this can be used when runtime keeps crashing due to workflow settings and cannot change status via portal. The command contains 2 sub-commands: <br/>Disable: disable all workflows via appsettings, it will also create a log file for original workflow status <br/> Restore: restore original workflow status based on log file. |
+| DisableWorkflows | Disable/Restore all workflow status, this can be used when runtime keeps crashing due to workflow settings and cannot change status via portal. <br/>The command contains 2 sub-commands: <br/>Disable: disable all workflows via appsettings, it will also create a log file for original workflow status <br/> Restore: restore original workflow status based on log file. |
 
 ## How to use (Demo of restore a workflow)
 1. Open Kudu (Advanced Tools) of Logic App Standard and upload this tool into a folder
