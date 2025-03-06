@@ -17,6 +17,14 @@ namespace LogicAppAdvancedTool
             }
         }
 
+        public static string HostID
+        {
+            get
+            {
+                return Environment.GetEnvironmentVariable("AzureFunctionsWebHost__hostId");
+            }
+        }
+
         public static string FileShareConnectionString
         {
             get

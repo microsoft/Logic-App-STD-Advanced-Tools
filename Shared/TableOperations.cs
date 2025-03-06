@@ -13,6 +13,11 @@ namespace LogicAppAdvancedTool
         {
             get
             {
+                if (!string.IsNullOrEmpty(AppSettings.HostID))
+                {
+                    return $"flow{StoragePrefixGenerator.Generate(AppSettings.HostID.ToLower())}flows";
+                }
+
                 return $"flow{StoragePrefixGenerator.Generate(AppSettings.LogicAppName.ToLower())}flows";
             }
         }

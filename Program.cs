@@ -1011,12 +1011,30 @@ namespace LogicAppAdvancedTool
                         });
                     });
                     #endregion
+
+                    #region Convert Instance Name
+                    c.Command("ConvertInstanceName", sub =>
+                    {
+                        sub.HelpOption("-?");
+                        sub.Description = "Convert instance name of Azure portal <--> Kusto log's role instance name.";
+
+                        CommandOption instanceNameCO = sub.Option("-n|--name", "(Mandatory) The instance name need to be converted.", CommandOptionType.SingleValue).IsRequired();
+
+                        sub.OnExecute(() =>
+                        {
+                            string instanceName = instanceNameCO.Value();
+
+                            Tools.InstanceNameConverter(instanceName.ToUpper());
+
+                            return 0;
+                        });
+                    });
+                    #endregion
                 });
                 #endregion
 
                 //TODO:
                 //delete cleanup subfolders in workflow folder
-                //disable all workflow
                 //instance name conversion of Azure and kusto
 
                 app.Execute(args);
