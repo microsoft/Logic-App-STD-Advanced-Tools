@@ -9,7 +9,7 @@ namespace LogicAppAdvancedTool.Operations
     {
         public static void Run(string workflowName)
         {
-            string logicAppPrefix = StoragePrefixGenerator.Generate(AppSettings.LogicAppName.ToLower());
+            string logicAppPrefix = StoragePrefixGenerator.GenerateLogicAppPrefix();
 
             //if we don't need to generate workflow prefix, just output Logic App prefix
             if (String.IsNullOrEmpty(workflowName))
@@ -28,7 +28,7 @@ namespace LogicAppAdvancedTool.Operations
 
             string workflowID = tableEntities.First<TableEntity>().GetString("FlowId");
 
-            string workflowPrefix = StoragePrefixGenerator.Generate(workflowID);
+            string workflowPrefix = StoragePrefixGenerator.GenerateWorkflowPrefix(workflowID);
 
             Console.WriteLine($"Logic App Prefix: {logicAppPrefix}");
             Console.WriteLine($"Workflow Prefix: {workflowPrefix}");

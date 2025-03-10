@@ -7,40 +7,20 @@ namespace LogicAppAdvancedTool
     //method for generating the storage table name prefix
     //In Logic App Standard, we need to map the Logic App Name to the storage table name (LAName -> flowxxxxxflows)
     //DO NOT change anything in MurmurHash64 method
-    public static class StoragePrefixGenerator
+    public static partial class StoragePrefixGenerator
 	{
-		public static string Generate(string name)
-		{
-			byte[] data = Encoding.UTF8.GetBytes(name);
-
-			string hashResult = MurmurHash64(data, 0U).ToString("X");
-
-			return TrimStorageKeyPrefix(hashResult, 32).ToLower();
-		}
-
-		public static string GeneratePartitionKey(string rowKey)
-		{
-			string key = rowKey.Split('_')[0];
-
-			byte[] data = Encoding.UTF8.GetBytes(key);
-
-			uint result = MurmurHash32(data, 0U) % 1048576;
-
-			return result.ToString("X5");
-		}
-
-		private static string TrimStorageKeyPrefix(string storageKeyPrefix, int limit)
-		{
-			if (limit < 17)
-			{
-				throw new ArgumentException(string.Format("The storage key limit should be at least {0} characters.", 17), "limit");
-			}
-			if (storageKeyPrefix.Length <= limit - 17)
-			{
-				return storageKeyPrefix;
-			}
-			return storageKeyPrefix.Substring(0, limit - 17);
-		}
+        private static string TrimStorageKeyPrefix(string storageKeyPrefix, int limit)
+        {
+            if (limit < 17)
+            {
+                throw new ArgumentException(string.Format("The storage key limit should be at least {0} characters.", 17), "limit");
+            }
+            if (storageKeyPrefix.Length <= limit - 17)
+            {
+                return storageKeyPrefix;
+            }
+            return storageKeyPrefix.Substring(0, limit - 17);
+        }
 
         #region Hash Algorithm for LA table
         private static uint MurmurHash32(byte[] data, uint seed = 0U)

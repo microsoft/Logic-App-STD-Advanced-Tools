@@ -67,15 +67,6 @@ namespace LogicAppAdvancedTool.Operations
             SaveLogs(filteredEntities, fileName);
         }
 
-        private static bool SearchForKeyword(string content, string keyword)
-        {
-            if (!String.IsNullOrEmpty(content))
-            {
-                return content.Contains(keyword);
-            }
-
-            return false;
-        }
         private static void SaveLogs(List<TableEntity> tableEntities, string fileName)
         {
             Dictionary<string, List<HistoryRecords>> records = new Dictionary<string, List<HistoryRecords>>();

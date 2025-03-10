@@ -33,18 +33,11 @@ namespace LogicAppAdvancedTool
             }
         }
 
-        public static string GenerateLogicAppPrefix()
-        {
-            string HostID = AppSettings.HostID ?? AppSettings.LogicAppName;
-
-            return StoragePrefixGenerator.Generate(HostID.ToLower());
-        }
-
         public static string GenerateWorkflowTablePrefixByFlowID(string workflowID)
         {
-            string logicAppPrefix = GenerateLogicAppPrefix();
+            string logicAppPrefix = StoragePrefixGenerator.GenerateLogicAppPrefix();
 
-            string workflowPrefix = StoragePrefixGenerator.Generate(workflowID.ToLower());
+            string workflowPrefix = StoragePrefixGenerator.GenerateWorkflowPrefix(workflowID);
 
             return $"{logicAppPrefix}{workflowPrefix}";
         }

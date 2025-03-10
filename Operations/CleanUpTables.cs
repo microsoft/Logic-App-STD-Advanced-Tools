@@ -17,7 +17,7 @@ namespace LogicAppAdvancedTool.Operations
             List<string> tablePrefixs = new List<string>();
             if (string.IsNullOrEmpty(workflowName))
             {
-                tablePrefixs.Add(CommonOperations.GenerateLogicAppPrefix());
+                tablePrefixs.Add(StoragePrefixGenerator.GenerateLogicAppPrefix());
             }
             else
             {

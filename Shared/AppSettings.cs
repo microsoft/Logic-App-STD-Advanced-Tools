@@ -21,7 +21,7 @@ namespace LogicAppAdvancedTool
         {
             get
             {
-                return Environment.GetEnvironmentVariable("AzureFunctionsWebHost__hostId");
+                return Environment.GetEnvironmentVariable("AzureFunctionsWebHost__hostId") ?? LogicAppName;
             }
         }
 

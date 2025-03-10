@@ -10,7 +10,7 @@ namespace LogicAppAdvancedTool
     {
         public static void GeneratePrefix(string logicAppName, string workflowID)
         {
-            string logicAppPrefix = StoragePrefixGenerator.Generate(logicAppName);
+            string logicAppPrefix = StoragePrefixGenerator.GenerateLogicAppPrefix();
 
             //if we don't need to generate workflow prefix, just output Logic App prefix
             if (String.IsNullOrEmpty(workflowID))
@@ -20,7 +20,7 @@ namespace LogicAppAdvancedTool
                 return;
             }
 
-            string workflowPrefix = StoragePrefixGenerator.Generate(workflowID);
+            string workflowPrefix = StoragePrefixGenerator.GenerateWorkflowPrefix(workflowID);
 
             Console.WriteLine($"Logic App Prefix: {logicAppPrefix}");
             Console.WriteLine($"Workflow Prefix: {workflowPrefix}");

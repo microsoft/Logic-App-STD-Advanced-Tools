@@ -13,12 +13,7 @@ namespace LogicAppAdvancedTool
         {
             get
             {
-                if (!string.IsNullOrEmpty(AppSettings.HostID))
-                {
-                    return $"flow{StoragePrefixGenerator.Generate(AppSettings.HostID.ToLower())}flows";
-                }
-
-                return $"flow{StoragePrefixGenerator.Generate(AppSettings.LogicAppName.ToLower())}flows";
+                return $"flow{StoragePrefixGenerator.GenerateLogicAppPrefix()}flows";
             }
         }
 
@@ -43,7 +38,7 @@ namespace LogicAppAdvancedTool
 
         public static List<TableEntity> QueryAccessKeyTable(string filter = null, string[] select = null)
         {
-            string accessKeyTableName = $"flow{StoragePrefixGenerator.Generate(AppSettings.LogicAppName.ToLower())}flowaccesskeys";
+            string accessKeyTableName = $"flow{StoragePrefixGenerator.GenerateLogicAppPrefix()}flowaccesskeys";
             return QueryTable(accessKeyTableName, filter, select);
         }
 

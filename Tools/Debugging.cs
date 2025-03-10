@@ -13,7 +13,6 @@ namespace LogicAppAdvancedTool
     {
         public static void FeatureTesting()
         {
-            
         }
     }
 }

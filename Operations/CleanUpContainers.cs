@@ -22,7 +22,7 @@ namespace LogicAppAdvancedTool.Operations
             List<string> containerPrefixs = new List<string>();
             if (string.IsNullOrEmpty(workflowName))
             {
-                containerPrefixs.Add(CommonOperations.GenerateLogicAppPrefix());
+                containerPrefixs.Add(StoragePrefixGenerator.GenerateLogicAppPrefix());
             }
             else
             {
