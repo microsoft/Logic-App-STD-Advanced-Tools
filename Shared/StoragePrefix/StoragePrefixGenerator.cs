@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Azure.Data.Tables;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 
@@ -41,5 +44,28 @@ namespace LogicAppAdvancedTool
 
 			return result.ToString("X5");
 		}
-	}
+
+        public static string GenerateWorkflowTablePrefixByFlowID(string workflowID)
+        {
+            string logicAppPrefix = StoragePrefixGenerator.GenerateLogicAppPrefix();
+
+            string workflowPrefix = StoragePrefixGenerator.GenerateWorkflowPrefix(workflowID);
+
+            return $"{logicAppPrefix}{workflowPrefix}";
+        }
+
+        public static string GenerateWorkflowTablePrefixByName(string workflowName)
+        {
+            List<TableEntity> tableEntities = TableOperations.QueryCurrentWorkflowByName(workflowName, new string[] { "FlowId" });
+
+            if (tableEntities.Count() == 0)
+            {
+                throw new UserInputException($"{workflowName} cannot be found in storage table, please check whether workflow name is correct.");
+            }
+
+            string workflowID = tableEntities.First<TableEntity>().GetString("FlowId");
+
+            return GenerateWorkflowTablePrefixByFlowID(workflowID);
+        }
+    }
 }

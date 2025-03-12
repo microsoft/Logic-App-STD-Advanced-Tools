@@ -36,7 +36,7 @@ namespace LogicAppAdvancedTool.Operations
             string listWorkflowsResponse = HttpOperations.ValidatedHttpRequestWithToken(listWorkflowsUrl, HttpMethod.Get, string.Empty, token.access_token, "Cannot get workflow list, please check managed indentity permission.");
             Console.WriteLine("Workflow list has been retrieved");
 
-            List<WorkflowInfo> workflowInfos = Newtonsoft.Json.JsonConvert.DeserializeObject<List<WorkflowInfo>>(listWorkflowsResponse);
+            List<WorkflowInfo> workflowInfos = JsonConvert.DeserializeObject<List<WorkflowInfo>>(listWorkflowsResponse);
 
             if (workflowInfos == null || workflowInfos.Count == 0)
             {

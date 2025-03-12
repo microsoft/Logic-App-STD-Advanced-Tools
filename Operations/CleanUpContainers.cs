@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using McMaster.Extensions.CommandLineUtils;
-using Azure.Storage.Blobs;
+﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using System;
+using System.Collections.Generic;
 using System.Globalization;
-using Microsoft.Extensions.Hosting;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.ComponentModel;
-using System.Reflection;
+using System.Linq;
 
 namespace LogicAppAdvancedTool.Operations
 {
@@ -29,7 +24,7 @@ namespace LogicAppAdvancedTool.Operations
                 List<string> flowIDs = CommonOperations.ListFlowIDsByName(workflowName);
                 foreach (string flowID in flowIDs)
                 {
-                    containerPrefixs.Add(CommonOperations.GenerateWorkflowTablePrefixByFlowID(flowID));
+                    containerPrefixs.Add(StoragePrefixGenerator.GenerateWorkflowTablePrefixByFlowID(flowID));
                 }
             }
 

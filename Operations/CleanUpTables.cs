@@ -24,7 +24,7 @@ namespace LogicAppAdvancedTool.Operations
                 List<string> flowIDs = CommonOperations.ListFlowIDsByName(workflowName);
                 foreach (string flowID in flowIDs)
                 {
-                    tablePrefixs.Add(CommonOperations.GenerateWorkflowTablePrefixByFlowID(flowID));
+                    tablePrefixs.Add(StoragePrefixGenerator.GenerateWorkflowTablePrefixByFlowID(flowID));
                 }
             }
 

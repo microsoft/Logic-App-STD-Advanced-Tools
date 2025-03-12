@@ -44,42 +44,42 @@ namespace LogicAppAdvancedTool
 
         public static List<TableEntity> QueryHistoryTable(string workflowName, string filter = null, string[] select = null)
         {
-            string historyTableName = $"flow{CommonOperations.GenerateWorkflowTablePrefix(workflowName)}histories";
+            string historyTableName = $"flow{StoragePrefixGenerator.GenerateWorkflowTablePrefixByName(workflowName)}histories";
 
             return QueryTable(historyTableName, filter, select);
         }
 
         public static List<TableEntity> QueryRunTable(string workflowName, string filter, string[] select = null)
         {
-            string runTableName = $"flow{CommonOperations.GenerateWorkflowTablePrefix(workflowName)}runs";
+            string runTableName = $"flow{StoragePrefixGenerator.GenerateWorkflowTablePrefixByName(workflowName)}runs";
 
             return QueryTable(runTableName, filter, select);
         }
 
         public static List<TableEntity> QueryRunTableByFlowID(string workflowID, string filter, string[] select = null)
         {
-            string runTableName = $"flow{CommonOperations.GenerateWorkflowTablePrefixByFlowID(workflowID)}runs";
+            string runTableName = $"flow{StoragePrefixGenerator.GenerateWorkflowTablePrefixByFlowID(workflowID)}runs";
 
             return QueryTable(runTableName, filter, select);
         }
 
         public static List<TableEntity> QueryActionTable(string workflowName, string date, string filter, string[] select = null)
         { 
-            string actionTableName = $"flow{CommonOperations.GenerateWorkflowTablePrefix(workflowName)}{date}t000000zactions";
+            string actionTableName = $"flow{StoragePrefixGenerator.GenerateWorkflowTablePrefixByName(workflowName)}{date}t000000zactions";
 
             return QueryTable(actionTableName, filter, select);
         }
 
         public static List<TableEntity> QueryActionTableByFlowID(string workflowID, string date, string filter, string[] select = null)
         {
-            string actionTableName = $"flow{CommonOperations.GenerateWorkflowTablePrefixByFlowID(workflowID)}{date}t000000zactions";
+            string actionTableName = $"flow{StoragePrefixGenerator.GenerateWorkflowTablePrefixByFlowID(workflowID)}{date}t000000zactions";
 
             return QueryTable(actionTableName, filter, select);
         }
 
         public static List<TableEntity> QueryWorkflowTable(string workflowName, string filter, string[] select = null)
         { 
-            string workflowTableName = $"flow{CommonOperations.GenerateWorkflowTablePrefix(workflowName)}flows";
+            string workflowTableName = $"flow{StoragePrefixGenerator.GenerateWorkflowTablePrefixByName(workflowName)}flows";
 
             return QueryTable(workflowTableName, filter, select);
         }
@@ -95,6 +95,13 @@ namespace LogicAppAdvancedTool
             string rowKey = $"MYEDGEENVIRONMENT_FLOWLOOKUP-MYEDGERESOURCEGROUP-{FormatRawKey(workflowName.ToUpper())}";
 
             return QueryMainTable($"RowKey eq '{rowKey}'", select);
+        }
+
+        public static List<TableEntity> QuerySubscriptionSummaryTable(string filter = null, string[] select = null)
+        {
+            string workflowTableName = $"flow{StoragePrefixGenerator.GenerateLogicAppPrefix()}flowsubscriptionsummary";
+
+            return QueryTable(workflowTableName, filter, select);
         }
 
         public static string FormatRawKey(string rawKey)

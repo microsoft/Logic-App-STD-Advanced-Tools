@@ -21,7 +21,7 @@ namespace LogicAppAdvancedTool.Operations
 
             int index = 0;
 
-            string tableName = $"flow{CommonOperations.GenerateWorkflowTablePrefixByFlowID(selectedWorkflowId)}{date}t000000zactions";
+            string tableName = $"flow{StoragePrefixGenerator.GenerateWorkflowTablePrefixByFlowID(selectedWorkflowId)}{date}t000000zactions";
             string query = "InputsLinkCompressed ne '' or OutputsLinkCompressed ne ''";
 
             PageableTableQuery pageableTableQuery = new PageableTableQuery(AppSettings.ConnectionString, tableName, query);

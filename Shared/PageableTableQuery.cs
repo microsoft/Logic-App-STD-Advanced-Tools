@@ -19,6 +19,7 @@ namespace LogicAppAdvancedTool
         {
             if (pageSize > 1000)
             {
+                pageSize = 1000;
                 Console.WriteLine($"Page size cannot be larger than 1000, change to 1000");
             }
 

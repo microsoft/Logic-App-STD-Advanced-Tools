@@ -11,7 +11,7 @@ namespace LogicAppAdvancedTool.Operations
         {
             CommonOperations.AlertExperimentalFeature();
 
-            string prefix = CommonOperations.GenerateWorkflowTablePrefix(workflowName);
+            string prefix = StoragePrefixGenerator.GenerateWorkflowTablePrefixByName(workflowName);
             string runTableName = $"flow{prefix}runs";
 
             TableClient runTableClient = new TableClient(AppSettings.ConnectionString, runTableName);
@@ -19,7 +19,7 @@ namespace LogicAppAdvancedTool.Operations
             string query = $"Status eq 'Running' or Status eq 'Waiting'";
 
             int totalCount = 0;
-            PageableTableQuery queryForCount = new PageableTableQuery(AppSettings.ConnectionString, $"flow{CommonOperations.GenerateWorkflowTablePrefix(workflowName)}runs", query, new string[] { "Status", "PartitionKey", "RowKey" }, 1000);
+            PageableTableQuery queryForCount = new PageableTableQuery(AppSettings.ConnectionString, $"flow{StoragePrefixGenerator.GenerateWorkflowTablePrefixByName(workflowName)}runs", query, new string[] { "Status", "PartitionKey", "RowKey" }, 1000);
             while (queryForCount.HasNextPage)
             { 
                 totalCount += queryForCount.GetNextPage().Count;
@@ -37,7 +37,7 @@ namespace LogicAppAdvancedTool.Operations
             int cancelledCount = 0;
             int failedCount = 0;
 
-            PageableTableQuery pageableTableQuery = new PageableTableQuery(AppSettings.ConnectionString, $"flow{CommonOperations.GenerateWorkflowTablePrefix(workflowName)}runs", query, new string[] { "Status", "PartitionKey", "RowKey" }, 1000);
+            PageableTableQuery pageableTableQuery = new PageableTableQuery(AppSettings.ConnectionString, $"flow{StoragePrefixGenerator.GenerateWorkflowTablePrefixByName(workflowName)}runs", query, new string[] { "Status", "PartitionKey", "RowKey" }, 1000);
             while (pageableTableQuery.HasNextPage)
             {
                 List<TableEntity> entities = pageableTableQuery.GetNextPage();

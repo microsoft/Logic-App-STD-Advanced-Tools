@@ -30,6 +30,21 @@ namespace LogicAppAdvancedTool.Shared
             return entities;
         }
 
+        public static List<TableEntity> ListCurrentWorkflows(params string[] select)
+        {
+            List<string> querySelect = new List<string> { "FlowName", "ChangedTime", "Kind" };
+
+            querySelect.AddRange(select);
+            List<TableEntity> entities = TableOperations.QuerySubscriptionSummaryTable($"FlowName ne 'null'", select: querySelect.Distinct().ToArray());
+
+            if (entities.Count == 0)
+            {
+                throw new UserInputException("No workflows found.");
+            }
+
+            return entities;
+        }
+
         public static List<TableEntity> ListWorkflowsByName(string workflowName, params string[] select)
         {
             List<string> querySelect = new List<string> { "FlowId", "ChangedTime", "Kind" };

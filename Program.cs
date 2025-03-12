@@ -1030,12 +1030,25 @@ namespace LogicAppAdvancedTool
                         });
                     });
                     #endregion
+
+                    #region Clean up workflow folder
+                    c.Command("CleanWorkflowFolder", sub =>
+                    {
+                        sub.HelpOption("-?");
+                        sub.Description = "Remove all the sub-folders and files from workflow folder expect workflow.json";
+
+                        sub.OnExecute(() =>
+                        {
+                            Tools.CleanUpWorkflowFolder();
+
+                            return 0;
+                        });
+                    });
+                    #endregion
                 });
                 #endregion
-
                 //TODO:
-                //delete cleanup subfolders in workflow folder
-                //instance name conversion of Azure and kusto
+                //delete/cleanup subfolders in workflow folder
 
                 app.Execute(args);
             }

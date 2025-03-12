@@ -33,29 +33,6 @@ namespace LogicAppAdvancedTool
             }
         }
 
-        public static string GenerateWorkflowTablePrefixByFlowID(string workflowID)
-        {
-            string logicAppPrefix = StoragePrefixGenerator.GenerateLogicAppPrefix();
-
-            string workflowPrefix = StoragePrefixGenerator.GenerateWorkflowPrefix(workflowID);
-
-            return $"{logicAppPrefix}{workflowPrefix}";
-        }
-
-        public static string GenerateWorkflowTablePrefix(string workflowName)
-        {
-            List<TableEntity> tableEntities = TableOperations.QueryCurrentWorkflowByName(workflowName, new string[] { "FlowId" });
-
-            if (tableEntities.Count() == 0)
-            {
-                throw new UserInputException($"{workflowName} cannot be found in storage table, please check whether workflow name is correct.");
-            }
-
-            string workflowID = tableEntities.First<TableEntity>().GetString("FlowId");
-
-            return GenerateWorkflowTablePrefixByFlowID(workflowID);
-        }
-
         public static List<string> ListFlowIDsByName(string workflowName)
         {
             List<string> ids = TableOperations.QueryMainTable($"FlowName eq '{workflowName}'", new string[] { "FlowId"})
