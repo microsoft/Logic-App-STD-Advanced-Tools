@@ -1,3 +1,6 @@
+2025-03-17
+1. "CancelRuns" command now supports specify time period via -st/-et parameters.
+
 2025-03-03
 1. Added a new command "DisableWorkflows".
 
