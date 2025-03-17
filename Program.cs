@@ -534,15 +534,33 @@ namespace LogicAppAdvancedTool
                 app.Command("CancelRuns", c => {
                     
                     CommandOption workflowNameCO = c.Option("-wf|--workflow", "(Mandatory) Workflow Name", CommandOptionType.SingleValue).IsRequired();
+                    CommandOption startTimeCO = c.Option("-st|--startTime", "(Optional) Start time for cancelling in GMT, format: yyyy-MM-ddTHH:mm:ssZ (can be simplified to yyyy-MM-dd)", CommandOptionType.SingleValue);
+                    CommandOption endTimeCO = c.Option("-et|--endTime", "(Optional) End time for cancelling in GMT, format: yyyy-MM-ddTHH:mm:ssZ (can be simplified to yyyy-MM-dd)", CommandOptionType.SingleValue);
 
                     c.HelpOption("-?");
-                    c.Description = "Cancel all running/waiting instances of a workflow, will cause data lossing for running instances.";
+                    c.Description = "Cancel all running/waiting instances of a workflow, will cause data lossing for running instances. If start time and end time not provided, it will cancel all running instances.";
 
                     c.OnExecute(() =>
                     {
                         string workflowName = workflowNameCO.Value();
+                        string startTime = startTimeCO.Value() ?? "1970-01-01T00:00:00Z";
 
-                        CancelRuns.Run(workflowName);
+                        if (startTimeCO.Value() == null)
+                        { 
+                            Console.WriteLine("Start time not provided, using 1970-01-01 as default value.");
+                        }
+
+                        string endTime = endTimeCO.Value() ?? DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ");
+
+                        if (String.IsNullOrEmpty(endTimeCO.Value()))
+                        {
+                            Console.WriteLine($"End time not provided, using current time ({endTime}) by default.");
+                        }
+
+                        startTime = DateTime.Parse(startTime).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ");
+                        endTime = DateTime.Parse(endTime).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ");
+
+                        CancelRuns.Run(workflowName, startTime, endTime);
 
                         return 0;
                     });
@@ -1048,7 +1066,7 @@ namespace LogicAppAdvancedTool
                 });
                 #endregion
                 //TODO:
-                //delete/cleanup subfolders in workflow folder
+                //add time range for cancel run
 
                 app.Execute(args);
             }

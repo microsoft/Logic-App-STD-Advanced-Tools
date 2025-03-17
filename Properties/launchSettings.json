@@ -2,7 +2,7 @@
   "profiles": {
     "LogicAppAdvancedTool": {
       "commandName": "Project",
-      "commandLineArgs": "tools ConvertInstanceName -n pd1SmallDedicatedWebWorkerRole_IN_14067"
+      "commandLineArgs": "cancelruns -wf canceltest"
     }
   }
 }

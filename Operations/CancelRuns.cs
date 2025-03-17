@@ -7,19 +7,18 @@ namespace LogicAppAdvancedTool.Operations
 {
     public static class CancelRuns
     {
-        public static void Run(string workflowName)
+        public static void Run(string workflowName, string startTime, string endTime)
         {
             CommonOperations.AlertExperimentalFeature();
 
-            string prefix = StoragePrefixGenerator.GenerateWorkflowTablePrefixByName(workflowName);
-            string runTableName = $"flow{prefix}runs";
+            string runTableName = $"flow{StoragePrefixGenerator.GenerateWorkflowTablePrefixByName(workflowName)}runs";
 
             TableClient runTableClient = new TableClient(AppSettings.ConnectionString, runTableName);
 
-            string query = $"Status eq 'Running' or Status eq 'Waiting'";
+            string query = $"(Status eq 'Running' or Status eq 'Waiting') and (CreatedTime ge datetime'{startTime}' and CreatedTime le datetime'{endTime}')";
 
             int totalCount = 0;
-            PageableTableQuery queryForCount = new PageableTableQuery(AppSettings.ConnectionString, $"flow{StoragePrefixGenerator.GenerateWorkflowTablePrefixByName(workflowName)}runs", query, new string[] { "Status", "PartitionKey", "RowKey" }, 1000);
+            PageableTableQuery queryForCount = new PageableTableQuery(AppSettings.ConnectionString, runTableName, query, new string[] { "Status", "PartitionKey", "RowKey" }, 1000);
             while (queryForCount.HasNextPage)
             { 
                 totalCount += queryForCount.GetNextPage().Count;
@@ -37,16 +36,10 @@ namespace LogicAppAdvancedTool.Operations
             int cancelledCount = 0;
             int failedCount = 0;
 
-            PageableTableQuery pageableTableQuery = new PageableTableQuery(AppSettings.ConnectionString, $"flow{StoragePrefixGenerator.GenerateWorkflowTablePrefixByName(workflowName)}runs", query, new string[] { "Status", "PartitionKey", "RowKey" }, 1000);
+            PageableTableQuery pageableTableQuery = new PageableTableQuery(AppSettings.ConnectionString, runTableName, query, new string[] { "Status", "PartitionKey", "RowKey" }, 1000);
             while (pageableTableQuery.HasNextPage)
             {
                 List<TableEntity> entities = pageableTableQuery.GetNextPage();
-
-                //throw expected exception if no running/waiting instances found on the first page
-                if (entities.Count == 0)
-                {
-                    
-                }
 
                 foreach (TableEntity te in entities)
                 {
