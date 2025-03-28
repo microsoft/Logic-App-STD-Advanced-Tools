@@ -17,6 +17,38 @@ namespace LogicAppAdvancedTool
             }
         }
 
+        public static string TableServiceUri
+        {
+            get
+            {
+                return Environment.GetEnvironmentVariable("AzureWebJobsStorage__tableServiceUri");
+            }
+        }
+
+        public static string BlobServiceUri
+        {
+            get
+            {
+                return Environment.GetEnvironmentVariable("AzureWebJobsStorage__blobServiceUri");
+            }
+        }
+
+        public static string QueueServiceUri
+        {
+            get
+            {
+                return Environment.GetEnvironmentVariable("AzureWebJobsStorage__queueServiceUri");
+            }
+        }
+
+        public static string ManagedIdentityResourceID
+        {
+            get
+            {
+                return Environment.GetEnvironmentVariable("AzureWebJobsStorage__managedIdentityResourceId");
+            }
+        }
+
         public static string HostID
         {
             get

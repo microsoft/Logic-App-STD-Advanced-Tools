@@ -1,6 +1,7 @@
 ﻿using Azure;
 using Azure.Data.Tables;
 using Azure.Data.Tables.Models;
+using Azure.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace LogicAppAdvancedTool
 {
     public class TableOperations
     {
-        public static string DefinitionTableName 
+        public static string DefinitionTableName
         {
             get
             {
@@ -17,23 +18,25 @@ namespace LogicAppAdvancedTool
             }
         }
 
-        private static List<TableEntity> QueryTable(string tableName, string query, string[] select = null)
+        public static TableClient GenerateTableClient(string tableName)
         {
-            List<TableEntity> tableEntities = new List<TableEntity>();
+            TableServiceClient tableServiceClient = StorageClientCreator.GenerateTableServiceClient();
 
-            TableServiceClient serviceClient = new TableServiceClient(AppSettings.ConnectionString);
-            Pageable<TableItem> results = serviceClient.Query(filter: $"TableName eq '{tableName}'");
+            Pageable<TableItem> results = tableServiceClient.Query(filter: $"TableName eq '{tableName}'");
 
             if (results.Count() == 0)
             {
                 throw new UserInputException($"Table - {tableName} not exist, please check whether parameters are correct or not.");
             }
 
-            TableClient tableClient = new TableClient(AppSettings.ConnectionString, tableName);
+            return tableServiceClient.GetTableClient(tableName);
+        }
 
-            tableEntities = tableClient.Query<TableEntity>(filter: query, select: select).ToList();
+        private static List<TableEntity> QueryTable(string tableName, string query, string[] select = null)
+        {
+            TableClient tableClient = GenerateTableClient(tableName);
 
-            return tableEntities;
+            return tableClient.Query<TableEntity>(filter: query, select: select).ToList();
         }
 
         public static List<TableEntity> QueryAccessKeyTable(string filter = null, string[] select = null)
@@ -64,7 +67,7 @@ namespace LogicAppAdvancedTool
         }
 
         public static List<TableEntity> QueryActionTable(string workflowName, string date, string filter, string[] select = null)
-        { 
+        {
             string actionTableName = $"flow{StoragePrefixGenerator.GenerateWorkflowTablePrefixByName(workflowName)}{date}t000000zactions";
 
             return QueryTable(actionTableName, filter, select);
@@ -78,7 +81,7 @@ namespace LogicAppAdvancedTool
         }
 
         public static List<TableEntity> QueryWorkflowTable(string workflowName, string filter, string[] select = null)
-        { 
+        {
             string workflowTableName = $"flow{StoragePrefixGenerator.GenerateWorkflowTablePrefixByName(workflowName)}flows";
 
             return QueryTable(workflowTableName, filter, select);

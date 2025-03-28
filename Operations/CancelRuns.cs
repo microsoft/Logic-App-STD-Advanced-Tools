@@ -13,12 +13,14 @@ namespace LogicAppAdvancedTool.Operations
 
             string runTableName = $"flow{StoragePrefixGenerator.GenerateWorkflowTablePrefixByName(workflowName)}runs";
 
-            TableClient runTableClient = new TableClient(AppSettings.ConnectionString, runTableName);
+            //TableClient runTableClient = new TableClient(AppSettings.ConnectionString, runTableName);
+            //Just leaving the original code for reference
+            TableClient runTableClient = TableOperations.GenerateTableClient(runTableName);
 
             string query = $"(Status eq 'Running' or Status eq 'Waiting') and (CreatedTime ge datetime'{startTime}' and CreatedTime le datetime'{endTime}')";
 
             int totalCount = 0;
-            PageableTableQuery queryForCount = new PageableTableQuery(AppSettings.ConnectionString, runTableName, query, new string[] { "Status", "PartitionKey", "RowKey" }, 1000);
+            PageableTableQuery queryForCount = new PageableTableQuery(runTableName, query, new string[] { "Status", "PartitionKey", "RowKey" }, 1000);
             while (queryForCount.HasNextPage)
             { 
                 totalCount += queryForCount.GetNextPage().Count;
@@ -36,7 +38,7 @@ namespace LogicAppAdvancedTool.Operations
             int cancelledCount = 0;
             int failedCount = 0;
 
-            PageableTableQuery pageableTableQuery = new PageableTableQuery(AppSettings.ConnectionString, runTableName, query, new string[] { "Status", "PartitionKey", "RowKey" }, 1000);
+            PageableTableQuery pageableTableQuery = new PageableTableQuery(runTableName, query, new string[] { "Status", "PartitionKey", "RowKey" }, 1000);
             while (pageableTableQuery.HasNextPage)
             {
                 List<TableEntity> entities = pageableTableQuery.GetNextPage();

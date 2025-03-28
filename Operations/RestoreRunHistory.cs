@@ -94,7 +94,8 @@ namespace LogicAppAdvancedTool.Operations
 
             Console.WriteLine("Records found, converting...");
 
-            TableClient tableClient = new TableClient(AppSettings.ConnectionString, TableOperations.DefinitionTableName);
+            //TableClient tableClient = new TableClient(AppSettings.ConnectionString, TableOperations.DefinitionTableName);
+            TableClient tableClient = TableOperations.GenerateTableClient(TableOperations.DefinitionTableName);
 
             foreach (TableEntity te in reviewerWorkflowEntities)
             {

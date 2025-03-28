@@ -28,7 +28,7 @@ namespace LogicAppAdvancedTool.Operations
                 }
             }
 
-            TableServiceClient client = new TableServiceClient(AppSettings.ConnectionString);
+            TableServiceClient client = StorageClientCreator.GenerateTableServiceClient();
             List<string> matchedTables = new List<string>();
 
             foreach (string prefix in tablePrefixs)

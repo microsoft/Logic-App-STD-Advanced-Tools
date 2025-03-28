@@ -9,7 +9,8 @@ namespace LogicAppAdvancedTool
     {
         public static string Decode(string connectionString, string tableName, string rowKey)
         {
-            TableClient tableClient = new TableClient(connectionString, tableName);
+            //TableClient tableClient = new TableClient(connectionString, tableName);
+            TableClient tableClient = TableOperations.GenerateTableClient(tableName);
             Pageable<TableEntity> tableEntities = tableClient.Query<TableEntity>(filter: $"RowKey eq '{rowKey}'");
 
             foreach (TableEntity tableEntity in tableEntities)

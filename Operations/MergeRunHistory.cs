@@ -83,7 +83,7 @@ namespace LogicAppAdvancedTool.Operations
 
         private static List<string> ListActionVarTables(string prefix, int startTime, int endTime)
         {
-            TableServiceClient serviceClient = new TableServiceClient(AppSettings.ConnectionString);
+            TableServiceClient serviceClient = StorageClientCreator.GenerateTableServiceClient();
 
             return serviceClient.Query().ToList()
                     .Where(s => s.Name.StartsWith(prefix) && (s.Name.EndsWith("actions") || s.Name.EndsWith("variables")) && int.Parse(s.Name.Substring(34, 8)) >= startTime && int.Parse(s.Name.Substring(34, 8)) <= endTime)
@@ -95,7 +95,7 @@ namespace LogicAppAdvancedTool.Operations
         {
             Console.WriteLine($"Merging {sourceTableName} to {targetTableName}");
 
-            TableServiceClient serviceClient = new TableServiceClient(AppSettings.ConnectionString);
+            TableServiceClient serviceClient = StorageClientCreator.GenerateTableServiceClient();
             Pageable<TableItem> sourceTableRecords = serviceClient.Query(filter: $"TableName eq '{sourceTableName}'");
 
             if (sourceTableRecords.Count() == 0)
@@ -105,10 +105,12 @@ namespace LogicAppAdvancedTool.Operations
                 return;
             }
 
-            TableClient targetTableClient = new TableClient(AppSettings.ConnectionString, targetTableName);
+            //TableClient targetTableClient = new TableClient(AppSettings.ConnectionString, targetTableName);
+            TableClient targetTableClient = TableOperations.GenerateTableClient(targetTableName);
             targetTableClient.CreateIfNotExists();
 
-            TableClient sourceTableClient = new TableClient(AppSettings.ConnectionString, sourceTableName);
+            //TableClient sourceTableClient = new TableClient(AppSettings.ConnectionString, sourceTableName);
+            TableClient sourceTableClient = TableOperations.GenerateTableClient(sourceTableName);
 
             //Split records into pages for memory usage consideration
             Pageable<TableEntity> entities = sourceTableClient.Query<TableEntity>(maxPerPage: 1000);
@@ -161,7 +163,8 @@ namespace LogicAppAdvancedTool.Operations
             string filter = $"FlowId eq '{sourceID}'";
             List<TableEntity> deletedWorkflowRecords = TableOperations.QueryMainTable(filter);
 
-            TableClient tableClient = new TableClient(AppSettings.ConnectionString, TableOperations.DefinitionTableName);
+            //TableClient tableClient = new TableClient(AppSettings.ConnectionString, TableOperations.DefinitionTableName);
+            TableClient tableClient = TableOperations.GenerateTableClient(TableOperations.DefinitionTableName);
 
             foreach (TableEntity te in deletedWorkflowRecords)
             {

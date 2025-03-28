@@ -173,19 +173,19 @@ namespace LogicAppAdvancedTool
                 switch (ServiceType)
                 {
                     case StorageServiceType.Blob:
-                        BlobServiceClient blobClient = new BlobServiceClient(AppSettings.ConnectionString);
+                        BlobServiceClient blobClient = StorageClientCreator.GenerateBlobServiceClient();
                         blobClient.GetProperties();
                         break;
                     case StorageServiceType.File:
-                        ShareServiceClient shareClient = new ShareServiceClient(AppSettings.ConnectionString);
+                        ShareServiceClient shareClient = new ShareServiceClient(AppSettings.FileShareConnectionString);  //file share only support for using connection string
                         shareClient.GetProperties();
                         break;
                     case StorageServiceType.Queue:
-                        QueueServiceClient queueClient = new QueueServiceClient(AppSettings.ConnectionString);
+                        QueueServiceClient queueClient = StorageClientCreator.GenerateQueueServiceClient();
                         queueClient.GetProperties();
                         break;
                     case StorageServiceType.Table:
-                        TableServiceClient tableClient = new TableServiceClient(AppSettings.ConnectionString);
+                        TableServiceClient tableClient = StorageClientCreator.GenerateTableServiceClient();
                         tableClient.GetProperties();
                         break;
                     default: break;

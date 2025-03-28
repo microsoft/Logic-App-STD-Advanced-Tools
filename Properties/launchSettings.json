@@ -1,8 +1,7 @@
 {
   "profiles": {
     "LogicAppAdvancedTool": {
-      "commandName": "Project",
-      "commandLineArgs": "cancelruns -wf canceltest"
+      "commandName": "Project"
     }
   }
 }

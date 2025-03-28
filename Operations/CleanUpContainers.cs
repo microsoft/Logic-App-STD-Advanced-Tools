@@ -29,7 +29,7 @@ namespace LogicAppAdvancedTool.Operations
             }
 
             List<string> matchedContainers = new List<string>();
-            BlobServiceClient client = new BlobServiceClient(AppSettings.ConnectionString);
+            BlobServiceClient client = StorageClientCreator.GenerateBlobServiceClient();
 
             foreach (string prefix in containerPrefixs)
             {

@@ -119,13 +119,12 @@ namespace LogicAppAdvancedTool
         #region Storage operation
         public static string GetBlobContent(string blobUri, int contentSize = -1)
         {
-            Uri uri = new Uri(blobUri);
-            StorageConnectionInfo info = new StorageConnectionInfo(AppSettings.ConnectionString, StorageServiceType.Blob);
-            StorageSharedKeyCredential cred = new StorageSharedKeyCredential(info.AccountName, info.AccountKey);
-
-            BlobClient client = new BlobClient(uri, cred);
+            string containerName = blobUri.Split('/')[3];
+            string blobName = blobUri.Split("/")[4];
+            BlobClient client = StorageClientCreator.GenerateBlobServiceClient().GetBlobContainerClient(containerName).GetBlobClient(blobName);
 
             long blobSize = client.GetProperties().Value.ContentLength;
+
 
             //If content size is specified and blob size is larger than content size, return empty string
             if (contentSize != -1 && blobSize > contentSize)
