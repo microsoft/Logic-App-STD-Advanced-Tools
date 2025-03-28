@@ -1,3 +1,6 @@
+2025-03-28
+1. Added supportiabilty for connecting Logic App STD backend Storage Account via user-assgned MI as per appsettings.
+
 2025-03-17
 1. "CancelRuns" command now supports specify time period via -st/-et parameters.
 
