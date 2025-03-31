@@ -1065,10 +1065,9 @@ namespace LogicAppAdvancedTool
                     #endregion
                 });
                 #endregion
+                
                 //TODO:
                 //add exception filter for resubmit
-                //add MI support for storage connection
-                //improvement of class StorageConnectionInfo
 
                 app.Execute(args);
             }
