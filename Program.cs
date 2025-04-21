@@ -612,6 +612,8 @@ namespace LogicAppAdvancedTool
                     CommandOption endTimeCO = c.Option("-et|--endTime", "(Manadatory) End time of time peroid (format in yyyy-MM-ddTHH:mm:ssZ).", CommandOptionType.SingleValue).IsRequired();
                     CommandOption ignoreProcessedCO = c.Option("-ignore|--ignoreProcessed", "(Optional) Whether need to ignore the runs already be resubmitted in previous executions. True or False (default vaule is true).", CommandOptionType.SingleValue);
                     CommandOption statusCO = c.Option("-s|--status", "(Optional) Filter which status of runs need to be resubmitted (Default value is Failed). Available parameters are \"Cancelled\", \"Succeeded\" and \"Failed\".", CommandOptionType.SingleValue);
+                    CommandOption actionNameCO = c.Option("-an|--actionName", "(Optional) Action name for key word filter feature. If contains space, then quote this value.", CommandOptionType.SingleValue);
+                    CommandOption keywordCO = c.Option("-k|--keyword", "(Optional) Key word for action outputs/errors filtering. If contains space, then quote this value.", CommandOptionType.SingleValue);
 
                     c.HelpOption("-?");
                     c.Description = "Resubmit all failed runs of a specific workflow within provided time peroid. If we have large count of runs need to be resubmitted, we will hit throttling (~50 execution per 5 minutes) but it will be handled internally.";
@@ -623,6 +625,14 @@ namespace LogicAppAdvancedTool
                         DateTime st = DateTime.Parse(startTimeCO.Value());
                         DateTime et = DateTime.Parse(endTimeCO.Value());
 
+                        string actionName = actionNameCO.Value();
+                        string keyword = keywordCO.Value();
+
+                        if (String.IsNullOrEmpty(actionName) ^ String.IsNullOrEmpty(keyword))
+                        {
+                            throw new UserInputException("ActionName (-an|--actionName) and Keyword (-k|--keyword) must be provided in pair.");
+                        }
+
                         if (st > et)
                         {
                             throw new UserInputException("Provided end time is earlier than start time, please correct.");
@@ -632,14 +642,14 @@ namespace LogicAppAdvancedTool
                         string endTime = et.ToString("yyyy-MM-ddTHH:mm:ssZ");
                         bool ignoreProcessed = bool.Parse(ignoreProcessedCO.Value() ?? "true");
 
-                        string status = (statusCO.Value()?? "failed").ToLower();
+                        string status = (statusCO.Value() ?? "Failed").ToLower();
 
                         if (status != "failed" && status != "succeeded" && status != "cancelled")
                         {
                             Console.WriteLine("Invalid value of parameter \"status\", available parameters are \"Cancelled\", \"Succeeded\" and \"Failed\".");
                         }
 
-                        BatchResubmit.Run(workflowName, startTime, endTime, ignoreProcessed, status);
+                        BatchResubmit.Run(workflowName, startTime, endTime, ignoreProcessed, status, actionName, keyword);
 
                         return 0;
                     });

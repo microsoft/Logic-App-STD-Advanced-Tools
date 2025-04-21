@@ -12,6 +12,7 @@ namespace LogicAppAdvancedTool
         private Pageable<TableEntity> pageableEntities;
         private string continuationToken;
         private int PageSize { get; set; }
+        public int PageCount { get; private set; }
 
         public bool HasNextPage { get; private set; }
 
@@ -25,6 +26,7 @@ namespace LogicAppAdvancedTool
 
             HasNextPage = true;
             PageSize = pageSize;
+            PageCount = 1;
 
             TableClient tableClient = TableOperations.GenerateTableClient(tableName);
             pageableEntities = tableClient.Query<TableEntity>(filter: query, select: select, maxPerPage: PageSize);
@@ -41,6 +43,8 @@ namespace LogicAppAdvancedTool
             {
                 HasNextPage = false;
             }
+
+            PageCount++;
 
             return page.Values.ToList();
         }
