@@ -1073,11 +1073,34 @@ namespace LogicAppAdvancedTool
                         });
                     });
                     #endregion
+
+                    #region Back Public Bundle
+                    c.Command("BackupBundles", sub =>
+                    {
+                        sub.HelpOption("-?");
+                        sub.Description = "Backup all the exisiting public bundles in a storage account blob container.";
+
+                        CommandOption storageAccountCO = sub.Option("-sa|--storageAccount", "(Mandatory) The target storage account.", CommandOptionType.SingleValue).IsRequired();
+                        CommandOption containerCO = sub.Option("-c|--container", "(Mandatory) The target blob container.", CommandOptionType.SingleValue).IsRequired();
+
+                        sub.OnExecute(() =>
+                        {
+                            string storageAccount = storageAccountCO.Value();
+                            string containerName = containerCO.Value();
+
+                            Tools.BackupBundles(storageAccount, containerName);
+
+                            return 0;
+                        });
+                    });
+                    #endregion
                 });
                 #endregion
                 
                 //TODO:
-                //add exception filter for resubmit
+                //1. Create bundle snapshot to blob
+                //2. Convert public bundle to private bundle
+                
 
                 app.Execute(args);
             }

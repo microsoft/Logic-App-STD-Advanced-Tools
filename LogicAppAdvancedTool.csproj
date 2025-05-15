@@ -97,6 +97,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Update="Temp\ConnectionString.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Temp\MIToken.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

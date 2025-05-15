@@ -10,7 +10,6 @@ namespace LogicAppAdvancedTool.Structures
 
         public StorageConnectionInfo(StorageServiceType storageType)
         {
-            //quick and dirty
             this.storageType = storageType;
 
             if (storageType == StorageServiceType.File)
