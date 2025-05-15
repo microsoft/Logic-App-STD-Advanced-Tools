@@ -1,3 +1,6 @@
+2025-04-21
+1. BatchResubmit command now support for filtering runs based on action name and keyword via provding -an and -k options.
+
 2025-03-28
 1. Added supportiabilty for connecting Logic App STD backend Storage Account via user-assgned MI as per appsettings.
 
