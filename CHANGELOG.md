@@ -1,3 +1,6 @@
+2025-05-15
+1. Added new command "BackupBundles" for backup all existing public bundles
+
 2025-04-21
 1. BatchResubmit command now support for filtering runs based on action name and keyword via provding -an and -k options.
 
