@@ -44,6 +44,7 @@ namespace LogicAppAdvancedTool
             {
                 string bundleVersion = bundlePath.Name;
                 string targetTempFolder = $"bundles_temp\\{bundleVersion}";
+                Console.WriteLine($"Copying bundle {bundleVersion} to local temp folder");
                 CommonOperations.CopyDirectory(bundlePath.FullName, targetTempFolder, true);
                 
                 string zipFileName = $"{bundleVersion}.zip";
