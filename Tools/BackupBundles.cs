@@ -13,7 +13,7 @@ namespace LogicAppAdvancedTool
     {
         public static void BackupBundles(string storageAccount, string containerName)
         {
-            CommonOperations.PromptConfirmation("This command requests \"Storage Blob Data Contributor\" role be assigned to Logic App system-assigned managed identity");
+            CommonOperations.PromptConfirmation("This command requests \"Storage Blob Data Contributor\" role be assigned to Logic App system-assigned managed identity of your backup Storage Account.");
 
             Console.WriteLine($"Retrieving existing bundles from storage account: {storageAccount}, blob container: {containerName}");
 
