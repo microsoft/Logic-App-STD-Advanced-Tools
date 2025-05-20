@@ -42,10 +42,11 @@ namespace LogicAppAdvancedTool
 
             foreach (DirectoryInfo bundlePath in bundlePaths)
             {
-                string targetTempFolder = $"bundles_temp\\{bundlePath.Name}";
+                string bundleVersion = bundlePath.Name;
+                string targetTempFolder = $"bundles_temp\\{bundleVersion}";
                 CommonOperations.CopyDirectory(bundlePath.FullName, targetTempFolder, true);
                 
-                string zipFileName = $"{bundlePath.Name}.zip";
+                string zipFileName = $"{bundleVersion}.zip";
                 string zipFilePath = $"bundles_temp\\{zipFileName}";
 
                 if (File.Exists(zipFilePath))
@@ -53,14 +54,14 @@ namespace LogicAppAdvancedTool
                     File.Delete(zipFilePath);
                 }
 
-                Console.WriteLine($"Creating zip file for bundle {bundlePath.Name}");
+                Console.WriteLine($"Creating zip file for bundle {bundleVersion}, it will take ~1 minute");
                 ZipFile.CreateFromDirectory(targetTempFolder, zipFilePath, CompressionLevel.NoCompression, false);
 
-                Console.WriteLine("Zip file has been created, uploading to blob container.");
+                Console.WriteLine($"Zip file has been created for bundle {bundleVersion}, uploading to blob container.");
                 BlobClient blobClient = blobContainerClient.GetBlobClient(zipFileName);
                 blobClient.Upload(zipFilePath);
 
-                Console.WriteLine($"Bundle {bundlePath.Name} has been uploaded.");
+                Console.WriteLine($"Bundle {bundleVersion} has been uploaded.");
             }
 
             Directory.Delete("bundles_temp", true);
