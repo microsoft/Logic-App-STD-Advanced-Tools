@@ -1,3 +1,6 @@
+2025-06-10
+1. Added a new command "RollbackBundle" to rollback undle to a backuped public bundle in Storage Blob Container
+
 2025-05-15
 1. Added new command "BackupBundles" for backup all existing public bundles
 
