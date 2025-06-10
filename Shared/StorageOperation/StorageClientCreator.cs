@@ -6,6 +6,7 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Queues;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace LogicAppAdvancedTool
@@ -64,6 +65,21 @@ namespace LogicAppAdvancedTool
             }
 
             return queueServiceClient;
+        }
+
+        public static BlobServiceClient GenerateBlobClientBySystemMI(string storageAccount, BlobClientOptions clientOptions)
+        {
+#if !DEBUG
+            DefaultAzureCredential credential = new DefaultAzureCredential();
+            string blobUri = $"https://{storageAccount}.blob.core.windows.net";
+            BlobServiceClient blobServiceClient = new BlobServiceClient(new Uri(blobUri), credential, clientOptions);
+
+#else
+            string connectionString = File.ReadAllText("Temp/ConnectionString.txt");
+            BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString, clientOptions);
+#endif
+
+            return blobServiceClient;
         }
 
         private static DefaultAzureCredential GenerateCredential(string serviceUriName)

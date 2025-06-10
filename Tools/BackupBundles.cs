@@ -1,4 +1,5 @@
-﻿using Azure.Identity;
+﻿using Azure.Core.Pipeline;
+using Azure.Identity;
 using Azure.Storage.Blobs;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,12 @@ namespace LogicAppAdvancedTool
 
             Console.WriteLine($"Retrieving existing bundles from storage account: {storageAccount}, blob container: {containerName}");
 
-            BlobContainerClient blobContainerClient = CreateBlobClient(storageAccount, containerName);
+            BlobClientOptions blobClientOptions = new BlobClientOptions()
+            {
+                RetryPolicy = new RetryPolicy(0)
+            };
+
+            BlobContainerClient blobContainerClient = StorageClientCreator.GenerateBlobClientBySystemMI(storageAccount, blobClientOptions).GetBlobContainerClient(containerName);
             List<string> existingBundles = blobContainerClient.GetBlobs()
                                             .Where(x => x.Name.EndsWith(".zip"))
                                             .Select(y => y.Name.Replace(".zip", ""))
@@ -65,33 +71,9 @@ namespace LogicAppAdvancedTool
                 Console.WriteLine($"Bundle {bundleVersion} has been uploaded.");
             }
 
+            Console.WriteLine("Cleaning up temp files.");
             Directory.Delete("bundles_temp", true);
-            Console.WriteLine("Temp folder has been cleaned up, bundle(s) backup done.");
-        }
-
-        private static BlobContainerClient CreateBlobClient(string storageAccount, string containerName)
-        {
-#if !DEBUG
-            /*
-            DefaultAzureCredential credential = new DefaultAzureCredential(
-                new DefaultAzureCredentialOptions
-                {
-                    //ManagedIdentityResourceId = new Azure.Core.ResourceIdentifier(AppSettings.ManagedIdentityResourceID)
-                    ManagedIdentityClientId = "d99a7597-a635-448f-8941-09779c79c02f"
-                });
-            */
-
-            DefaultAzureCredential credential = new DefaultAzureCredential();
-            string blobUri = $"https://{storageAccount}.blob.core.windows.net";
-            BlobServiceClient blobServiceClient = new BlobServiceClient(new Uri(blobUri), credential);
-
-#else
-            string connectionString = File.ReadAllText("Temp/ConnectionString.txt");
-            BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
-#endif
-            BlobContainerClient blobContainerClient = blobServiceClient.GetBlobContainerClient(containerName);
-
-            return blobContainerClient;
+            Console.WriteLine("Bundle(s) backup done.");
         }
     }
 }

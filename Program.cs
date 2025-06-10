@@ -1094,12 +1094,54 @@ namespace LogicAppAdvancedTool
                         });
                     });
                     #endregion
+
+                    #region Rollback Bundle
+                    c.Command("RollbackBundle", sub =>
+                    {
+                        sub.HelpOption("-?");
+                        sub.Description = "Rollback a pervious version of public bundle which stored as Storage Blob";
+
+                        CommandOption storageAccountCO = sub.Option("-sa|--storageAccount", "(Mandatory) The target storage account.", CommandOptionType.SingleValue).IsRequired();
+                        CommandOption containerCO = sub.Option("-c|--container", "(Mandatory) The blob container.", CommandOptionType.SingleValue).IsRequired();
+                        CommandOption blobNameCO = sub.Option("-b|--blobName", "(Mandatory) The blob name of bundle backup file.", CommandOptionType.SingleValue).IsRequired();
+                        CommandOption bundleVersionCO = sub.Option("-bv|--bundleVersion", "(Mandatory) The target bundle version.", CommandOptionType.SingleValue).IsRequired();
+                        CommandOption anonymousCO = sub.Option("-a|--anonymous", "Whether blob enabled anonymous access. If not, then it will use Logic App system-assigned MI for authentication.", CommandOptionType.SingleValue);
+
+                        sub.OnExecute(() =>
+                        {
+                            string storageAccount = storageAccountCO.Value();
+                            string containerName = containerCO.Value();
+                            string blobName = blobNameCO.Value();
+                            string bundleVersion = bundleVersionCO.Value();
+                            bool anonymous = bool.Parse(anonymousCO.Value() ?? "false");
+
+                            Tools.RollbackBundle(storageAccount, containerName, blobName, bundleVersion, anonymous);
+
+                            return 0;
+                        });
+                    });
+                    #endregion
+
+                    #region Internal usage for development debugging
+                    c.Command("DevDebug", sub =>
+                    {
+                        sub.HelpOption("-?");
+                        sub.Description = "Test";
+
+
+                        sub.OnExecute(() =>
+                        {
+                            Tools.DevDebug();
+
+                            return 0;
+                        });
+                    });
+                    #endregion
                 });
                 #endregion
                 
                 //TODO:
-                //1. Create bundle snapshot to blob
-                //2. Convert public bundle to private bundle
+                //1. Convert public bundle to private bundle
                 
 
                 app.Execute(args);
@@ -1108,7 +1150,7 @@ namespace LogicAppAdvancedTool
             {
                 if (ex.Message == "Enumeration already finished.")
                 {
-                    Console.WriteLine($"Cannot find command {args[0]}, please revew your input or create a Github issue if command is correct.");
+                    Console.WriteLine($"Cannot find command {args[0]}, please revew your input or create a Github issue (https://github.com/microsoft/Logic-App-STD-Advanced-Tools/issues) if command is correct.");
 
                     return;
                 }

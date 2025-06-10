@@ -2,7 +2,7 @@
   "profiles": {
     "LogicAppAdvancedTool": {
       "commandName": "Project",
-      "commandLineArgs": "Tools Backupbundles -sa dracbundlebackup -c bundle"
+      "commandLineArgs": "tools rollbackbundle -sa adracbackupbundle -c bundle -b 1.114.223.zip -bv 1.114.22 -a false"
     }
   }
 }
