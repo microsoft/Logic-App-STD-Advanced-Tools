@@ -1,4 +1,4 @@
-##Important!!! No maintainence of this tool from 7-July 2025
+# !!!No maintainence of this tool from 7-July 2025
 
 ## Introduction
 This tool integrated several useful features for Logic App Standard which not available in Logic App portal yet.<br/>
